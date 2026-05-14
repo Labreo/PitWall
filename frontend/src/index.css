@@ -1,0 +1,188 @@
+/* ─────────────────────────────────────────────
+   PitWall Design System — Cinematic Motorsport
+   ───────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ── Palette: Night Circuit ── */
+  --pw-bg-deep:     #050a14;
+  --pw-bg-surface:  #0b1121;
+  --pw-bg-card:     #111827;
+  --pw-bg-elevated: #1a2332;
+  --pw-border:      rgba(56, 189, 248, 0.08);
+  --pw-border-glow: rgba(56, 189, 248, 0.25);
+
+  /* ── Accent: Telemetry ── */
+  --pw-cyan:        #22d3ee;
+  --pw-cyan-dim:    rgba(34, 211, 238, 0.15);
+  --pw-emerald:     #34d399;
+  --pw-amber:       #fbbf24;
+  --pw-red:         #f87171;
+  --pw-violet:      #a78bfa;
+
+  /* ── Speed Gradient ── */
+  --pw-speed-slow:  #22d3ee;
+  --pw-speed-mid:   #34d399;
+  --pw-speed-fast:  #fbbf24;
+  --pw-speed-max:   #f87171;
+
+  /* ── Typography ── */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
+
+  /* ── Glow ── */
+  --glow-cyan: 0 0 20px rgba(34, 211, 238, 0.3), 0 0 60px rgba(34, 211, 238, 0.1);
+  --glow-emerald: 0 0 20px rgba(52, 211, 153, 0.3), 0 0 60px rgba(52, 211, 153, 0.1);
+  --glow-red: 0 0 20px rgba(248, 113, 113, 0.3), 0 0 60px rgba(248, 113, 113, 0.1);
+  --glow-amber: 0 0 20px rgba(251, 191, 36, 0.3), 0 0 60px rgba(251, 191, 36, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--pw-bg-deep);
+  color: #e2e8f0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Glass Panel ── */
+.glass-panel {
+  background: rgba(11, 17, 33, 0.75);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid var(--pw-border);
+}
+
+.glass-panel-bright {
+  background: rgba(17, 24, 39, 0.85);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid var(--pw-border-glow);
+}
+
+/* ── Telemetry Glow Text ── */
+.glow-text-cyan {
+  color: var(--pw-cyan);
+  text-shadow: var(--glow-cyan);
+}
+
+.glow-text-emerald {
+  color: var(--pw-emerald);
+  text-shadow: var(--glow-emerald);
+}
+
+.glow-text-red {
+  color: var(--pw-red);
+  text-shadow: var(--glow-red);
+}
+
+.glow-text-amber {
+  color: var(--pw-amber);
+  text-shadow: var(--glow-amber);
+}
+
+/* ── Track SVG Styles ── */
+.track-path-glow {
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.4));
+}
+
+.car-marker-glow {
+  filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.8))
+          drop-shadow(0 0 24px rgba(251, 191, 36, 0.4));
+}
+
+/* ── Animated Pulse ── */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ── Scanline overlay ── */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+.scanline-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(34, 211, 238, 0.02) 2px,
+    rgba(34, 211, 238, 0.02) 4px
+  );
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* ── Timeline Slider ── */
+input[type="range"].timeline-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  background: transparent;
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"].timeline-slider::-webkit-slider-track {
+  height: 4px;
+  background: rgba(56, 189, 248, 0.12);
+  border-radius: 2px;
+}
+
+input[type="range"].timeline-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--pw-cyan);
+  box-shadow: var(--glow-cyan);
+  border: 2px solid var(--pw-bg-deep);
+  margin-top: -5px;
+  cursor: grab;
+  transition: transform 0.15s ease;
+}
+
+input[type="range"].timeline-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+}
+
+/* ── Label Typography ── */
+.label-micro {
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(148, 163, 184, 0.7);
+}
+
+.label-data {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
