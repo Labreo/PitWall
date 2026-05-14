@@ -92,6 +92,12 @@ def main():
     plot_file = "data/processed/refined_track_segments.png"
     plot_segments(segments, plot_file)
     
+    # Save to JSON for the frontend
+    segments_json_file = "frontend/public/data/segments.json"
+    with open(segments_json_file, 'w') as f:
+        json.dump(segments, f)
+    logging.info(f"Saved segments to {segments_json_file}")
+    
     print(f"\n{Color.OKGREEN}{Color.BOLD}✓ Segmentation Complete{Color.ENDC}\n")
 
 if __name__ == "__main__":

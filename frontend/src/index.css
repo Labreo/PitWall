@@ -42,113 +42,229 @@ html, body, #root {
 .glow-red     { color: var(--pw-red);     text-shadow: var(--glow-red); }
 .glow-amber   { color: var(--pw-amber);   text-shadow: var(--glow-amber); }
 
-/* ── Broadcast Label ── */
 .bc-label {
   font-family: var(--font-sans);
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
+  font-size: 9px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
   color: rgba(148, 163, 184, 0.5);
 }
-
 .bc-value {
   font-family: var(--font-mono);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
+  font-weight: 700; letter-spacing: -0.03em; line-height: 1;
 }
 
-/* ── Timeline Slider (ultra-thin) ── */
+/* ── Timeline ── */
 input[type="range"].timeline-slider {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 2px;
-  background: transparent;
-  outline: none;
-  cursor: pointer;
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 2px;
+  background: transparent; outline: none; cursor: pointer;
 }
-
 input[type="range"].timeline-slider::-webkit-slider-track {
-  height: 2px;
-  background: rgba(34, 211, 238, 0.08);
-  border-radius: 1px;
+  height: 2px; background: rgba(34,211,238,0.08); border-radius: 1px;
 }
-
 input[type="range"].timeline-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  background: var(--pw-cyan);
-  box-shadow: var(--glow-cyan);
-  border: 1.5px solid #020408;
-  margin-top: -4px;
-  cursor: grab;
-  transition: transform 0.12s ease;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--pw-cyan); box-shadow: var(--glow-cyan);
+  border: 1.5px solid #020408; margin-top: -4px;
+  cursor: grab; transition: transform 0.12s ease;
 }
-
-input[type="range"].timeline-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.5);
-}
+input[type="range"].timeline-slider::-webkit-slider-thumb:hover { transform: scale(1.5); }
 
 /* ── Scanline overlay ── */
 .scanline-overlay::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent, transparent 3px,
-    rgba(34, 211, 238, 0.012) 3px,
-    rgba(34, 211, 238, 0.012) 4px
-  );
-  pointer-events: none;
-  z-index: 100;
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(34,211,238,0.012) 3px, rgba(34,211,238,0.012) 4px);
+  pointer-events: none; z-index: 100;
 }
 
 /* ── Vignette ── */
 .vignette::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+  content: ''; position: absolute; inset: 0;
   background: radial-gradient(ellipse at center, transparent 40%, rgba(2,4,8,0.7) 100%);
-  pointer-events: none;
-  z-index: 50;
+  pointer-events: none; z-index: 50;
 }
 
-/* ── Broadcast edge fade ── */
+/* ── Edge fades ── */
 .edge-fade-bottom::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 180px;
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 180px;
   background: linear-gradient(to top, rgba(2,4,8,0.95) 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 40;
+  pointer-events: none; z-index: 40;
 }
-
 .edge-fade-top::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 80px;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 80px;
   background: linear-gradient(to bottom, rgba(2,4,8,0.6) 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 40;
+  pointer-events: none; z-index: 40;
 }
 
-/* ── Animated rec dot ── */
+/* ── Rec dot ── */
 @keyframes rec-pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.3; }
 }
-.rec-dot {
-  animation: rec-pulse 1.2s ease-in-out infinite;
+.rec-dot { animation: rec-pulse 1.2s ease-in-out infinite; }
+
+/* ───────────────────────────────
+   CINEMATIC ATMOSPHERE ADDITIONS
+   ─────────────────────────────── */
+
+/* ── Animated Background Grid (drifts slowly) ── */
+@keyframes grid-drift {
+  0%   { background-position: 0px 0px; }
+  100% { background-position: 48px 48px; }
+}
+.animated-grid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(34,211,238,0.018) 1px, transparent 0);
+  background-size: 48px 48px;
+  animation: grid-drift 12s linear infinite;
 }
 
-/* ── Speed bar glow ── */
-@keyframes bar-shimmer {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+/* ── Intro scanline sweep ── */
+@keyframes intro-sweep {
+  0%   { transform: translateY(-100%); opacity: 0.8; }
+  100% { transform: translateY(110vh); opacity: 0; }
+}
+.intro-scanline {
+  position: absolute; inset: 0; z-index: 200; pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(34,211,238,0.06) 45%,
+    rgba(34,211,238,0.15) 50%,
+    rgba(34,211,238,0.06) 55%,
+    transparent 100%
+  );
+  animation: intro-sweep 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Camera parallax drift (gentle floating) ── */
+@keyframes parallax-drift {
+  0%   { transform: translate(0px, 0px) scale(1.015); }
+  25%  { transform: translate(3px, -2px) scale(1.015); }
+  50%  { transform: translate(-1px, 3px) scale(1.015); }
+  75%  { transform: translate(-3px, -1px) scale(1.015); }
+  100% { transform: translate(0px, 0px) scale(1.015); }
+}
+.camera-drift {
+  animation: parallax-drift 25s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ── Car marker pulse (breathing while paused, intensifies with speed) ── */
+@keyframes car-breathe {
+  0%, 100% { r: 18; opacity: 0.12; }
+  50%      { r: 24; opacity: 0.06; }
+}
+
+/* ── Sector flash ── */
+@keyframes sector-flash {
+  0%   { opacity: 0.2; }
+  20%  { opacity: 0.1; }
+  100% { opacity: 0; }
+}
+.sector-flash-overlay {
+  animation: sector-flash 0.6s ease-out forwards;
+}
+
+/* ── Lap change sweep ── */
+@keyframes lap-sweep {
+  0%   { transform: scaleX(0); opacity: 1; }
+  50%  { transform: scaleX(1); opacity: 0.6; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+.lap-change-line {
+  transform-origin: left center;
+  animation: lap-sweep 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Speed-reactive glow intensity classes (set dynamically) ── */
+.speed-glow-low    { text-shadow: 0 0 8px rgba(34,211,238,0.2), 0 0 24px rgba(34,211,238,0.06); }
+.speed-glow-mid    { text-shadow: 0 0 14px rgba(34,211,238,0.45), 0 0 50px rgba(34,211,238,0.15); }
+.speed-glow-high   { text-shadow: 0 0 20px rgba(251,191,36,0.5), 0 0 60px rgba(251,191,36,0.2), 0 0 100px rgba(248,113,113,0.1); }
+.speed-glow-max    { text-shadow: 0 0 24px rgba(248,113,113,0.6), 0 0 60px rgba(248,113,113,0.25), 0 0 120px rgba(248,113,113,0.12); }
+
+/* ── Motion trail blur (SVG) ── */
+@keyframes trail-fade {
+  0%   { stroke-opacity: 0.6; }
+  100% { stroke-opacity: 0; }
+}
+
+/* ─────────────────────────────────────────────
+   CORNER INTELLIGENCE OVERLAY
+   ───────────────────────────────────────────── */
+
+/* Apex ring pulse */
+@keyframes apex-pulse {
+  0%   { r: 8;  opacity: 0.5; }
+  60%  { r: 14; opacity: 0.1; }
+  100% { r: 8;  opacity: 0.5; }
+}
+.corner-apex-ring {
+  animation: apex-pulse 1.8s ease-in-out infinite;
+}
+
+/* Braking dash march */
+@keyframes dash-march {
+  to { stroke-dashoffset: -12; }
+}
+.corner-braking-line {
+  animation: dash-march 0.6s linear infinite;
+}
+
+/* Active/inactive SVG group visibility */
+.corner-inactive .corner-highlight-path,
+.corner-inactive .corner-braking-line,
+.corner-inactive .corner-braking-label,
+.corner-inactive .corner-apex-group,
+.corner-inactive .corner-entry-speed,
+.corner-inactive .corner-exit-speed {
+  /* opacity controlled imperatively — just ensure default */
+  pointer-events: none;
+}
+
+.corner-active .corner-apex-ring {
+  animation: apex-pulse 1.4s ease-in-out infinite;
+}
+
+/* Corner HUD panel */
+.corner-hud {
+  font-feature-settings: 'tnum' 1;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* ── Coaching Overlay ── */
+@keyframes waveform-bounce {
+  0%, 100% { transform: scaleY(0.3); }
+  50%       { transform: scaleY(1.0); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.coaching-bar {
+  animation: waveform-bounce 0.6s ease-in-out infinite;
+  transform-origin: bottom;
+}
+
+.coaching-bar--active {
+  animation-duration: 0.3s !important;
+  opacity: 1 !important;
+}
+
+.coaching-panel {
+  font-feature-settings: 'tnum' 1;
+}
+
+@keyframes radio-tx {
+  0%, 100% { height: 3px; }
+  33%       { height: 10px; }
+  66%       { height: 6px; }
+}
+
+.radio-tx-bar {
+  animation: radio-tx 0.4s ease-in-out infinite;
+  transform-origin: bottom;
 }

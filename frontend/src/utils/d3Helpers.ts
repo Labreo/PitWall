@@ -9,7 +9,7 @@ export function createTrackProjection(
   data: TelemetryPoint[],
   width: number,
   height: number,
-  padding: number = 60
+  padding: number = 100
 ) {
   const lons = data.map(d => d.longitude);
   const lats = data.map(d => d.latitude);

@@ -1,24 +1,45 @@
 import { TelemetryPoint, Segment, Lap } from '../types/telemetry';
+import { CoachingEvent } from '../types/coaching';
 import { interpolateTelemetry } from './interpolation';
 import { useReplayStore } from '../store/replayStore';
+import { speechCoach } from '../services/SpeechCoach';
 
-export type EngineCallback = (interpolated: TelemetryPoint) => void;
+export type EngineCallback = (
+  interpolated: TelemetryPoint,
+  ghost: TelemetryPoint | null,
+  ghostTimeDeltaMs: number   // positive = current lap is behind best lap (losing time)
+) => void;
 
 export class ReplayEngine {
   private telemetry: TelemetryPoint[] = [];
   private segments: Segment[] = [];
   private laps: Lap[] = [];
-  
+  private coachingEvents: CoachingEvent[] = [];
+
   private rAFId: number | null = null;
   private lastRealTime: number = 0;
-  
+
+  // Performance: cached index lookups
+  private cachedIndex: number = 0;
+  private ghostCachedIndex: number = 0;
+  private bestLapCache: Lap | null = null;
+
+  // Coaching dedup: prevent re-fire on same event ID within a forward pass
+  private lastFiredEventId: string | null = null;
+
   // Subscribers
   private callbacks: EngineCallback[] = [];
 
-  constructor(telemetry: TelemetryPoint[], segments: Segment[], laps: Lap[]) {
+  constructor(telemetry: TelemetryPoint[], segments: Segment[], laps: Lap[], coachingEvents: CoachingEvent[] = []) {
     this.telemetry = telemetry;
     this.segments = segments;
     this.laps = laps;
+    this.coachingEvents = coachingEvents;
+
+    // Pre-compute best lap on construction (only once)
+    if (laps.length > 0) {
+      this.bestLapCache = [...laps].sort((a, b) => a.lap_duration_seconds - b.lap_duration_seconds)[0];
+    }
   }
 
   public subscribe(cb: EngineCallback) {
@@ -42,6 +63,9 @@ export class ReplayEngine {
   }
 
   public updateManual(timestamp: number) {
+    // Scrub resets dedup so events can re-fire when scrubbing back past them
+    this.lastFiredEventId = null;
+    speechCoach.reset();
     this.processFrame(timestamp);
   }
 
@@ -54,13 +78,13 @@ export class ReplayEngine {
 
     // Advance virtual timestamp
     let newTimestamp = store.currentTimestamp + (deltaRealMs * store.playbackSpeed);
-    
+
     if (newTimestamp > store.sessionEnd) {
       newTimestamp = store.sessionEnd;
       store.togglePlay();
     }
-    
-    store.setCurrentTimestamp(newTimestamp); // Updates zustand state for controls (runs every frame but it's cheap)
+
+    store.setCurrentTimestamp(newTimestamp);
     this.processFrame(newTimestamp);
 
     this.rAFId = requestAnimationFrame(this.loop);
@@ -70,35 +94,25 @@ export class ReplayEngine {
     if (this.telemetry.length === 0) return;
 
     // 1. Interpolate Telemetry
-    // Binary search or simple math since it's exactly 10Hz
-    // Let's do simple binary search for robustness if gaps exist
-    let t1 = this.telemetry[0];
-    let t2 = this.telemetry[this.telemetry.length - 1];
-    
-    let low = 0;
-    let high = this.telemetry.length - 1;
-    
-    while (low <= high) {
-      const mid = Math.floor((low + high) / 2);
-      if (this.telemetry[mid].timestamp <= timestamp) {
-        t1 = this.telemetry[mid];
-        low = mid + 1;
-      } else {
-        high = mid - 1;
-      }
+    let idx = Math.max(0, Math.min(this.cachedIndex, this.telemetry.length - 2));
+
+    while (idx < this.telemetry.length - 1 && this.telemetry[idx + 1].timestamp <= timestamp) {
+      idx++;
     }
-    
-    const nextIdx = Math.min(this.telemetry.indexOf(t1) + 1, this.telemetry.length - 1);
-    t2 = this.telemetry[nextIdx];
+    while (idx > 0 && this.telemetry[idx].timestamp > timestamp) {
+      idx--;
+    }
+
+    this.cachedIndex = idx;
+
+    const t1 = this.telemetry[idx];
+    const t2 = this.telemetry[Math.min(idx + 1, this.telemetry.length - 1)];
 
     const currentData = interpolateTelemetry(t1, t2, timestamp);
-    
-    // Notify DOM listeners (imperative)
-    this.callbacks.forEach(cb => cb(currentData));
 
     // 2. Dispatch boundary events to Zustand (Discrete)
     const store = useReplayStore.getState();
-    
+
     // Find current segment
     const activeSegment = this.segments.find(s => timestamp >= s.start_timestamp && timestamp <= s.end_timestamp);
     if (activeSegment && activeSegment.segment_id !== store.currentSegmentId) {
@@ -106,11 +120,68 @@ export class ReplayEngine {
     } else if (!activeSegment && store.currentSegmentId !== null) {
       store.setCurrentSegmentId(null);
     }
-    
+
     // Find current lap
     const activeLap = this.laps.find(l => timestamp >= l.start_timestamp && timestamp <= l.end_timestamp);
     if (activeLap && activeLap.lap_number !== store.currentLapNumber) {
       store.setCurrentLapNumber(activeLap.lap_number);
     }
+
+    // 3. Coaching event dispatch — 100ms fire window, dedup by lastFiredEventId
+    const triggered = this.coachingEvents.find(e =>
+      timestamp >= e.timestamp && timestamp < e.timestamp + 100
+    );
+    if (triggered && triggered.id !== this.lastFiredEventId) {
+      this.lastFiredEventId = triggered.id;
+      store.setActiveCoachingEvent(triggered);
+    }
+    // Reset dedup when scrubbed past all active windows (allows re-fire on forward replay)
+    if (!triggered && this.lastFiredEventId !== null) {
+      const stillInWindow = this.coachingEvents.some(e =>
+        timestamp >= e.timestamp && timestamp < e.timestamp + 100
+      );
+      if (!stillInWindow) {
+        this.lastFiredEventId = null;
+      }
+    }
+
+    // 4. Calculate Ghost Lap (Best Lap)
+    // Ghost replays actual best-lap telemetry at the proportionally equivalent elapsed time.
+    // Uses a separate cached index so ghost search never corrupts main car search.
+    let ghostData: TelemetryPoint | null = null;
+    let ghostTimeDeltaMs = 0;
+
+    if (store.ghostModeEnabled && activeLap && this.bestLapCache) {
+      const bestLap = this.bestLapCache;
+
+      const elapsedMs = timestamp - activeLap.start_timestamp;
+      const activeLapDurationMs = activeLap.end_timestamp - activeLap.start_timestamp;
+      const bestLapDurationMs = bestLap.end_timestamp - bestLap.start_timestamp;
+
+      const progress = activeLapDurationMs > 0 ? elapsedMs / activeLapDurationMs : 0;
+      const ghostLapTimestamp = bestLap.start_timestamp + progress * bestLapDurationMs;
+
+      // Positive delta = current lap is behind best lap at this point in the lap
+      ghostTimeDeltaMs = elapsedMs - (bestLapDurationMs * progress);
+
+      if (ghostLapTimestamp <= bestLap.end_timestamp) {
+        let gIdx = Math.max(0, Math.min(this.ghostCachedIndex, this.telemetry.length - 2));
+        while (gIdx < this.telemetry.length - 1 && this.telemetry[gIdx + 1].timestamp <= ghostLapTimestamp) {
+          gIdx++;
+        }
+        while (gIdx > 0 && this.telemetry[gIdx].timestamp > ghostLapTimestamp) {
+          gIdx--;
+        }
+        this.ghostCachedIndex = gIdx;
+
+        const g1 = this.telemetry[gIdx];
+        const g2 = this.telemetry[Math.min(gIdx + 1, this.telemetry.length - 1)];
+
+        ghostData = interpolateTelemetry(g1, g2, ghostLapTimestamp);
+      }
+    }
+
+    // Notify DOM listeners (imperative)
+    this.callbacks.forEach(cb => cb(currentData, ghostData, ghostTimeDeltaMs));
   }
 }
