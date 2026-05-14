@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { TrackMap } from '../map/TrackMap';
 import { TelemetryHUD } from './TelemetryHUD';
 import { PlaybackControls } from './PlaybackControls';
@@ -20,15 +20,13 @@ export const ReplayLayout: React.FC<ReplayLayoutProps> = ({
   laps = MOCK_LAPS,
 }) => {
   const engineRef = useReplayEngine(telemetry, segments, laps);
-  const currentSegmentId = useReplayStore(state => state.currentSegmentId);
+  const currentSegmentId = useReplayStore(s => s.currentSegmentId);
 
-  // Find current segment details
   const activeSegment = useMemo(() => {
     if (!currentSegmentId) return null;
     return segments.find(s => s.segment_id === currentSegmentId) ?? null;
   }, [currentSegmentId, segments]);
 
-  // Add segment data with gps_path for TrackMap
   const segmentsWithPath = useMemo(() => {
     return segments.map(seg => {
       const startIdx = telemetry.findIndex(t => t.timestamp >= seg.start_timestamp);
@@ -45,94 +43,89 @@ export const ReplayLayout: React.FC<ReplayLayoutProps> = ({
   }, [segments, telemetry]);
 
   return (
-    <div className="w-full h-full flex flex-col relative scanline-overlay">
-      {/* ── Header Bar ── */}
-      <motion.header
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-30 flex items-center justify-between px-6 py-3 glass-panel border-b border-slate-800/50"
+    <div className="w-full h-full relative scanline-overlay">
+      {/* ── Fullscreen Track Map (THE canvas) ── */}
+      <TrackMap
+        telemetry={telemetry}
+        segments={segmentsWithPath as any}
+        engine={engineRef.current}
+      />
+
+      {/* ── Atmospheric layers ── */}
+      <div className="absolute inset-0 pointer-events-none vignette z-[45]" />
+      <div className="absolute inset-0 pointer-events-none edge-fade-bottom z-[45]" />
+      <div className="absolute inset-0 pointer-events-none edge-fade-top z-[45]" />
+
+      {/* ── PITWALL watermark: top-left corner ── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.1 }}
+        className="absolute top-5 left-6 z-[60] flex items-center gap-2"
       >
-        <div className="flex items-center gap-3">
-          {/* Logo mark */}
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{
-            background: 'linear-gradient(135deg, rgba(34,211,238,0.2), rgba(34,211,238,0.05))',
-            border: '1px solid rgba(34,211,238,0.3)',
-          }}>
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#22d3ee" strokeWidth="2" strokeLinecap="round">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" />
-              <path d="M2 17l10 5 10-5" />
-              <path d="M2 12l10 5 10-5" />
-            </svg>
+        <div className="w-[3px] h-5 rounded-full" style={{ background: 'rgba(34,211,238,0.5)', boxShadow: '0 0 8px rgba(34,211,238,0.3)' }} />
+        <div>
+          <div className="text-[11px] font-bold tracking-[0.15em]" style={{ color: 'rgba(226,232,240,0.7)' }}>
+            PIT<span style={{ color: 'rgba(34,211,238,0.8)' }}>WALL</span>
           </div>
-          <div>
-            <h1 className="text-sm font-semibold tracking-wide text-slate-200" style={{ fontFamily: 'var(--font-sans)' }}>
-              PIT<span className="text-cyan-400">WALL</span>
-            </h1>
-            <p className="text-[10px] text-slate-500 font-light tracking-widest uppercase">Race Telemetry</p>
+          <div className="text-[7px] font-medium tracking-[0.25em] uppercase" style={{ color: 'rgba(148,163,184,0.3)' }}>
+            TELEMETRY REPLAY
           </div>
         </div>
+      </motion.div>
 
-        {/* Session info */}
-        <div className="flex items-center gap-6 text-xs">
-          <div>
-            <span className="label-micro">SESSION</span>
-            <p className="label-data text-sm text-slate-300 mt-0.5">Donington Park GP</p>
-          </div>
-          <div>
-            <span className="label-micro">DATE</span>
-            <p className="label-data text-sm text-slate-400 mt-0.5">29 AUG 2019</p>
-          </div>
-          <div>
-            <span className="label-micro">LAPS</span>
-            <p className="label-data text-sm text-cyan-400 mt-0.5">{laps.length}</p>
-          </div>
-        </div>
-      </motion.header>
+      {/* ── Session badge: top-center ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+        className="absolute top-5 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-4"
+      >
+        <span className="text-[9px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'rgba(148,163,184,0.35)' }}>
+          DONINGTON PARK GP
+        </span>
+        <div className="w-px h-3" style={{ background: 'rgba(148,163,184,0.15)' }} />
+        <span className="text-[9px] font-mono tracking-wider" style={{ color: 'rgba(148,163,184,0.25)' }}>
+          29.08.2019
+        </span>
+      </motion.div>
 
-      {/* ── Main Canvas: Track Map (fills remaining space) ── */}
-      <div className="flex-1 relative z-10">
-        <TrackMap
-          telemetry={telemetry}
-          segments={segmentsWithPath as any}
-          engine={engineRef.current}
-        />
+      {/* ── Telemetry HUD overlays ── */}
+      <TelemetryHUD engine={engineRef.current} />
 
-        {/* ── Floating HUD (absolute over the map) ── */}
-        <div className="absolute top-4 left-4 right-4 z-30 flex justify-center pointer-events-none">
-          <div className="pointer-events-auto">
-            <TelemetryHUD engine={engineRef.current} />
-          </div>
-        </div>
-
-        {/* ── Corner Event Toast ── */}
+      {/* ── Corner Event: broadcast-style popup ── */}
+      <AnimatePresence>
         {activeSegment && activeSegment.segment_type === 'corner' && (
           <motion.div
             key={activeSegment.segment_id}
-            initial={{ opacity: 0, x: 30, scale: 0.95 }}
+            initial={{ opacity: 0, x: 40, scale: 0.9 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-4 right-4 z-30 glass-panel-bright rounded-xl px-4 py-3"
+            exit={{ opacity: 0, x: -30, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute top-16 right-8 z-[60]"
           >
             <div className="flex items-center gap-3">
-              <div className="w-1.5 h-8 rounded-full bg-red-500 shadow-[0_0_8px_rgba(248,113,113,0.5)]" />
-              <div>
-                <p className="label-micro text-red-400">{activeSegment.segment_id}</p>
-                <p className="text-sm font-semibold text-slate-200 mt-0.5">{activeSegment.classification}</p>
-                <p className="text-xs text-slate-500 mt-0.5 font-mono">
+              {/* Accent bar */}
+              <div className="w-[3px] h-10 rounded-full" style={{
+                background: 'linear-gradient(to bottom, #f87171, rgba(248,113,113,0.2))',
+                boxShadow: '0 0 10px rgba(248,113,113,0.4)',
+              }} />
+              <div className="text-right">
+                <div className="bc-label text-[8px] glow-red">{activeSegment.segment_id}</div>
+                <div className="text-[13px] font-semibold text-slate-200 leading-tight -mt-0.5">
+                  {activeSegment.classification}
+                </div>
+                <div className="text-[10px] font-mono mt-0.5" style={{ color: 'rgba(148,163,184,0.3)' }}>
                   {Math.abs(activeSegment.heading_change_degrees).toFixed(0)}° · {activeSegment.average_speed.toFixed(0)} km/h
-                </p>
+                </div>
               </div>
             </div>
           </motion.div>
         )}
-      </div>
+      </AnimatePresence>
 
-      {/* ── Bottom Playback Bar ── */}
-      <div className="relative z-30 px-6 pb-4 pt-2">
-        <PlaybackControls />
-      </div>
+      {/* ── Playback Controls: bottom edge ── */}
+      <PlaybackControls />
     </div>
   );
 };

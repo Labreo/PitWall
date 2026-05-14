@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as d3 from 'd3';
 import { TelemetryPoint, Segment } from '../../types/telemetry';
 import { createTrackProjection, speedToColor } from '../../utils/d3Helpers';
@@ -18,206 +18,172 @@ export const TrackMap: React.FC<TrackMapProps> = ({ telemetry, segments, engine 
   const trailRef = useRef<SVGPathElement | null>(null);
   const trailPointsRef = useRef<[number, number][]>([]);
 
-  // ── Resize Observer ──
   useEffect(() => {
     if (!containerRef.current) return;
     const obs = new ResizeObserver(entries => {
-      for (const entry of entries) {
-        setDimensions({ width: entry.contentRect.width, height: entry.contentRect.height });
-      }
+      for (const e of entries) setDimensions({ width: e.contentRect.width, height: e.contentRect.height });
     });
     obs.observe(containerRef.current);
     return () => obs.disconnect();
   }, []);
 
-  // ── Draw Static Track ──
+  // ── Draw Track ──
   useEffect(() => {
     if (!svgRef.current || telemetry.length === 0 || dimensions.width === 0) return;
 
     const svg = d3.select(svgRef.current);
     svg.selectAll('*').remove();
 
-    // Defs for glow filters and gradients
     const defs = svg.append('defs');
 
-    // Glow filter
-    const filter = defs.append('filter').attr('id', 'trackGlow');
-    filter.append('feGaussianBlur').attr('stdDeviation', '3').attr('result', 'blur');
-    filter.append('feFlood').attr('flood-color', '#22d3ee').attr('flood-opacity', '0.3').attr('result', 'color');
-    filter.append('feComposite').attr('in', 'color').attr('in2', 'blur').attr('operator', 'in').attr('result', 'glow');
-    const feMerge = filter.append('feMerge');
-    feMerge.append('feMergeNode').attr('in', 'glow');
-    feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
-
     // Car glow
-    const carFilter = defs.append('filter').attr('id', 'carGlow');
-    carFilter.append('feGaussianBlur').attr('stdDeviation', '4').attr('result', 'blur');
-    carFilter.append('feFlood').attr('flood-color', '#fbbf24').attr('flood-opacity', '0.6').attr('result', 'color');
-    carFilter.append('feComposite').attr('in', 'color').attr('in2', 'blur').attr('operator', 'in').attr('result', 'glow');
-    const carMerge = carFilter.append('feMerge');
-    carMerge.append('feMergeNode').attr('in', 'glow');
-    carMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+    const carF = defs.append('filter').attr('id', 'carBloom').attr('x', '-100%').attr('y', '-100%').attr('width', '300%').attr('height', '300%');
+    carF.append('feGaussianBlur').attr('stdDeviation', '6').attr('result', 'blur');
+    carF.append('feFlood').attr('flood-color', '#fbbf24').attr('flood-opacity', '0.5').attr('result', 'c');
+    carF.append('feComposite').attr('in', 'c').attr('in2', 'blur').attr('operator', 'in').attr('result', 'glow');
+    const cm = carF.append('feMerge');
+    cm.append('feMergeNode').attr('in', 'glow');
+    cm.append('feMergeNode').attr('in', 'SourceGraphic');
 
-    const proj = createTrackProjection(telemetry, dimensions.width, dimensions.height);
+    // Track glow
+    const tF = defs.append('filter').attr('id', 'trackBloom').attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
+    tF.append('feGaussianBlur').attr('stdDeviation', '2').attr('result', 'blur');
+    const tm = tF.append('feMerge');
+    tm.append('feMergeNode').attr('in', 'blur');
+    tm.append('feMergeNode').attr('in', 'SourceGraphic');
+
+    const proj = createTrackProjection(telemetry, dimensions.width, dimensions.height, 80);
     projectionRef.current = proj;
 
-    const trackLayer = svg.append('g').attr('class', 'track-layer');
-
-    // ── Draw speed-colored track ──
-    // Base track (dark, wide)
-    const allPoints = telemetry.map(t => proj(t.longitude, t.latitude));
+    const trackG = svg.append('g').attr('class', 'track');
     const lineGen = d3.line<[number, number]>().x(d => d[0]).y(d => d[1]).curve(d3.curveCatmullRom.alpha(0.5));
+    const allPts = telemetry.map(t => proj(t.longitude, t.latitude) as [number, number]);
 
-    trackLayer.append('path')
-      .attr('d', lineGen(allPoints)!)
+    // Shadow track (wide, dark)
+    trackG.append('path')
+      .attr('d', lineGen(allPts)!)
       .attr('fill', 'none')
-      .attr('stroke', 'rgba(30, 41, 59, 0.8)')
-      .attr('stroke-width', 14)
+      .attr('stroke', 'rgba(15, 23, 42, 0.9)')
+      .attr('stroke-width', 18)
       .attr('stroke-linecap', 'round')
       .attr('stroke-linejoin', 'round');
 
-    // Speed-colored segments (thin, on top)
-    const maxSpeed = Math.max(...telemetry.map(t => t.speed_kmh), 1);
+    // Track outline (subtle border)
+    trackG.append('path')
+      .attr('d', lineGen(allPts)!)
+      .attr('fill', 'none')
+      .attr('stroke', 'rgba(34, 211, 238, 0.04)')
+      .attr('stroke-width', 20)
+      .attr('stroke-linecap', 'round')
+      .attr('stroke-linejoin', 'round');
+
+    // Speed gradient — individual segments
+    const maxSpd = Math.max(...telemetry.map(t => t.speed_kmh), 1);
     for (let i = 0; i < telemetry.length - 1; i++) {
       const p1 = proj(telemetry[i].longitude, telemetry[i].latitude);
       const p2 = proj(telemetry[i + 1].longitude, telemetry[i + 1].latitude);
-      const avgSpd = (telemetry[i].speed_kmh + telemetry[i + 1].speed_kmh) / 2;
-
-      trackLayer.append('line')
+      const avg = (telemetry[i].speed_kmh + telemetry[i + 1].speed_kmh) / 2;
+      trackG.append('line')
         .attr('x1', p1[0]).attr('y1', p1[1])
         .attr('x2', p2[0]).attr('y2', p2[1])
-        .attr('stroke', speedToColor(avgSpd, maxSpeed))
-        .attr('stroke-width', 4)
+        .attr('stroke', speedToColor(avg, maxSpd))
+        .attr('stroke-width', 5)
         .attr('stroke-linecap', 'round')
-        .attr('opacity', 0.85);
+        .attr('opacity', 0.75)
+        .attr('filter', 'url(#trackBloom)');
     }
 
-    // ── Corner labels ──
-    const corners = segments.filter(s => s.segment_type === 'corner');
-    corners.forEach(corner => {
+    // Corner sector markers — thin ticks
+    segments.filter(s => s.segment_type === 'corner').forEach(corner => {
       const midTs = (corner.start_timestamp + corner.end_timestamp) / 2;
       const closest = telemetry.reduce((prev, curr) =>
         Math.abs(curr.timestamp - midTs) < Math.abs(prev.timestamp - midTs) ? curr : prev
       );
       const [cx, cy] = proj(closest.longitude, closest.latitude);
 
-      const g = trackLayer.append('g').attr('transform', `translate(${cx}, ${cy - 20})`);
-      g.append('rect')
-        .attr('x', -20).attr('y', -10)
-        .attr('width', 40).attr('height', 20)
-        .attr('rx', 4)
-        .attr('fill', 'rgba(248, 113, 113, 0.15)')
-        .attr('stroke', 'rgba(248, 113, 113, 0.4)')
-        .attr('stroke-width', 0.5);
-      g.append('text')
+      trackG.append('text')
+        .attr('x', cx).attr('y', cy - 16)
         .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'central')
-        .attr('fill', '#f87171')
-        .attr('font-size', '9px')
+        .attr('fill', 'rgba(248, 113, 113, 0.35)')
+        .attr('font-size', '8px')
         .attr('font-family', "'Inter', sans-serif")
-        .attr('font-weight', '600')
-        .attr('letter-spacing', '0.05em')
+        .attr('font-weight', '700')
+        .attr('letter-spacing', '0.1em')
         .text(corner.segment_id);
     });
 
-    // ── Start/Finish marker ──
+    // S/F line
     if (telemetry.length > 0) {
       const [sx, sy] = proj(telemetry[0].longitude, telemetry[0].latitude);
-      trackLayer.append('rect')
-        .attr('x', sx - 10).attr('y', sy - 3)
-        .attr('width', 20).attr('height', 6)
-        .attr('rx', 1)
-        .attr('fill', '#22d3ee')
-        .attr('opacity', 0.8);
-
-      trackLayer.append('text')
-        .attr('x', sx).attr('y', sy - 10)
-        .attr('text-anchor', 'middle')
-        .attr('fill', 'rgba(34, 211, 238, 0.6)')
-        .attr('font-size', '8px')
-        .attr('font-family', "'Inter', sans-serif")
-        .attr('font-weight', '500')
-        .attr('letter-spacing', '0.1em')
-        .text('S/F');
+      trackG.append('line')
+        .attr('x1', sx - 8).attr('y1', sy)
+        .attr('x2', sx + 8).attr('y2', sy)
+        .attr('stroke', '#22d3ee')
+        .attr('stroke-width', 2)
+        .attr('stroke-linecap', 'round')
+        .attr('opacity', 0.6);
     }
 
-    // ── Trail path (for fading car trail) ──
+    // Trail path
     const trail = svg.append('path')
       .attr('class', 'car-trail')
       .attr('fill', 'none')
-      .attr('stroke', '#fbbf24')
+      .attr('stroke', 'url(#trailGrad)')
       .attr('stroke-width', 2)
       .attr('stroke-linecap', 'round')
-      .attr('opacity', 0.4);
+      .attr('opacity', 0.5);
+
+    // Trail gradient
+    const trailGrad = defs.append('linearGradient').attr('id', 'trailGrad');
+    trailGrad.append('stop').attr('offset', '0%').attr('stop-color', '#fbbf24').attr('stop-opacity', '0');
+    trailGrad.append('stop').attr('offset', '100%').attr('stop-color', '#fbbf24').attr('stop-opacity', '1');
+
     trailRef.current = trail.node();
     trailPointsRef.current = [];
 
-    // ── Car marker ──
-    const carGroup = svg.append('g').attr('class', 'car-group');
+    // Car marker
+    const carG = svg.append('g').attr('class', 'car-group');
 
-    // Outer pulse ring
-    carGroup.append('circle')
-      .attr('class', 'car-pulse')
-      .attr('r', 16)
-      .attr('fill', 'none')
-      .attr('stroke', '#fbbf24')
-      .attr('stroke-width', 1)
-      .attr('opacity', 0.3);
+    // Outer pulse
+    carG.append('circle').attr('class', 'car-ring').attr('r', 20)
+      .attr('fill', 'none').attr('stroke', 'rgba(251,191,36,0.15)').attr('stroke-width', 1);
 
-    // Main car dot
-    carGroup.append('circle')
-      .attr('class', 'car-dot')
-      .attr('r', 6)
-      .attr('fill', '#fbbf24')
-      .attr('filter', 'url(#carGlow)');
+    // Main dot
+    carG.append('circle').attr('r', 5).attr('fill', '#fbbf24').attr('filter', 'url(#carBloom)');
 
-    // Inner bright core
-    carGroup.append('circle')
-      .attr('class', 'car-core')
-      .attr('r', 2.5)
-      .attr('fill', '#fff');
+    // Core
+    carG.append('circle').attr('r', 2).attr('fill', '#fffbeb');
 
   }, [telemetry, segments, dimensions]);
 
-  // ── Imperative Car Updates via Engine ──
+  // ── Imperative animation ──
   useEffect(() => {
     if (!engine || !svgRef.current) return;
-
     const svg = d3.select(svgRef.current);
     const lineGen = d3.line<[number, number]>().x(d => d[0]).y(d => d[1]).curve(d3.curveCatmullRom.alpha(0.5));
 
-    const unsubscribe = engine.subscribe((point) => {
+    const unsub = engine.subscribe((pt) => {
       if (!projectionRef.current) return;
-      const [x, y] = projectionRef.current(point.longitude, point.latitude);
+      const [x, y] = projectionRef.current(pt.longitude, pt.latitude);
+      svg.select('.car-group').attr('transform', `translate(${x},${y})`);
 
-      // Move car group
-      svg.select('.car-group').attr('transform', `translate(${x}, ${y})`);
-
-      // Update trail
       trailPointsRef.current.push([x, y]);
-      if (trailPointsRef.current.length > 80) trailPointsRef.current.shift();
+      if (trailPointsRef.current.length > 60) trailPointsRef.current.shift();
       if (trailRef.current && trailPointsRef.current.length > 1) {
         trailRef.current.setAttribute('d', lineGen(trailPointsRef.current)!);
       }
     });
-
-    return unsubscribe;
+    return unsub;
   }, [engine]);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden">
-      {/* Grid background */}
+    <div ref={containerRef} className="absolute inset-0">
+      {/* Subtle grid */}
       <div className="absolute inset-0" style={{
-        backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(34,211,238,0.03) 1px, transparent 0)',
-        backgroundSize: '40px 40px',
+        backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(34,211,238,0.015) 1px, transparent 0)',
+        backgroundSize: '48px 48px',
       }} />
-
-      <svg ref={svgRef} width="100%" height="100%" className="relative z-10" />
-
-      {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none z-20" style={{
-        background: 'radial-gradient(ellipse at center, transparent 50%, rgba(5,10,20,0.6) 100%)',
-      }} />
+      <svg ref={svgRef} width="100%" height="100%" className="relative" />
     </div>
   );
 };
