@@ -14,25 +14,31 @@ class CornerSegmenterConfig:
                  hysteresis_duration_sec=0.5, 
                  min_fragment_duration_sec=1.5,
                  max_gap_to_merge_sec=1.5,
-                 gps_outlier_max_speed_kmh=400.0):
+                 gps_outlier_max_speed_kmh=400.0,
+                 max_signal_drop_sec=2.0):
         self.heading_rate_threshold = heading_rate_threshold
         self.hysteresis_duration_sec = hysteresis_duration_sec
         self.min_fragment_duration_sec = min_fragment_duration_sec
         self.max_gap_to_merge_sec = max_gap_to_merge_sec
         self.gps_outlier_max_speed_kmh = gps_outlier_max_speed_kmh
+        self.max_signal_drop_sec = max_signal_drop_sec
 
 class CornerSegmenter:
     def __init__(self, config=None):
         self.config = config or CornerSegmenterConfig()
         self.debug_stats = {
             "outlier_rejection_count": 0,
+            "signal_drop_corrections": 0,
             "merged_fragment_count": 0
         }
 
     def segment_track(self, df: pd.DataFrame):
         logger.info("Smoothing GPS coordinates...")
-        df = smooth_gps_coordinates(df, window_size=5, max_speed_kmh=self.config.gps_outlier_max_speed_kmh)
+        df = smooth_gps_coordinates(df, window_size=5, 
+                                    max_speed_kmh=self.config.gps_outlier_max_speed_kmh,
+                                    max_signal_drop_sec=self.config.max_signal_drop_sec)
         self.debug_stats["outlier_rejection_count"] = int(df.attrs.get('outlier_count', 0))
+        self.debug_stats["signal_drop_corrections"] = int(df.attrs.get('signal_drop_corrections', 0))
         
         logger.info("Computing heading kinematics...")
         df = compute_heading_kinematics(df, dt_sec=0.1)

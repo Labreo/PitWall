@@ -1,4 +1,5 @@
 {
   "outlier_rejection_count": 9,
+  "signal_drop_corrections": 0,
   "merged_fragment_count": 139
 }
