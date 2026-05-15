@@ -11,7 +11,7 @@ import { useReplayStore } from '../../store/replayStore';
 import { MOCK_TELEMETRY, MOCK_SEGMENTS, MOCK_LAPS } from '../../utils/mockData';
 import { TelemetryPoint, Segment, Lap } from '../../types/telemetry';
 import { CornerAnalytics } from '../map/CornerIntelligenceLayer';
-import { MOCK_COACHING_EVENTS } from '../../utils/mockCoachingEvents';
+import REAL_COACHING_EVENTS from '../../utils/coaching_events.json';
 
 interface ReplayLayoutProps {
   telemetry?: TelemetryPoint[];
@@ -24,7 +24,7 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
   segments = MOCK_SEGMENTS,
   laps = MOCK_LAPS,
 }) => {
-  const engineRef = useReplayEngine(telemetry, segments, laps, MOCK_COACHING_EVENTS);
+  const engineRef = useReplayEngine(telemetry, segments, laps, REAL_COACHING_EVENTS as any);
   const cornerAnalyticsRef = useRef<CornerAnalytics[]>([]);
   const [cornerAnalytics, setCornerAnalytics] = useState<CornerAnalytics[]>([]);
 
