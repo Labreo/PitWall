@@ -1,221 +1,208 @@
-import React, { useEffect, useState, useRef, useMemo, memo } from 'react';
+import React, { useEffect, useState, useRef, memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TelemetryPoint, Segment, Lap } from '../../types/telemetry';
 import { ReplayEngine } from '../../engine/ReplayEngine';
 import { useReplayStore } from '../../store/replayStore';
-import { buildLapSplits, LapSplits, SplitTiming } from '../../utils/splitGenerator';
-import { buildTheoreticalBestLap, TheoreticalBest } from '../../utils/theoreticalBestLap';
-import { calculateSplitDelta, SplitDeltaResult } from '../../utils/splitDeltaCalculator';
+import { splitStateMachine, CompletedSectorResult } from '../../engine/splitStateMachine';
+import { TheoreticalBestState } from '../../engine/theoreticalBestTracker';
 import { getSplitColorValue } from '../../utils/splitColorRules';
 import { LapHistoryHUD } from './LapHistoryHUD';
 
 interface SplitTimingHUDProps {
   engine: ReplayEngine | null;
-  telemetry: TelemetryPoint[];
-  segments: Segment[];
-  laps: Lap[];
 }
 
-const SplitTimingHUDComponent: React.FC<SplitTimingHUDProps> = ({ engine, telemetry, segments, laps }) => {
+const SplitTimingHUDComponent: React.FC<SplitTimingHUDProps> = ({ engine }) => {
   const currentLapNumber = useReplayStore(s => s.currentLapNumber);
   const currentSegmentId = useReplayStore(s => s.currentSegmentId);
-  const ghostSource = useReplayStore(s => s.ghostSource);
-  const ghostSelectedLap = useReplayStore(s => s.ghostSelectedLap);
+  const currentTimestamp = useReplayStore(s => s.currentTimestamp);
 
-  const [lapSplitsMap, setLapSplitsMap] = useState<Map<number, LapSplits>>(new Map());
-  const [theoreticalBest, setTheoreticalBest] = useState<TheoreticalBest | null>(null);
+  const [theoBest, setTheoBest] = useState<TheoreticalBestState>(splitStateMachine.getTheoreticalBest());
+  const [activeState, setActiveState] = useState(splitStateMachine.getActiveState());
+  const [showDebug, setShowDebug] = useState(false);
 
   const liveDeltaRef = useRef<HTMLSpanElement>(null);
   const liveDeltaContainerRef = useRef<HTMLDivElement>(null);
   const liveTimerRef = useRef<HTMLSpanElement>(null);
 
+  // Subscribe to state machine updates
   useEffect(() => {
-    if (!laps.length || !segments.length) return;
-    setLapSplitsMap(buildLapSplits(laps, segments));
-    setTheoreticalBest(buildTheoreticalBestLap(laps, segments));
-  }, [laps, segments]);
+    const unsub = splitStateMachine.subscribe(() => {
+      setTheoBest(splitStateMachine.getTheoreticalBest());
+      setActiveState(splitStateMachine.getActiveState());
+    });
+    return unsub;
+  }, []);
 
-  // Determine the reference lap number for split comparison
-  const referenceLapNumber = useMemo(() => {
-    if (ghostSource === 'best') {
-      if (!laps.length) return 1;
-      const best = [...laps].sort((a, b) => a.lap_duration_seconds - b.lap_duration_seconds)[0];
-      return best.lap_number;
-    }
-    return ghostSelectedLap;
-  }, [ghostSource, ghostSelectedLap, laps]);
-
-  // High-frequency subscription for live delta during current segment
+  // High-frequency subscription for live delta
   useEffect(() => {
-    if (!engine || !currentLapNumber || !currentSegmentId) return;
+    if (!engine || !activeState.activeLapNumber || !activeState.activeSegmentId) return;
 
-    const currentLap = laps.find(l => l.lap_number === currentLapNumber);
-    const refLap = laps.find(l => l.lap_number === referenceLapNumber);
-    const lapSplits = lapSplitsMap.get(currentLapNumber);
-    const refSplits = lapSplitsMap.get(referenceLapNumber);
+    const lapSplits = splitStateMachine.getLapSplits(activeState.activeLapNumber);
+    if (!lapSplits) return;
 
-    if (!currentLap || !refLap || !lapSplits || !refSplits) return;
+    const activeSplit = lapSplits.splits.find(s => s.segment_id === activeState.activeSegmentId);
+    if (!activeSplit) return;
 
-    const activeSplitIdx = lapSplits.splits.findIndex(s => s.segment_id === currentSegmentId);
-    if (activeSplitIdx === -1) return;
-
-    const activeSplit = lapSplits.splits[activeSplitIdx];
-    const refSplit = refSplits.splits.find(s => s.segment_id === currentSegmentId);
-
-    if (!refSplit) return;
+    const bestDuration = splitStateMachine.getHistoricalBestForSegment(activeSplit.split_index);
 
     const unsub = engine.subscribe(() => {
-      // 1. Get high-precision time elapsed for the current lap
-      const currentTimestamp = useReplayStore.getState().currentTimestamp;
-      const total_elapsed = (currentTimestamp - currentLap.start_timestamp) / 1000;
-      
-      // 2. Reference the active segment data (PB Target)
-      const pb_target = refSplit.cumulative_time_seconds;
-      
-      // 3. Compute live delta
-      const live_delta = total_elapsed - pb_target;
-      
-      // 4. Format string
-      const formatted_delta = Math.abs(live_delta).toFixed(2);
-      
-      // 5. Update UI values and CSS classes
-      if (liveDeltaRef.current && liveDeltaContainerRef.current) {
-        if (live_delta < 0) {
-          liveDeltaRef.current.textContent = `-${formatted_delta}`;
-          liveDeltaContainerRef.current.style.color = '#10b981'; // Green (Safe)
-        } else if (live_delta > 0) {
-          liveDeltaRef.current.textContent = `+${formatted_delta}`;
-          liveDeltaContainerRef.current.style.color = '#ef4444'; // Red (Behind pace)
-        } else {
-          liveDeltaRef.current.textContent = '0.00';
-          liveDeltaContainerRef.current.style.color = '#cbd5e1'; // Neutral
-        }
-      }
+      const timestamp = useReplayStore.getState().currentTimestamp;
+      const elapsed = (timestamp - activeSplit.start_timestamp) / 1000;
 
       if (liveTimerRef.current) {
-        liveTimerRef.current.textContent = `${total_elapsed.toFixed(1)}s`;
+        liveTimerRef.current.textContent = `${elapsed.toFixed(1)}s`;
+      }
+
+      if (liveDeltaRef.current && liveDeltaContainerRef.current) {
+        if (bestDuration === null) {
+          liveDeltaRef.current.textContent = '--';
+          liveDeltaContainerRef.current.style.color = '#94a3b8';
+        } else {
+          const delta = elapsed - bestDuration;
+          const formatted = Math.abs(delta).toFixed(2);
+          
+          if (delta < 0) {
+            liveDeltaRef.current.textContent = `-${formatted}`;
+            liveDeltaContainerRef.current.style.color = '#10b981'; // Gaining
+          } else {
+            liveDeltaRef.current.textContent = `+${formatted}`;
+            liveDeltaContainerRef.current.style.color = '#ef4444'; // Losing
+          }
+        }
       }
     });
 
     return unsub;
-  }, [engine, currentLapNumber, currentSegmentId, laps, lapSplitsMap, referenceLapNumber]);
-
+  }, [engine, activeState.activeLapNumber, activeState.activeSegmentId]);
 
   if (!currentLapNumber) return null;
 
-  const currentSplits = lapSplitsMap.get(currentLapNumber)?.splits || [];
-  const refSplits = lapSplitsMap.get(referenceLapNumber)?.splits || [];
+  const displayLapNumber = activeState.activeLapNumber || currentLapNumber;
+  const lapSplits = splitStateMachine.getLapSplits(displayLapNumber);
+  if (!lapSplits) return null;
 
-  // Find active split index
-  const activeIndex = currentSplits.findIndex(s => s.segment_id === currentSegmentId);
-
-  // We only show a limited number of splits to avoid giant dashboards
-  // e.g. show 2 completed splits, 1 active, 2 upcoming
-  let startIndex = 0;
-  if (activeIndex > 2) startIndex = activeIndex - 2;
-  const visibleSplits = currentSplits.slice(startIndex, startIndex + 5);
+  const completedSectors = splitStateMachine.getCompletedSectorsForLap(displayLapNumber);
+  
+  // Find visible window
+  const activeIdx = lapSplits.splits.findIndex(s => s.segment_id === activeState.activeSegmentId);
+  let startIndex = Math.max(0, activeIdx - 2);
+  const visibleSplits = lapSplits.splits.slice(startIndex, startIndex + 5);
 
   return (
     <>
-      <LapHistoryHUD 
-        currentLapNumber={currentLapNumber} 
-        referenceLapNumber={referenceLapNumber} 
-        lapSplitsMap={lapSplitsMap} 
-        theoreticalBest={theoreticalBest} 
-      />
+      <LapHistoryHUD />
+      {/* Debug Toggle */}
+      <button 
+        onClick={() => setShowDebug(!showDebug)}
+        className="absolute top-4 left-4 z-[100] px-2 py-1 bg-slate-800 text-[10px] text-slate-400 rounded opacity-20 hover:opacity-100 transition-opacity pointer-events-auto"
+      >
+        {showDebug ? 'HIDE DEBUG' : 'SHOW DEBUG'}
+      </button>
+
+      {showDebug && (
+        <div className="absolute top-12 left-4 z-[100] p-3 bg-slate-900/90 border border-slate-700 rounded-lg font-mono text-[10px] text-cyan-400 w-64 backdrop-blur-xl">
+          <div className="flex justify-between border-b border-slate-800 pb-1 mb-2 text-slate-500 font-bold uppercase tracking-wider">
+            <span>Timing Debug</span>
+            <span>{currentTimestamp.toFixed(0)}ms</span>
+          </div>
+          <div className="grid grid-cols-2 gap-y-1">
+            <span className="text-slate-500">Lap:</span> <span>{activeState.activeLapNumber ?? '---'}</span>
+            <span className="text-slate-500">Sector ID:</span> <span className="truncate">{activeState.activeSegmentId ?? '---'}</span>
+            <span className="text-slate-500">Theo Best:</span> <span>{theoBest.totalDuration.toFixed(2)}s</span>
+            <span className="text-slate-500">Sectors:</span> <span>{theoBest.segments.size} recorded</span>
+            <span className="text-slate-500">Complete:</span> <span className={theoBest.isComplete ? 'text-green-400' : 'text-amber-400'}>{theoBest.isComplete ? 'YES' : 'NO'}</span>
+          </div>
+        </div>
+      )}
 
       <div className="absolute top-[40%] -translate-y-1/2 left-8 z-[60] flex flex-col items-start gap-2 pointer-events-none">
-        
         <div className="flex flex-col items-start mb-2 mt-1">
           <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">
-            LAP {currentLapNumber} SPLITS
+            LAP {displayLapNumber} SPLITS
           </span>
-        <span className="text-[8px] text-slate-600 font-mono mt-0.5">
-          VS LAP {referenceLapNumber}
-        </span>
-      </div>
+          <span className="text-[8px] text-slate-600 font-mono mt-0.5">
+            VS SESSION BEST
+          </span>
+        </div>
 
-      <div className="flex flex-col gap-1 w-64">
-        <AnimatePresence initial={false}>
-          {visibleSplits.map((split, i) => {
-            const splitIdxInLap = currentSplits.findIndex(s => s.segment_id === split.segment_id);
-            const isCompleted = activeIndex > splitIdxInLap || (activeIndex === -1 && useReplayStore.getState().currentTimestamp > split.end_timestamp);
-            const isActive = activeIndex === splitIdxInLap;
-            const refSplit = refSplits.find(s => s.segment_id === split.segment_id);
+        <div className="flex flex-col gap-1 w-64">
+          <AnimatePresence initial={false}>
+            {visibleSplits.map((split) => {
+              const completed = completedSectors.find(s => s.segment_id === split.segment_id);
+              const isActive = activeState.activeSegmentId === split.segment_id;
+              
+              let deltaText = '--';
+              let color = getSplitColorValue('neutral');
+              
+              if (completed) {
+                const sign = completed.delta_seconds >= 0 ? '+' : '';
+                deltaText = `${sign}${completed.delta_seconds.toFixed(2)}`;
+                color = getSplitColorValue(completed.status);
+              }
 
-            let deltaText = '--';
-            let color = getSplitColorValue('neutral');
-            let isBold = false;
-
-            if (isCompleted) {
-              const res = calculateSplitDelta(split, refSplit, theoreticalBest);
-              const sign = res.delta_seconds >= 0 ? '+' : '';
-              deltaText = `${sign}${res.delta_seconds.toFixed(2)}`;
-              color = getSplitColorValue(res.status);
-              isBold = true;
-            }
-
-            return (
-              <motion.div
-                key={split.segment_id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: isActive ? 1 : 0.8, x: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                className={`flex items-center justify-between p-2 rounded border border-l-4 ${isActive ? 'bg-slate-800/80 backdrop-blur-md' : 'bg-slate-900/40'} shadow-lg`}
-                style={{ 
-                  borderLeftColor: isActive ? '#38bdf8' : color,
-                  borderColor: isActive ? 'rgba(56,189,248,0.2)' : 'transparent',
-                  borderLeftWidth: '3px'
-                }}
-              >
-                <div className="flex flex-col items-start">
-                  <span className="text-[10px] font-bold tracking-widest" style={{ color: isActive ? '#f8fafc' : '#cbd5e1' }}>
-                    {split.name}
-                  </span>
-                  {isCompleted ? (
-                    <span className="text-[9px] font-mono text-slate-500">
-                      {split.cumulative_time_seconds.toFixed(1)}s
+              return (
+                <motion.div
+                  key={split.segment_id}
+                  layout
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  className={`flex items-center justify-between p-2 rounded border border-l-4 ${isActive ? 'bg-slate-800/80 backdrop-blur-md' : 'bg-slate-900/40'} shadow-lg transition-colors`}
+                  style={{ 
+                    borderLeftColor: isActive ? '#38bdf8' : color,
+                    borderColor: isActive ? 'rgba(56,189,248,0.2)' : 'transparent',
+                  }}
+                >
+                  <div className="flex flex-col items-start">
+                    <span className="text-[10px] font-bold tracking-widest" style={{ color: isActive ? '#f8fafc' : '#cbd5e1' }}>
+                      {split.name}
                     </span>
-                  ) : isActive ? (
-                    <span ref={liveTimerRef} className="text-[9px] font-mono text-cyan-400">
-                      --s
-                    </span>
-                  ) : null}
-                </div>
+                    {completed ? (
+                      <span className="text-[9px] font-mono text-slate-500">
+                        {completed.duration_seconds.toFixed(2)}s
+                      </span>
+                    ) : isActive ? (
+                      <span ref={liveTimerRef} className="text-[9px] font-mono text-cyan-400">
+                        --s
+                      </span>
+                    ) : null}
+                  </div>
 
-                <div className="flex flex-col items-end">
-                  {isActive ? (
-                    <div ref={liveDeltaContainerRef} className="font-mono text-sm font-bold tracking-tight">
-                      <span ref={liveDeltaRef}>0.00</span>
-                    </div>
-                  ) : (
-                    <span className={`font-mono text-xs ${isBold ? 'font-bold' : ''}`} style={{ color }}>
-                      {deltaText}
-                    </span>
-                  )}
-                </div>
-              </motion.div>
-            );
-          })}
-        </AnimatePresence>
-      </div>
+                  <div className="flex flex-col items-end">
+                    {isActive ? (
+                      <div ref={liveDeltaContainerRef} className="font-mono text-sm font-bold tracking-tight">
+                        <span ref={liveDeltaRef}>0.00</span>
+                      </div>
+                    ) : (
+                      <span className="font-mono text-xs font-bold" style={{ color }}>
+                        {deltaText}
+                      </span>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
+        </div>
 
-      {/* Theoretical Best Indicator */}
-      {theoreticalBest && (
+        {/* Theoretical Best Indicator */}
         <div className="mt-3 flex flex-col items-start opacity-60 hover:opacity-100 transition-opacity">
           <span className="text-[8px] font-bold text-slate-500 tracking-widest uppercase">
             THEORETICAL BEST
           </span>
           <span className="text-[11px] font-mono text-amber-400 font-bold">
-            {(Math.floor(theoreticalBest.total_theoretical_seconds / 60))}:
-            {(theoreticalBest.total_theoretical_seconds % 60).toFixed(2).padStart(5, '0')}
+            {theoBest.isComplete ? (
+              `${Math.floor(theoBest.totalDuration / 60)}:${(theoBest.totalDuration % 60).toFixed(2).padStart(5, '0')}`
+            ) : (
+              '--'
+            )}
           </span>
         </div>
-      )}
-
       </div>
     </>
   );
 };
 
 export const SplitTimingHUD = memo(SplitTimingHUDComponent);
+

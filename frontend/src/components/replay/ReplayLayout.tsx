@@ -359,12 +359,7 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
 
       {/* ── Split Timing HUD ── */}
       {telemetry && segments && laps && (
-        <SplitTimingHUD 
-          engine={engineRef.current}
-          telemetry={telemetry}
-          segments={segments}
-          laps={laps}
-        />
+        <SplitTimingHUD engine={engineRef.current} />
       )}
 
       {/* ── Corner Intelligence HUD ── */}

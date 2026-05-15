@@ -1,51 +1,41 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LapSplits } from '../../utils/splitGenerator';
-import { calculateSplitDelta } from '../../utils/splitDeltaCalculator';
+import { splitStateMachine, CompletedSectorResult } from '../../engine/splitStateMachine';
 import { getSplitColorValue } from '../../utils/splitColorRules';
-import { TheoreticalBest } from '../../utils/theoreticalBestLap';
 
-interface LapHistoryHUDProps {
-  currentLapNumber: number;
-  referenceLapNumber: number;
-  lapSplitsMap: Map<number, LapSplits>;
-  theoreticalBest: TheoreticalBest | null;
-}
-
-export const LapHistoryHUD: React.FC<LapHistoryHUDProps> = ({
-  currentLapNumber,
-  referenceLapNumber,
-  lapSplitsMap,
-  theoreticalBest
-}) => {
+export const LapHistoryHUD: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
 
-  // Compute all previous laps summary
-  const previousLapsSummary = useMemo(() => {
-    const summary = [];
-    for (let l = 1; l < currentLapNumber; l++) {
-      const pLap = lapSplitsMap.get(l);
-      const rLap = lapSplitsMap.get(referenceLapNumber);
-      if (pLap && rLap && pLap.splits.length > 0 && rLap.splits.length > 0) {
-        const lastSplitP = pLap.splits[pLap.splits.length - 1];
-        const lastSplitR = rLap.splits[rLap.splits.length - 1];
-        const res = calculateSplitDelta(lastSplitP, lastSplitR, theoreticalBest);
-        summary.push({
-          lap: l,
-          time: lastSplitP.cumulative_time_seconds,
-          delta: res.delta_seconds,
-          status: res.status
-        });
+  useEffect(() => {
+    const updateHistory = () => {
+      const activeState = splitStateMachine.getActiveState();
+      const currentLap = activeState.activeLapNumber || 0;
+      const newHistory = [];
+
+      for (let l = 1; l < currentLap; l++) {
+        const sectors = splitStateMachine.getCompletedSectorsForLap(l);
+        if (sectors.length > 0) {
+          const lastSector = sectors[sectors.length - 1];
+          newHistory.push({
+            lap: l,
+            time: lastSector.cumulative_time_seconds,
+            delta: lastSector.delta_seconds,
+            status: lastSector.status
+          });
+        }
       }
-    }
-    return summary;
-  }, [currentLapNumber, referenceLapNumber, lapSplitsMap, theoreticalBest]);
+      setHistory(newHistory);
+    };
 
-  if (previousLapsSummary.length === 0) return null;
+    updateHistory();
+    return splitStateMachine.subscribe(updateHistory);
+  }, []);
+
+  if (history.length === 0) return null;
 
   return (
-    <div className="absolute top-1/2 -translate-y-1/2 right-8 z-[65] flex items-start gap-4 pointer-events-auto">
-      
+    <div className="absolute top-[8.5rem] right-8 z-[65] flex items-start gap-4 pointer-events-auto">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -59,12 +49,12 @@ export const LapHistoryHUD: React.FC<LapHistoryHUDProps> = ({
                 LAP HISTORY
               </span>
               <span className="text-[8px] text-slate-600 font-mono mt-0.5">
-                VS LAP {referenceLapNumber}
+                VS SESSION BEST
               </span>
             </div>
 
             <div className="flex flex-col gap-1 w-56 pr-2 max-h-[60vh] overflow-y-auto custom-scrollbar">
-              {previousLapsSummary.map(pl => {
+              {history.map(pl => {
                 const sign = pl.delta >= 0 ? '+' : '';
                 return (
                   <div key={pl.lap} className="flex items-center justify-between w-full p-2 rounded bg-slate-900/60 backdrop-blur-md border border-slate-800/50 shadow-lg">
@@ -92,7 +82,7 @@ export const LapHistoryHUD: React.FC<LapHistoryHUDProps> = ({
           HISTORY
         </span>
       </button>
-
     </div>
   );
 };
+

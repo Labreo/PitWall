@@ -2,6 +2,7 @@ import { Lap, Segment } from '../types/telemetry';
 
 export interface SplitTiming {
   segment_id: string;
+  split_index: number;
   name: string; // e.g. "Sector 1", "Turn 4"
   start_timestamp: number;
   end_timestamp: number;
@@ -39,6 +40,7 @@ export function buildLapSplits(laps: Lap[], segments: Segment[]): Map<number, La
       
       splits.push({
         segment_id: seg.segment_id,
+        split_index: i,
         name: seg.segment_type === 'corner' ? `Turn ${i+1}` : `Straight ${i+1}`,
         start_timestamp: previousEndTs,
         end_timestamp: seg.end_timestamp,

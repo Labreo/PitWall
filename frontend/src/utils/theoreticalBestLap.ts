@@ -8,6 +8,7 @@ export interface TheoreticalBest {
     lap_number: number;
   }[];
   total_theoretical_seconds: number;
+  is_complete: boolean;
 }
 
 /**
@@ -31,7 +32,7 @@ export function buildTheoreticalBestLap(laps: Lap[], segments: Segment[]): Theor
     }
   }
 
-  if (laps.length === 0) return { segments: [], total_theoretical_seconds: 0 };
+  if (laps.length === 0) return { segments: [], total_theoretical_seconds: 0, is_complete: false };
   
   // Use Lap 1 splits as the reference layout
   const refSplits = lapSplitsMap.get(laps[0].lap_number)?.splits || [];
@@ -54,5 +55,6 @@ export function buildTheoreticalBestLap(laps: Lap[], segments: Segment[]): Theor
   return {
     segments: bestSegments,
     total_theoretical_seconds: total,
+    is_complete: bestSegments.length > 0 && bestSegments.length === refSplits.length,
   };
 }

@@ -8,49 +8,34 @@ export interface SplitDeltaResult {
 }
 
 /**
- * Calculates the delta and status color for a completed split compared to a reference lap and theoretical best.
+ * Calculates the delta and status color for a completed split compared to the best historical split duration.
  * 
  * @param currentSplit The completed split on the current lap
- * @param referenceSplit The corresponding split on the reference (PB) lap
- * @param theoreticalBest The theoretical best lap data
+ * @param bestHistoricalDuration The best duration recorded for this segment prior to this split
+ * @param isNewBest Whether this split is the new absolute best (equal to or faster than bestHistoricalDuration)
  */
 export function calculateSplitDelta(
   currentSplit: SplitTiming,
-  referenceSplit: SplitTiming | undefined,
-  theoreticalBest: TheoreticalBest | null
+  bestHistoricalDuration: number | null,
+  isNewBest: boolean
 ): SplitDeltaResult {
-  if (!referenceSplit) {
-    return { delta_seconds: 0, status: 'neutral' };
+  if (bestHistoricalDuration === null) {
+    // First time completing this split
+    return { delta_seconds: 0, status: 'gold' };
   }
 
-  // Cumulative delta (current cumulative - reference cumulative)
-  // Negative means ahead of PB, Positive means behind PB
-  const cumulativeDelta = currentSplit.cumulative_time_seconds - referenceSplit.cumulative_time_seconds;
-  const isAhead = cumulativeDelta < 0;
+  // Segment delta (current segment duration - historical best segment duration)
+  const segmentDelta = currentSplit.duration_seconds - bestHistoricalDuration;
 
-  // Segment delta (current segment duration - reference segment duration)
-  const segmentDelta = currentSplit.duration_seconds - referenceSplit.duration_seconds;
-  const gainedTime = segmentDelta < 0;
-
-  let status: SplitColorStatus = isAhead ? 'green' : 'red';
-
-  // Check if blue: Ahead of PB pace AND gained time during this specific segment
-  if (isAhead && gainedTime) {
-    status = 'blue';
-  }
+  let status: SplitColorStatus = segmentDelta <= 0 ? 'green' : 'red';
 
   // Check if gold: New absolute best segment achieved
-  if (theoreticalBest) {
-    const theoSeg = theoreticalBest.segments.find(s => s.segment_id === currentSplit.segment_id);
-    // If the current duration is equal to or faster than the theoretical best
-    // (using a tiny epsilon for float comparison)
-    if (theoSeg && currentSplit.duration_seconds <= theoSeg.best_duration_seconds + 0.001) {
-      status = 'gold';
-    }
+  if (isNewBest) {
+    status = 'gold';
   }
 
   return {
-    delta_seconds: cumulativeDelta,
+    delta_seconds: segmentDelta,
     status
   };
 }

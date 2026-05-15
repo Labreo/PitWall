@@ -70,9 +70,16 @@ export const GhostReplayLayer: React.FC<GhostReplayLayerProps> = ({
     let activeGhost: GhostLapData | null = null;
     let ghostLapNum: number | null = null;
 
-    if (ghostSource === 'best' && bestLapRef.current) {
-      ghostLapNum = bestLapRef.current.lap_number;
-      activeGhost = ghostLapsRef.current.get(ghostLapNum) ?? null;
+    if (ghostSource === 'best') {
+      const currentLapNum = useReplayStore.getState().currentLapNumber;
+      if (currentLapNum) {
+        const completedLaps = laps.filter(l => l.lap_number < currentLapNum);
+        if (completedLaps.length > 0) {
+          const best = completedLaps.sort((a, b) => a.lap_duration_seconds - b.lap_duration_seconds)[0];
+          ghostLapNum = best.lap_number;
+          activeGhost = ghostLapsRef.current.get(ghostLapNum) ?? null;
+        }
+      }
     } else if (ghostSource === 'selected') {
       ghostLapNum = ghostSelectedLapNum;
       activeGhost = ghostLapsRef.current.get(ghostLapNum) ?? null;

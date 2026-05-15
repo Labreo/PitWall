@@ -4,6 +4,7 @@ import { interpolateTelemetry } from './interpolation';
 import { useReplayStore } from '../store/replayStore';
 import { CoachingScheduler } from './coachingScheduler';
 import { coachingAudioQueue } from './coachingAudioQueue';
+import { splitStateMachine } from './splitStateMachine';
 
 export type EngineCallback = (
   interpolated: TelemetryPoint,
@@ -38,10 +39,12 @@ export class ReplayEngine {
     // Initialize the synchronization engine
     this.scheduler = new CoachingScheduler(coachingEvents);
 
-    // Pre-compute best lap on construction (only once)
     if (laps.length > 0) {
       this.bestLapCache = [...laps].sort((a, b) => a.lap_duration_seconds - b.lap_duration_seconds)[0];
     }
+
+    // Initialize Split State Machine
+    splitStateMachine.initialize(laps, segments);
   }
 
   public subscribe(cb: EngineCallback) {
@@ -115,34 +118,41 @@ export class ReplayEngine {
 
     const currentData = interpolateTelemetry(t1, t2, timestamp);
 
-    // 2. Dispatch boundary events to Zustand (Discrete)
+    // 2. Dispatch boundary events to State Machine & Zustand
     const store = useReplayStore.getState();
 
-    // Find current segment
-    const activeSegment = this.segments.find(s => timestamp >= s.start_timestamp && timestamp <= s.end_timestamp);
-    if (activeSegment && activeSegment.segment_id !== store.currentSegmentId) {
-      store.setCurrentSegmentId(activeSegment.segment_id);
-    } else if (!activeSegment && store.currentSegmentId !== null) {
-      store.setCurrentSegmentId(null);
+    // The state machine handles all deterministic split logic and history recomputation
+    splitStateMachine.processToTimestamp(timestamp);
+    
+    const { activeLapNumber, activeSegmentId } = splitStateMachine.getActiveState();
+
+    if (activeSegmentId !== store.currentSegmentId) {
+      store.setCurrentSegmentId(activeSegmentId);
     }
 
-    // Find current lap
+    if (activeLapNumber !== store.currentLapNumber) {
+      store.setCurrentLapNumber(activeLapNumber);
+    }
+
+
     const activeLap = this.laps.find(l => timestamp >= l.start_timestamp && timestamp <= l.end_timestamp);
-    if (activeLap && activeLap.lap_number !== store.currentLapNumber) {
-      store.setCurrentLapNumber(activeLap.lap_number);
-    } else if (!activeLap && store.currentLapNumber !== null) {
-      store.setCurrentLapNumber(null);
-    }
 
-
-    // 3. Calculate Ghost Lap (Best Lap)
+    // 3. Calculate Ghost Lap (Best Lap So Far)
     // Ghost replays actual best-lap telemetry at the proportionally equivalent elapsed time.
     // Uses a separate cached index so ghost search never corrupts main car search.
     let ghostData: TelemetryPoint | null = null;
     let ghostTimeDeltaMs = 0;
 
-    if (store.ghostModeEnabled && activeLap && activeLap.lap_number > 1 && this.bestLapCache) {
-      const bestLap = this.bestLapCache;
+    let bestLapSoFar: Lap | null = null;
+    if (activeLap) {
+      const completedLaps = this.laps.filter(l => l.lap_number < activeLap.lap_number);
+      if (completedLaps.length > 0) {
+        bestLapSoFar = completedLaps.sort((a, b) => a.lap_duration_seconds - b.lap_duration_seconds)[0];
+      }
+    }
+
+    if (store.ghostModeEnabled && activeLap && activeLap.lap_number > 1 && bestLapSoFar) {
+      const bestLap = bestLapSoFar;
 
       const elapsedMs = timestamp - activeLap.start_timestamp;
       const activeLapDurationMs = activeLap.end_timestamp - activeLap.start_timestamp;
