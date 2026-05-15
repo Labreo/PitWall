@@ -12,9 +12,13 @@ export const useReplayStore = create<ReplayState>((set) => ({
   currentSegmentId: null,
   currentLapNumber: null,
   ghostModeEnabled: true,
+  ghostSource: 'best',
+  ghostSelectedLap: 1,
+  ghostOffsetMs: 0,
+  ghostShowTrail: true,
   activeCoachingEvent: null,
   isSpeechActive: false,
-  showBrakingZones: false,
+  showBrakingZones: true,
 
   togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
   setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
@@ -24,6 +28,10 @@ export const useReplayStore = create<ReplayState>((set) => ({
   setCurrentLapNumber: (num) => set({ currentLapNumber: num }),
   initializeSession: (start, end) => set({ sessionStart: start, sessionEnd: end, currentTimestamp: start }),
   toggleGhostMode: () => set((state) => ({ ghostModeEnabled: !state.ghostModeEnabled })),
+  setGhostSource: (source) => set({ ghostSource: source }),
+  setGhostSelectedLap: (lap) => set({ ghostSelectedLap: lap }),
+  setGhostOffsetMs: (offset) => set({ ghostOffsetMs: offset }),
+  toggleGhostTrail: () => set((state) => ({ ghostShowTrail: !state.ghostShowTrail })),
   toggleBrakingZones: () => set((state) => ({ showBrakingZones: !state.showBrakingZones })),
 
   setActiveCoachingEvent: (event) => {

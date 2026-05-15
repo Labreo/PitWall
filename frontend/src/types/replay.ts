@@ -1,4 +1,5 @@
 import { CoachingEvent } from './coaching';
+import { GhostSource, GhostOffset } from '../utils/ghostTypes';
 
 export interface ReplayState {
   isPlaying: boolean;
@@ -11,6 +12,10 @@ export interface ReplayState {
 
   // Ghost Lap Mode
   ghostModeEnabled: boolean;
+  ghostSource: GhostSource;
+  ghostSelectedLap: number;
+  ghostOffsetMs: GhostOffset;
+  ghostShowTrail: boolean;
 
   // Coaching
   activeCoachingEvent: CoachingEvent | null;
@@ -28,6 +33,10 @@ export interface ReplayState {
   setCurrentLapNumber: (num: number | null) => void;
   initializeSession: (start: number, end: number) => void;
   toggleGhostMode: () => void;
+  setGhostSource: (source: GhostSource) => void;
+  setGhostSelectedLap: (lap: number) => void;
+  setGhostOffsetMs: (offset: GhostOffset) => void;
+  toggleGhostTrail: () => void;
   setActiveCoachingEvent: (event: CoachingEvent | null) => void;
   dismissCoachingEvent: () => void;
   setSpeechActive: (active: boolean) => void;

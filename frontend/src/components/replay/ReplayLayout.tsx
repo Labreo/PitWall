@@ -14,6 +14,7 @@ import { CornerAnalytics } from '../map/CornerIntelligenceLayer';
 import REAL_COACHING_EVENTS from '../../utils/coaching_events.json';
 import { CoachingSubtitles } from './CoachingSubtitles';
 import { EngineerRadioDebugPanel } from './EngineerRadioDebugPanel';
+import { SplitTimingHUD } from './SplitTimingHUD';
 import { coachingAudioQueue } from '../../engine/coachingAudioQueue';
 
 interface ReplayLayoutProps {
@@ -355,6 +356,16 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
 
       {/* ── Telemetry HUD (speed, g-force, heading) ── */}
       <TelemetryHUD engine={engineRef.current} />
+
+      {/* ── Split Timing HUD ── */}
+      {telemetry && segments && laps && (
+        <SplitTimingHUD 
+          engine={engineRef.current}
+          telemetry={telemetry}
+          segments={segments}
+          laps={laps}
+        />
+      )}
 
       {/* ── Corner Intelligence HUD ── */}
       <CornerHUD analytics={cornerAnalytics} />

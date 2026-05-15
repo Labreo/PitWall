@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ReplayLayout } from './components/replay/ReplayLayout';
 import { TelemetryPoint, Segment, Lap } from './types/telemetry';
+import { deriveGForces } from './utils/deriveGForces';
 
 type LoadState = 'loading' | 'ready' | 'error';
 
@@ -47,6 +48,9 @@ function App() {
             lap_duration_seconds: (sessionEnd - sessionStart) / 1000,
           }];
         }
+
+        // Derive G-forces from GPS data (raw accelerometer fields are zero)
+        deriveGForces(telemetryData);
 
         setTelemetry(telemetryData);
         setSegments(segmentsData);

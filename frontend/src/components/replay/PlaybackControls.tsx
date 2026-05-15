@@ -1,9 +1,15 @@
 import React, { memo, useRef, useEffect, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useReplayStore } from '../../store/replayStore';
 import { Play, Pause } from 'lucide-react';
+import { GHOST_OFFSETS, GhostOffset, GhostSource } from '../../utils/ghostTypes';
 
 const SPEEDS = [0.25, 0.5, 1, 2, 4];
+
+const GHOST_SOURCES: { value: GhostSource; label: string }[] = [
+  { value: 'best', label: 'BEST' },
+  { value: 'selected', label: 'LAP' },
+];
 
 const fmt = (s: number) => {
   const m = Math.floor(s / 60);
@@ -19,11 +25,17 @@ const PlaybackControlsComponent: React.FC = () => {
   const sessionStart = useReplayStore(s => s.sessionStart);
   const sessionEnd = useReplayStore(s => s.sessionEnd);
   const ghostModeEnabled = useReplayStore(s => s.ghostModeEnabled);
+  const ghostSource = useReplayStore(s => s.ghostSource);
+  const ghostOffsetMs = useReplayStore(s => s.ghostOffsetMs);
+  const ghostShowTrail = useReplayStore(s => s.ghostShowTrail);
   const showBrakingZones = useReplayStore(s => s.showBrakingZones);
   const togglePlay = useReplayStore(s => s.togglePlay);
   const setPlaybackSpeed = useReplayStore(s => s.setPlaybackSpeed);
   const seekTo = useReplayStore(s => s.seekTo);
   const toggleGhostMode = useReplayStore(s => s.toggleGhostMode);
+  const setGhostSource = useReplayStore(s => s.setGhostSource);
+  const setGhostOffsetMs = useReplayStore(s => s.setGhostOffsetMs);
+  const toggleGhostTrail = useReplayStore(s => s.toggleGhostTrail);
   const toggleBrakingZones = useReplayStore(s => s.toggleBrakingZones);
 
   // DOM refs for high-frequency updates (avoids re-render on every frame)
@@ -124,8 +136,9 @@ const PlaybackControlsComponent: React.FC = () => {
           </div>
         </div>
 
-        {/* Toggles + Speed */}
-        <div className="flex items-center gap-4">
+        {/* Toggles + Ghost Config + Speed */}
+        <div className="flex items-center gap-3">
+          {/* Braking Zones Toggle */}
           <button
             onClick={toggleBrakingZones}
             className="flex items-center gap-1.5 px-2 py-1 rounded transition-all duration-200"
@@ -142,6 +155,9 @@ const PlaybackControlsComponent: React.FC = () => {
             </span>
           </button>
 
+          <div className="w-px h-3" style={{ background: 'rgba(148,163,184,0.1)' }} />
+
+          {/* Ghost Toggle */}
           <button
             onClick={toggleGhostMode}
             className="flex items-center gap-1.5 px-2 py-1 rounded transition-all duration-200"
@@ -157,6 +173,69 @@ const PlaybackControlsComponent: React.FC = () => {
               GHOST
             </span>
           </button>
+
+          {/* Ghost Config — only visible when ghost is enabled */}
+          <AnimatePresence>
+            {ghostModeEnabled && (
+              <motion.div
+                initial={{ opacity: 0, width: 0 }}
+                animate={{ opacity: 1, width: 'auto' }}
+                exit={{ opacity: 0, width: 0 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center gap-2 overflow-hidden"
+              >
+                {/* Source Selector */}
+                <div className="flex items-center gap-0.5">
+                  {GHOST_SOURCES.map(src => (
+                    <button
+                      key={src.value}
+                      onClick={() => setGhostSource(src.value)}
+                      className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold transition-all duration-150"
+                      style={{
+                        color: ghostSource === src.value ? 'rgba(52,211,153,0.9)' : 'rgba(148,163,184,0.3)',
+                        background: ghostSource === src.value ? 'rgba(52,211,153,0.08)' : 'transparent',
+                      }}
+                    >
+                      {src.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="w-px h-3" style={{ background: 'rgba(148,163,184,0.08)' }} />
+
+                {/* Offset Selector */}
+                <div className="flex items-center gap-0.5">
+                  {GHOST_OFFSETS.map(off => (
+                    <button
+                      key={off.value}
+                      onClick={() => setGhostOffsetMs(off.value)}
+                      className="px-1 py-0.5 rounded text-[8px] font-mono transition-all duration-150"
+                      style={{
+                        color: ghostOffsetMs === off.value ? 'rgba(52,211,153,0.8)' : 'rgba(148,163,184,0.2)',
+                        background: ghostOffsetMs === off.value ? 'rgba(52,211,153,0.06)' : 'transparent',
+                      }}
+                    >
+                      {off.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="w-px h-3" style={{ background: 'rgba(148,163,184,0.08)' }} />
+
+                {/* Trail Toggle */}
+                <button
+                  onClick={toggleGhostTrail}
+                  className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold transition-all duration-150"
+                  style={{
+                    color: ghostShowTrail ? 'rgba(52,211,153,0.8)' : 'rgba(148,163,184,0.25)',
+                    background: ghostShowTrail ? 'rgba(52,211,153,0.06)' : 'transparent',
+                  }}
+                >
+                  TRAIL
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div className="w-px h-3" style={{ background: 'rgba(148,163,184,0.15)' }} />
 

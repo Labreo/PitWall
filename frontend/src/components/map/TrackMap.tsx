@@ -5,6 +5,7 @@ import { createTrackProjection, speedToColor } from '../../utils/d3Helpers';
 import { ReplayEngine } from '../../engine/ReplayEngine';
 import { CornerIntelligenceLayer, CornerAnalytics } from './CornerIntelligenceLayer';
 import { BrakingZoneLayer } from './BrakingZoneLayer';
+import { GhostReplayLayer } from './GhostReplayLayer';
 
 interface TrackMapProps {
   telemetry: TelemetryPoint[];
@@ -471,6 +472,16 @@ export const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments
         segments={segments}
         laps={laps}
         dimensions={dimensions}
+      />
+
+      {/* Ghost racing overlay */}
+      <GhostReplayLayer
+        svgRef={svgRef}
+        telemetry={telemetry}
+        segments={segments}
+        laps={laps}
+        dimensions={dimensions}
+        engine={engine}
       />
     </div>
   );
