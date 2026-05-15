@@ -153,7 +153,7 @@ export class ReplayEngine {
     let ghostData: TelemetryPoint | null = null;
     let ghostTimeDeltaMs = 0;
 
-    if (store.ghostModeEnabled && activeLap && this.bestLapCache) {
+    if (store.ghostModeEnabled && activeLap && activeLap.lap_number > 1 && this.bestLapCache) {
       const bestLap = this.bestLapCache;
 
       const elapsedMs = timestamp - activeLap.start_timestamp;

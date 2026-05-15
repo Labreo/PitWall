@@ -337,43 +337,7 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
           <div className="bc-value text-lg glow-red -mt-0.5">{currentSegmentId ?? '—'}</div>
         </div>
       </motion.div>
-      {/* ── Corner Event Toast ── bottom-left, above G-force + speed block ── */}
-      <AnimatePresence mode="wait">
-        {activeSegment && activeSegment.segment_type === 'corner' && (
-          <motion.div
-            key={activeSegment.segment_id}
-            initial={{ opacity: 0, y: 10, filter: 'blur(6px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute z-[60]"
-            style={{ bottom: '6rem', left: '14rem' }}
-          >
-            <div
-              className="flex items-center gap-2 px-3 py-1.5 rounded"
-              style={{
-                background: 'rgba(248,113,113,0.07)',
-                border: '1px solid rgba(248,113,113,0.18)',
-                backdropFilter: 'blur(6px)',
-              }}
-            >
-              <div className="w-[2px] h-6 rounded-full flex-shrink-0" style={{
-                background: 'linear-gradient(to bottom, #f87171, rgba(248,113,113,0.2))',
-                boxShadow: '0 0 6px rgba(248,113,113,0.4)',
-              }} />
-              <div>
-                <div className="bc-label text-[7px] glow-red">{activeSegment.segment_id}</div>
-                <div className="text-[11px] font-semibold text-slate-200 leading-tight -mt-0.5">
-                  {activeSegment.classification}
-                </div>
-                <div className="text-[9px] font-mono" style={{ color: 'rgba(148,163,184,0.35)' }}>
-                  {Math.abs(activeSegment.heading_change_degrees).toFixed(0)}° · {activeSegment.average_speed.toFixed(0)} km/h
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
 
       {/* ── Telemetry HUD (speed, g-force, heading) ── */}
