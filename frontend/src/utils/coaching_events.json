@@ -1,14 +1,14 @@
 [
   {
-    "id": "ea348da2-a278-448d-bb26-a28d385d7483",
+    "id": "c5843a22-df21-4d6d-89c2-848b5c2b2351",
     "timestamp": 129600,
     "lap_number": 1,
     "corner_id": "S5",
     "severity": "warn",
     "category": "throttle",
-    "message": "Focus on maintaining consistent steering input for smoother corner entries.",
-    "corner_summary": "Driver maintained control during heavy braking, but steering stability could be improved.",
-    "confidence_reasoning": "Braking score and time loss indicate controlled deceleration, while low steering stability suggests potential for oversteer.",
+    "message": "Maintain consistent braking pressure to ensure optimal traction and stability.",
+    "corner_summary": "Driver executed heavy braking (0.14 Brake Score) with minimal time loss, indicating a well-controlled and early application of brakes for safety.",
+    "confidence_reasoning": "According to theory 27.5.1 Braking, this score suggests a safe and controlled braking action, aligning with the goal of early brake balance for safety.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -20,15 +20,15 @@
     }
   },
   {
-    "id": "381a1149-c8ed-4f45-bc2b-3ee67477ff06",
+    "id": "7afa0ad8-29c1-4488-bfa8-0f63538df98d",
     "timestamp": 160200,
     "lap_number": 1,
     "corner_id": "S7",
     "severity": "warn",
     "category": "throttle",
-    "message": "Gentle throttle input for better traction and steering correction.",
-    "corner_summary": "Driver maintained control, slight oversteer at S7 corner.",
-    "confidence_reasoning": "Braking score (0.32) indicates potential for improved braking, while throttle (0.44) suggests room for more controlled acceleration.",
+    "message": "Ensure consistent brake application across corners to maintain stability and control.",
+    "corner_summary": "Driver maintained optimal braking balance, likely using moderate trail braking for corner S7.",
+    "confidence_reasoning": "Telemetry Brake Score (0.32) indicates a balanced braking input, aligning with theory on early system commissioning for safety and optimal balance.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -40,15 +40,15 @@
     }
   },
   {
-    "id": "6dde67bd-de08-4930-98a7-24e80c9bfbdc",
+    "id": "e438347b-bbcb-4d6b-923b-a09d90da2f88",
     "timestamp": 242100,
     "lap_number": 2,
     "corner_id": "S17",
     "severity": "warn",
     "category": "apex",
-    "message": "Focus on consistent throttle application for better acceleration control.",
-    "corner_summary": "Heavy braking at S17 with minimal throttle input, maintaining stability.",
-    "confidence_reasoning": "Low throttle score indicates potential for improved performance.",
+    "message": "Maintain consistent brake pressure for optimal corner entry.",
+    "corner_summary": "Driver executed heavy braking at S17, maintaining stability without significant throttle input.",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and more sweeping the turn (theory 3), less trail braking is used, indicating a balanced approach to braking force application.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -60,15 +60,15 @@
     }
   },
   {
-    "id": "868bfbda-7873-4faf-ae44-af6bd1a842e4",
+    "id": "9e3b3903-b49c-44dd-9ffc-7170dc29e04b",
     "timestamp": 348200,
     "lap_number": 3,
     "corner_id": "S27",
     "severity": "warn",
     "category": "apex",
-    "message": "Focus on smooth throttle application for better acceleration and fuel efficiency.",
-    "corner_summary": "Driver maintained control, but minimal throttle input and high braking force used.",
-    "confidence_reasoning": "Braking score indicates strong deceleration, while low throttle score suggests insufficient power delivery.",
+    "message": "Maintain consistent brake balance for optimal control in turns",
+    "corner_summary": "Driver executed heavy braking at corner S27, maintaining stability without significant throttle input.",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and the principle of more sweeping turns requiring less trail braking, the driver's performance indicates a well-executed heavy braking maneuver with stable steering.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -80,15 +80,15 @@
     }
   },
   {
-    "id": "7e230252-1a5f-41d2-b1f4-1d66f347b2d5",
+    "id": "e2edb0e0-973a-452a-85a5-0089571a4d27",
     "timestamp": 454000,
     "lap_number": 4,
     "corner_id": "S37",
     "severity": "warn",
     "category": "apex",
-    "message": "Maintain consistent pressure on the brakes for better control.",
-    "corner_summary": "Heavy braking at S37 with low throttle and stable steering, no time loss.",
-    "confidence_reasoning": "Braking score of 0.46 indicates moderate deceleration, while throttle score is zero, suggesting no power application. Steering stability at 0.50 shows controlled turning.",
+    "message": "Maintain consistent brake pressure for optimal corner entry.",
+    "corner_summary": "Driver executed heavy braking at S37, maintaining stability without significant throttle input.",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and more sweeping the turn (theory 3), less trail braking is used, indicating a balanced approach to braking.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -100,15 +100,15 @@
     }
   },
   {
-    "id": "c64eb032-ad8a-4edd-a7a6-3f29ea9f5373",
+    "id": "a7484dfe-f603-4f37-89a8-d6770e3a18ea",
     "timestamp": 559900,
     "lap_number": 5,
     "corner_id": "S47",
     "severity": "warn",
     "category": "throttle",
-    "message": "Focus on quicker throttle application for better acceleration out of the corner.",
-    "corner_summary": "Driver maintained control during heavy braking, but could improve throttle response and steering stability.",
-    "confidence_reasoning": "Braking score is good (0.50), indicating controlled deceleration. However, throttle and steering scores are low (0.02 and 0.50 respectively), suggesting room for improvement in maintaining speed and stability during corner exit.",
+    "message": "Maintain consistent brake pressure for optimal control and safety.",
+    "corner_summary": "Driver executed heavy braking, maintaining stability without significant time loss.",
+    "confidence_reasoning": "Telemetry indicates high braking score (0.50) and stable steering (0.50), aligning with theory on early braking system commissioning and suitable balance for safety. More sweeping turns would require less trail braking, as per RossBentley-Trail-Braking-20210928-1.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -120,15 +120,15 @@
     }
   },
   {
-    "id": "c5e72414-0492-4515-9e44-775a5ed910c3",
+    "id": "75d930e4-81cb-4619-8820-270d423b3934",
     "timestamp": 664900,
     "lap_number": 6,
     "corner_id": "S57",
     "severity": "warn",
     "category": "apex",
-    "message": "Focus on smooth throttle input and maintain steady steering",
-    "corner_summary": "Driver maintained control, but could improve throttle application and steering stability",
-    "confidence_reasoning": "Braking score indicates good control, but low throttle and steering scores suggest room for improvement",
+    "message": "Maintain consistent brake pressure for optimal corner entry.",
+    "corner_summary": "Driver executed heavy braking at S57, maintaining stability without significant throttle input.",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and more sweeping turns (theory 3), the driver's action indicates a well-executed, stable braking maneuver with minimal throttle intervention.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -140,15 +140,15 @@
     }
   },
   {
-    "id": "809389b4-0949-45af-bf37-b348aff5c307",
+    "id": "bd77906e-40a1-4906-887f-c680d30576a1",
     "timestamp": 769900,
     "lap_number": 7,
     "corner_id": "S67",
     "severity": "warn",
     "category": "apex",
-    "message": "Maintain consistent braking pressure and prepare for quicker throttle application next turn.",
-    "corner_summary": "Heavy braking at S67 with minimal throttle input, steering stability maintained.",
-    "confidence_reasoning": "Low throttle score indicates potential for reduced acceleration, while high steering stability suggests good control.",
+    "message": "Maintain consistent brake pressure for optimal corner entry.",
+    "corner_summary": "Driver executed heavy braking at S67, maintaining stability without significant throttle input.",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and the principle of more sweeping turns requiring less trail braking, the driver's action indicates a well-executed, stable braking maneuver (Braking Score: 0.45).",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -160,15 +160,15 @@
     }
   },
   {
-    "id": "20813dd9-3731-46c3-ad68-9634b4cabb57",
+    "id": "68871101-bda1-49fe-8193-a041596f0e14",
     "timestamp": 874300,
     "lap_number": 8,
     "corner_id": "S77",
     "severity": "warn",
     "category": "apex",
-    "message": "Maintain consistent pressure on the brakes for better control.",
-    "corner_summary": "Heavy braking at S77 with minimal throttle input, steering stability average.",
-    "confidence_reasoning": "Low throttle usage and time loss indicate a cautious approach, but further improvement in throttle application could enhance cornering speed.",
+    "message": "Maintain consistent brake pressure and trail-braking angle for optimal corner exit speed.",
+    "corner_summary": "Driver executed heavy braking at S77, maintaining stability without significant throttle input.",
+    "confidence_reasoning": "Telemetry indicates high braking score (0.37) and good steering stability (0.50), aligning with theory on early braking system commissioning and suitable brake balance for safety.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -180,15 +180,15 @@
     }
   },
   {
-    "id": "bade1d89-6b49-489d-8629-52fb602fef98",
+    "id": "13148f0d-58d6-4a3b-8dd0-d2a679ec2989",
     "timestamp": 979100,
     "lap_number": 9,
     "corner_id": "S87",
     "severity": "warn",
     "category": "apex",
-    "message": "Focus on smooth throttle application for better acceleration",
-    "corner_summary": "Driver maintained control, but could improve throttle input and steering stability",
-    "confidence_reasoning": "Braking score indicates good control, but low throttle and steering scores suggest room for improvement",
+    "message": "Maintain consistent brake pressure for optimal corner entry.",
+    "corner_summary": "Driver executed heavy braking at S87, maintaining stability without significant throttle input.",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and more sweeping turns (theory 3), less trail braking is used with more aggressive turn entries, indicating the driver's successful execution of heavy braking without compromising stability.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {

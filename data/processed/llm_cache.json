@@ -94,5 +94,135 @@
     "coaching_line": "Focus on smooth throttle application for better acceleration",
     "severity": "warn",
     "confidence_reasoning": "Braking score indicates good control, but low throttle and steering scores suggest room for improvement"
+  },
+  "f026697b0ed94d01aff3b6ee038d6c57": {
+    "corner_summary": "Driver applied brakes progressively, then released smoothly as steering was turned for corner entry.",
+    "coaching_line": "Maintain consistent pedal pressure until steering is aligned with the turn, then gently ease off the brakes.",
+    "severity": "warn",
+    "confidence_reasoning": "According to racing theory, smooth brake release prevents vehicle instability and maintains control during corner entry. This practice aligns with the '100% tire rule' and demonstrates understanding of Begin-of-Braking (BoB) versus End-of-Braking (EoB)."
+  },
+  "4140b5825e903aff914802df06b1d806": {
+    "corner_summary": "Driver applied brakes progressively, then released smoothly as they turned into the corner.",
+    "coaching_line": "Maintain consistent pedal pressure until steering is aligned for turn; release gently to avoid abrupt changes in speed and tire slip.",
+    "severity": "warn",
+    "confidence_reasoning": "According to racing theory, smooth brake application and release are crucial for maintaining vehicle control during corner entry. This ensures optimal tire grip and prevents unwanted wheel lock-up or loss of traction."
+  },
+  "66f834103768b008e2a198f93f9ce092": {
+    "corner_summary": "Driver applied brakes progressively, then released smoothly as they turned into the corner.",
+    "coaching_line": "Maintain consistent pedal pressure until steering is aligned for turn; release gradually to avoid abrupt changes in speed and control.",
+    "severity": "warn",
+    "confidence_reasoning": "According to racing theory, proper braking involves progressive application and smooth release. This ensures optimal tire grip and vehicle stability during corner entry."
+  },
+  "7ee01608925bf1c4514792cad25fb517": {
+    "corner_summary": "Driver applied brakes progressively, then released smoothly as steering was turned for corner entry.",
+    "coaching_line": "Maintain consistent pedal pressure until steering is aligned with the turn, then gradually release brakes",
+    "severity": "warn",
+    "confidence_reasoning": "According to racing theory, this approach ensures smooth vehicle control and adherence to the '100% tire rule', preventing unnecessary wheel slip."
+  },
+  "f2d4bcb6f1e32ef7b5f2f6502a3c7531": {
+    "corner_summary": "Driver applied brakes progressively, then released smoothly as they turned into the corner.",
+    "coaching_line": "Maintain consistent pedal pressure until full steering input is given; then gradually release brakes for a clean turn.",
+    "severity": "warn",
+    "confidence_reasoning": "According to racing theory, proper braking technique involves progressive application and smooth release. This ensures optimal tire grip and control during corner entry."
+  },
+  "59fac48862a66dbaede3bc3001c1646e": {
+    "corner_summary": "Driver applied brakes progressively, then released smoothly as steering was turned for corner entry.",
+    "coaching_line": "Maintain consistent pedal pressure until steering is set, then gradually release brakes to prevent loss of traction.",
+    "severity": "warn",
+    "confidence_reasoning": "According to racing theory, smooth brake application and release are crucial for maintaining vehicle control during corner entry. This ensures optimal tire grip, adhering to the '100% tire rule' and preventing over-braking that could lead to loss of traction."
+  },
+  "d4587e28da472364195b18bdcee88645": {
+    "corner_summary": "Driver applied brakes progressively, then released smoothly as steering was turned for corner entry.",
+    "coaching_line": "Maintain consistent pedal pressure until full turn is initiated; release gradually to avoid jerky motion.",
+    "severity": "warn",
+    "confidence_reasoning": "According to racing theory, proper braking involves a smooth transition from hard braking to no braking as the steering wheel turns for corner entry. This ensures vehicle stability and control."
+  },
+  "807f5361fc3ff163d28e60a78869f1a9": {
+    "corner_summary": "Driver applied brakes progressively, then released smoothly as steering was turned for corner entry.",
+    "coaching_line": "Maintain consistent pedal pressure until steering is aligned; release gently to avoid abrupt changes in speed and control.",
+    "severity": "warn",
+    "confidence_reasoning": "According to racing theory, smooth brake application and release are crucial for maintaining vehicle balance during corner entry. This practice ensures adherence to the '100% tire rule' and prevents unwanted wheel lock-up."
+  },
+  "4644e78d371299a52b6e344d0fbdc0a4": {
+    "corner_summary": "Driver applied brakes progressively, then released smoothly as steering was turned for corner entry.",
+    "coaching_line": "Maintain consistent pedal pressure until full turn is initiated; release gently to avoid abrupt changes in speed and control.",
+    "severity": "warn",
+    "confidence_reasoning": "According to racing theory, smooth brake application and release are crucial for maintaining vehicle balance during corner entry. This practice ensures adherence to the '100% tire rule' and prevents unwanted wheel lock-ups."
+  },
+  "cda135fe16e5d8686eaaad85d4b78257": {
+    "corner_summary": "Driver applied brakes progressively, then released smoothly as steering was turned for corner entry.",
+    "coaching_line": "Maintain consistent pressure on the brake pedal until full turn is initiated; release gently to avoid abrupt changes in speed and tire slip.",
+    "severity": "warn",
+    "confidence_reasoning": "According to racing theory, smooth brake application and release are crucial for maintaining vehicle control during corner entry. This minimizes tire slip and ensures optimal traction."
+  },
+  "359f08d52ef600531ddd24d74537619e": {
+    "corner_summary": "Driver executed heavy braking (0.14 Brake Score) with minimal time loss, indicating a well-controlled and early application of brakes for safety.",
+    "coaching_line": "Maintain consistent braking pressure to ensure optimal traction and stability.",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1 Braking, this score suggests a safe and controlled braking action, aligning with the goal of early brake balance for safety.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "3f38bfbdb70f0ad826356cb676f44781": {
+    "corner_summary": "Driver maintained optimal braking balance, likely using moderate trail braking for corner S7.",
+    "coaching_line": "Ensure consistent brake application across corners to maintain stability and control.",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry Brake Score (0.32) indicates a balanced braking input, aligning with theory on early system commissioning for safety and optimal balance.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "95ee3a3805f3a28897110760c7eb11b1": {
+    "corner_summary": "Driver executed heavy braking at S17, maintaining stability without significant throttle input.",
+    "coaching_line": "Maintain consistent brake pressure for optimal corner entry.",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and more sweeping the turn (theory 3), less trail braking is used, indicating a balanced approach to braking force application.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "ead3970e590180847a432a2a67911c3e": {
+    "corner_summary": "Driver executed heavy braking at corner S27, maintaining stability without significant throttle input.",
+    "coaching_line": "Maintain consistent brake balance for optimal control in turns",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and the principle of more sweeping turns requiring less trail braking, the driver's performance indicates a well-executed heavy braking maneuver with stable steering.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "3f08814c76794aa813b40c97ae7cad63": {
+    "corner_summary": "Driver executed heavy braking at S37, maintaining stability without significant throttle input.",
+    "coaching_line": "Maintain consistent brake pressure for optimal corner entry.",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and more sweeping the turn (theory 3), less trail braking is used, indicating a balanced approach to braking.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "b5ad01d586144a30743c7727522d913d": {
+    "corner_summary": "Driver executed heavy braking, maintaining stability without significant time loss.",
+    "coaching_line": "Maintain consistent brake pressure for optimal control and safety.",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry indicates high braking score (0.50) and stable steering (0.50), aligning with theory on early braking system commissioning and suitable balance for safety. More sweeping turns would require less trail braking, as per RossBentley-Trail-Braking-20210928-1.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "c961e7f890511097501a8c44be7c0a35": {
+    "corner_summary": "Driver executed heavy braking at S57, maintaining stability without significant throttle input.",
+    "coaching_line": "Maintain consistent brake pressure for optimal corner entry.",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and more sweeping turns (theory 3), the driver's action indicates a well-executed, stable braking maneuver with minimal throttle intervention.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "85fcc23c548f58dbf9e38bdca37b8dde": {
+    "corner_summary": "Driver executed heavy braking at S67, maintaining stability without significant throttle input.",
+    "coaching_line": "Maintain consistent brake pressure for optimal corner entry.",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and the principle of more sweeping turns requiring less trail braking, the driver's action indicates a well-executed, stable braking maneuver (Braking Score: 0.45).",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "ca961d83526f20e66cc54ac71c8c4995": {
+    "corner_summary": "Driver executed heavy braking at S77, maintaining stability without significant throttle input.",
+    "coaching_line": "Maintain consistent brake pressure and trail-braking angle for optimal corner exit speed.",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry indicates high braking score (0.37) and good steering stability (0.50), aligning with theory on early braking system commissioning and suitable brake balance for safety.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "71025dbbe18c3154f720e7c4f67646d2": {
+    "corner_summary": "Driver executed heavy braking at S87, maintaining stability without significant throttle input.",
+    "coaching_line": "Maintain consistent brake pressure for optimal corner entry.",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1 Braking and more sweeping turns (theory 3), less trail braking is used with more aggressive turn entries, indicating the driver's successful execution of heavy braking without compromising stability.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
   }
 }
