@@ -4,6 +4,7 @@ import { TelemetryPoint, Segment, Lap } from '../../types/telemetry';
 import { createTrackProjection, speedToColor } from '../../utils/d3Helpers';
 import { ReplayEngine } from '../../engine/ReplayEngine';
 import { CornerIntelligenceLayer, CornerAnalytics } from './CornerIntelligenceLayer';
+import { BrakingZoneLayer } from './BrakingZoneLayer';
 
 interface TrackMapProps {
   telemetry: TelemetryPoint[];
@@ -14,7 +15,7 @@ interface TrackMapProps {
   revealTrack?: boolean;
 }
 
-const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments, laps, engine, onAnalyticsReady, revealTrack = false }) => {
+export const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments, laps, engine, onAnalyticsReady, revealTrack = false }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -443,6 +444,7 @@ const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments, laps,
     return unsub;
   }, [engine, drawKey]);
 
+
   return (
     <div ref={containerRef} className="absolute inset-0 z-[10]">
       {/* Animated background grid */}
@@ -460,6 +462,15 @@ const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments, laps,
         segments={segments}
         dimensions={dimensions}
         onAnalyticsReady={onAnalyticsReady}
+      />
+      
+      {/* Braking clouds overlay */}
+      <BrakingZoneLayer
+        svgRef={svgRef}
+        telemetry={telemetry}
+        segments={segments}
+        laps={laps}
+        dimensions={dimensions}
       />
     </div>
   );

@@ -14,6 +14,7 @@ export const useReplayStore = create<ReplayState>((set) => ({
   ghostModeEnabled: true,
   activeCoachingEvent: null,
   isSpeechActive: false,
+  showBrakingZones: false,
 
   togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
   setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
@@ -23,6 +24,7 @@ export const useReplayStore = create<ReplayState>((set) => ({
   setCurrentLapNumber: (num) => set({ currentLapNumber: num }),
   initializeSession: (start, end) => set({ sessionStart: start, sessionEnd: end, currentTimestamp: start }),
   toggleGhostMode: () => set((state) => ({ ghostModeEnabled: !state.ghostModeEnabled })),
+  toggleBrakingZones: () => set((state) => ({ showBrakingZones: !state.showBrakingZones })),
 
   setActiveCoachingEvent: (event) => {
     if (dismissTimer) clearTimeout(dismissTimer);

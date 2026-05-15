@@ -16,6 +16,9 @@ export interface ReplayState {
   activeCoachingEvent: CoachingEvent | null;
   isSpeechActive: boolean;
 
+  // Visualization Toggles
+  showBrakingZones: boolean;
+
   // Actions
   togglePlay: () => void;
   setPlaybackSpeed: (speed: number) => void;
@@ -28,4 +31,5 @@ export interface ReplayState {
   setActiveCoachingEvent: (event: CoachingEvent | null) => void;
   dismissCoachingEvent: () => void;
   setSpeechActive: (active: boolean) => void;
+  toggleBrakingZones: () => void;
 }

@@ -19,10 +19,12 @@ const PlaybackControlsComponent: React.FC = () => {
   const sessionStart = useReplayStore(s => s.sessionStart);
   const sessionEnd = useReplayStore(s => s.sessionEnd);
   const ghostModeEnabled = useReplayStore(s => s.ghostModeEnabled);
+  const showBrakingZones = useReplayStore(s => s.showBrakingZones);
   const togglePlay = useReplayStore(s => s.togglePlay);
   const setPlaybackSpeed = useReplayStore(s => s.setPlaybackSpeed);
   const seekTo = useReplayStore(s => s.seekTo);
   const toggleGhostMode = useReplayStore(s => s.toggleGhostMode);
+  const toggleBrakingZones = useReplayStore(s => s.toggleBrakingZones);
 
   // DOM refs for high-frequency updates (avoids re-render on every frame)
   const progressFillRef = useRef<HTMLDivElement>(null);
@@ -122,8 +124,24 @@ const PlaybackControlsComponent: React.FC = () => {
           </div>
         </div>
 
-        {/* Ghost + Speed */}
+        {/* Toggles + Speed */}
         <div className="flex items-center gap-4">
+          <button
+            onClick={toggleBrakingZones}
+            className="flex items-center gap-1.5 px-2 py-1 rounded transition-all duration-200"
+            style={{
+              background: showBrakingZones ? 'rgba(239,68,68,0.1)' : 'transparent',
+              border: `1px solid ${showBrakingZones ? 'rgba(239,68,68,0.3)' : 'rgba(148,163,184,0.1)'}`,
+            }}
+          >
+            <div className={`w-1.5 h-1.5 rounded-full ${showBrakingZones ? 'bg-red-500' : 'bg-slate-600'}`}
+              style={showBrakingZones ? { boxShadow: '0 0 6px rgba(239,68,68,0.6)' } : {}} />
+            <span className="text-[9px] font-semibold tracking-[0.1em] uppercase"
+              style={{ color: showBrakingZones ? 'rgba(239,68,68,0.9)' : 'rgba(148,163,184,0.4)' }}>
+              BRAKING
+            </span>
+          </button>
+
           <button
             onClick={toggleGhostMode}
             className="flex items-center gap-1.5 px-2 py-1 rounded transition-all duration-200"
