@@ -47,7 +47,7 @@ export class CoachingScheduler {
     coachingAudioQueue.play(event);
   }
 
-  private reset(timestamp: number) {
+  public reset(timestamp: number) {
     // Clear future fired IDs but keep past ones to prevent double-firing on micro-scrubs
     // For a full restart (timestamp near 0), clear everything
     if (timestamp < 1000) {

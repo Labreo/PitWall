@@ -5,21 +5,25 @@ interface CoachingState {
   activeEvent: CoachingEvent | null;
   queue: CoachingEvent[];
   playbackStatus: 'idle' | 'playing' | 'interrupted';
+  isUnlocked: boolean;
   
   // Actions
   setActiveEvent: (event: CoachingEvent | null) => void;
   addToQueue: (event: CoachingEvent) => void;
   clearActive: () => void;
   setPlaybackStatus: (status: 'idle' | 'playing' | 'interrupted') => void;
+  unlock: () => void;
 }
 
 export const useCoachingStore = create<CoachingState>((set) => ({
   activeEvent: null,
   queue: [],
   playbackStatus: 'idle',
+  isUnlocked: false,
 
   setActiveEvent: (event) => set({ activeEvent: event }),
   addToQueue: (event) => set((state) => ({ queue: [...state.queue, event] })),
   clearActive: () => set({ activeEvent: null, playbackStatus: 'idle' }),
   setPlaybackStatus: (status) => set({ playbackStatus: status }),
+  unlock: () => set({ isUnlocked: true }),
 }));

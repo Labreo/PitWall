@@ -134,25 +134,8 @@ export class ReplayEngine {
       store.setCurrentLapNumber(null);
     }
 
-    // 3. Coaching event dispatch — 100ms fire window, dedup by lastFiredEventId
-    const triggered = this.coachingEvents.find(e =>
-      timestamp >= e.timestamp && timestamp < e.timestamp + 100
-    );
-    if (triggered && triggered.id !== this.lastFiredEventId) {
-      this.lastFiredEventId = triggered.id;
-      store.setActiveCoachingEvent(triggered);
-    }
-    // Reset dedup when scrubbed past all active windows (allows re-fire on forward replay)
-    if (!triggered && this.lastFiredEventId !== null) {
-      const stillInWindow = this.coachingEvents.some(e =>
-        timestamp >= e.timestamp && timestamp < e.timestamp + 100
-      );
-      if (!stillInWindow) {
-        this.lastFiredEventId = null;
-      }
-    }
 
-    // 4. Calculate Ghost Lap (Best Lap)
+    // 3. Calculate Ghost Lap (Best Lap)
     // Ghost replays actual best-lap telemetry at the proportionally equivalent elapsed time.
     // Uses a separate cached index so ghost search never corrupts main car search.
     let ghostData: TelemetryPoint | null = null;

@@ -13,6 +13,8 @@ import { TelemetryPoint, Segment, Lap } from '../../types/telemetry';
 import { CornerAnalytics } from '../map/CornerIntelligenceLayer';
 import REAL_COACHING_EVENTS from '../../utils/coaching_events.json';
 import { CoachingSubtitles } from './CoachingSubtitles';
+import { EngineerRadioDebugPanel } from './EngineerRadioDebugPanel';
+import { coachingAudioQueue } from '../../engine/coachingAudioQueue';
 
 interface ReplayLayoutProps {
   telemetry?: TelemetryPoint[];
@@ -26,6 +28,11 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
   laps = MOCK_LAPS,
 }) => {
   const engineRef = useReplayEngine(telemetry, segments, laps, REAL_COACHING_EVENTS as any);
+
+  // Audio Unlock Handler
+  const handleInteraction = () => {
+    coachingAudioQueue.unlock();
+  };
   const cornerAnalyticsRef = useRef<CornerAnalytics[]>([]);
   const [cornerAnalytics, setCornerAnalytics] = useState<CornerAnalytics[]>([]);
 
@@ -124,7 +131,11 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
   }, [segments, telemetry]);
 
   return (
-    <div className="w-full h-full relative scanline-overlay">
+    <div 
+      className="w-full h-full relative scanline-overlay"
+      onClick={handleInteraction}
+    >
+      <EngineerRadioDebugPanel />
 
       {/* ── Driving footage background ── */}
       <VideoBackground />
