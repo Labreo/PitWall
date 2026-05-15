@@ -12,6 +12,7 @@ import { MOCK_TELEMETRY, MOCK_SEGMENTS, MOCK_LAPS } from '../../utils/mockData';
 import { TelemetryPoint, Segment, Lap } from '../../types/telemetry';
 import { CornerAnalytics } from '../map/CornerIntelligenceLayer';
 import REAL_COACHING_EVENTS from '../../utils/coaching_events.json';
+import { CoachingSubtitles } from './CoachingSubtitles';
 
 interface ReplayLayoutProps {
   telemetry?: TelemetryPoint[];
@@ -248,6 +249,7 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
       <TrackMap
         telemetry={telemetry}
         segments={segmentsWithPath as any}
+        laps={laps}
         engine={engineRef.current}
         onAnalyticsReady={handleAnalyticsReady}
         revealTrack={revealTrack}
@@ -346,8 +348,8 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
       {/* ── Corner Intelligence HUD ── */}
       <CornerHUD analytics={cornerAnalytics} />
 
-      {/* ── Coaching Overlay ── */}
-      <CoachingOverlay />
+      {/* ── Cinematic Coaching Subtitles ── */}
+      <CoachingSubtitles />
 
       {/* ── Playback Controls ── */}
       <PlaybackControls />

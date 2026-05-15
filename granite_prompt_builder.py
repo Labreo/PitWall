@@ -18,24 +18,20 @@ def build_granite_prompt(context: dict[str, Any]) -> str:
     priority = context.get("coaching_priority", "info")
 
     prompt = f"""
-System: You are a professional race engineer. You must output ONLY valid JSON.
-Task: Explain telemetry findings and provide advice.
-
-Data:
+Input Data:
 - Corner: {corner_id} ({corner_type})
-- Braking Score: {brake:.2f} (Target: 0.6-0.8)
-- Throttle Score: {throttle:.2f} (Target: >0.85)
-- Steering Stability: {steer:.2f} (Target: >0.90)
+- Braking Score: {brake:.2f}
+- Throttle Score: {throttle:.2f}
+- Steering Stability: {steer:.2f}
 - Time Loss: {time_loss:.3f}s
 - Priority: {priority}
 
-Required JSON structure:
+Task: You are a race engineer. Return ONLY a single-line JSON object (no newlines) with this exact structure:
 {{
-  "corner_summary": "Short technical summary of current telemetry",
-  "coaching_line": "Direct advice to the driver (max 10 words)",
+  "corner_summary": "Summary of performance",
+  "coaching_line": "Direct advice (max 10 words)",
   "severity": "{priority}",
-  "confidence_reasoning": "Technical explanation of why this advice was given based on the scores"
+  "confidence_reasoning": "Technical explanation"
 }}
-
-Advice:"""
+"""
     return prompt.strip()

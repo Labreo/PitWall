@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, memo } from 'react';
 import * as d3 from 'd3';
-import { TelemetryPoint, Segment } from '../../types/telemetry';
+import { TelemetryPoint, Segment, Lap } from '../../types/telemetry';
 import { createTrackProjection, speedToColor } from '../../utils/d3Helpers';
 import { ReplayEngine } from '../../engine/ReplayEngine';
 import { CornerIntelligenceLayer, CornerAnalytics } from './CornerIntelligenceLayer';
@@ -8,12 +8,13 @@ import { CornerIntelligenceLayer, CornerAnalytics } from './CornerIntelligenceLa
 interface TrackMapProps {
   telemetry: TelemetryPoint[];
   segments: Segment[];
+  laps: Lap[];
   engine: ReplayEngine | null;
   onAnalyticsReady?: (analytics: CornerAnalytics[]) => void;
   revealTrack?: boolean;
 }
 
-const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments, engine, onAnalyticsReady, revealTrack = false }) => {
+const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments, laps, engine, onAnalyticsReady, revealTrack = false }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -111,6 +112,28 @@ const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments, engin
       { range: [maxSpd * 0.33, maxSpd * 0.66], opacity: 0.6 },
       { range: [maxSpd * 0.66, maxSpd], opacity: 0.9 },
     ];
+
+    // ── Start/Finish Indicator ──
+    // Find the timestamp when Lap 1 officially starts (from laps.json)
+    const lap1StartTs = laps[0]?.start_timestamp ?? telemetry[0].timestamp;
+    const startPoint = telemetry.find(t => t.timestamp >= lap1StartTs) ?? telemetry[0];
+    const [startX, startY] = proj(startPoint.longitude, startPoint.latitude);
+    const sfMarker = trackG.append('g').attr('class', 'sf-marker');
+    
+    sfMarker.append('text')
+      .attr('x', startX)
+      .attr('y', startY + 6)
+      .attr('text-anchor', 'middle')
+      .attr('style', 'font-size: 16px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); pointer-events: none;')
+      .text('🏁');
+    
+    sfMarker.append('text')
+      .attr('x', startX)
+      .attr('y', startY - 14)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#94a3b8')
+      .attr('style', 'font-size: 8px; font-weight: 800; letter-spacing: 0.1em; pointer-events: none;')
+      .text('START/FINISH');
     
     speedBuckets.forEach(bucket => {
       const bucketPts: [number, number][] = [];

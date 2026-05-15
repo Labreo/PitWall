@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, memo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ReplayEngine } from '../../engine/ReplayEngine';
 import { TelemetryPoint } from '../../types/telemetry';
+import { useCoachingStore } from '../../store/coachingStore';
 
 interface TelemetryHUDProps {
   engine: ReplayEngine | null;
@@ -115,8 +116,44 @@ const TelemetryHUDComponent: React.FC<TelemetryHUDProps> = ({ engine }) => {
     return unsub;
   }, [engine]);
 
+  const activeEvent = useCoachingStore((state) => state.activeEvent);
+
   return (
     <>
+      {/* ── Radio Activity: Top-left ── */}
+      <AnimatePresence>
+        {activeEvent && (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="absolute top-24 left-8 z-[60] flex items-center gap-3"
+          >
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-slate-500 tracking-widest uppercase">Engineer Radio</span>
+              <div className="flex items-center gap-1.5">
+                <div className="flex gap-0.5">
+                  {[...Array(4)].map((_, i) => (
+                    <motion.div
+                      key={i}
+                      animate={{ height: [4, 12, 4] }}
+                      transition={{ 
+                        repeat: Infinity, 
+                        duration: 0.6, 
+                        delay: i * 0.1,
+                        ease: "easeInOut" 
+                      }}
+                      className="w-0.5 bg-cyan-400"
+                    />
+                  ))}
+                </div>
+                <span className="text-[10px] font-mono text-cyan-400/80">TX ACTIVE</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* ── SPEED: Bottom-left ── */}
       <motion.div
         initial={{ opacity: 0, x: -40 }}

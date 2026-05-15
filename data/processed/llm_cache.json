@@ -1,0 +1,98 @@
+{
+  "afe5a2800b1591c07e26862d64253b81": {
+    "corner_summary": "Driver maintained control in S7 corner, showing steady throttle and braking.",
+    "coaching_line": "Maintain consistent throttle application for better acceleration.",
+    "severity": "warn",
+    "confidence_reasoning": "The driver's throttle score (0.44) indicates a slight over-application, which could be improved to enhance corner exit speed."
+  },
+  "57acff32adeabb4b157f847c501f6358": {
+    "corner_summary": "Driver's heavy braking at S27 corner resulted in minimal time loss, but steering stability was slightly compromised.",
+    "coaching_line": "Maintain consistent throttle input for better control during hard braking.",
+    "severity": "warn",
+    "confidence_reasoning": "The low throttle score (0.00) indicates the driver may have abruptly applied the brakes, potentially causing instability in steering. This is crucial to prevent overcorrection and maintain optimal corner exit speed."
+  },
+  "35f08beacb61d18839f50095a8f5279d": {
+    "corner_summary": "Driver maintained control during heavy braking, but could improve throttle response and steering stability.",
+    "coaching_line": "Focus on quicker throttle application for better acceleration out of the corner.",
+    "severity": "warn",
+    "confidence_reasoning": "The driver's throttle score (0.02) indicates a slow response time, which may lead to slower exit speeds from corners. Steering stability (0.50) is average, suggesting room for improvement in maintaining consistent line through the turn."
+  },
+  "ddd92ecaa210e93588ba8615f4d6f717": {
+    "corner_summary": "Driver's heavy braking at S57 corner, with minimal throttle input and average steering stability.",
+    "coaching_line": "Maintain consistent throttle control for better acceleration and smoother transitions.",
+    "severity": "warn",
+    "confidence_reasoning": "The low throttle score indicates insufficient power application, which could impact overtaking opportunities. The high braking score suggests aggressive braking, potentially leading to longer stopping distances."
+  },
+  "88518c7065fd1e9fc4a0046b052c93b0": {
+    "corner_summary": "Driver maintained control, but could improve throttle application and steering stability.",
+    "coaching_line": "Focus on smooth throttle input and maintain steady steering for better corner exit.",
+    "severity": "warn",
+    "confidence_reasoning": "The low throttle score (0.00) indicates the driver may have been too cautious, while the moderate steering stability (0.50) suggests room for improvement in maintaining consistent control during heavy braking."
+  },
+  "ac1e96a44272a0f6aadbc8d4be75d89f": {
+    "corner_summary": "Driver maintained control during heavy braking, but lacked throttle input and steering stability.",
+    "coaching_line": "Focus on consistent throttle application for smoother transitions.",
+    "severity": "warn",
+    "confidence_reasoning": "The low throttle score (0.00) indicates the driver may have abruptly applied brakes, causing instability. This is crucial to prevent loss of control during heavy braking."
+  },
+  "ef3a7e1f6f8f51fb669c1404f524af34": {
+    "corner_summary": "Driver maintained control during heavy braking, but steering stability could be improved.",
+    "coaching_line": "Focus on maintaining consistent steering input for smoother corner entries.",
+    "severity": "warn",
+    "confidence_reasoning": "Braking score and time loss indicate controlled deceleration, while low steering stability suggests potential for oversteer."
+  },
+  "73a1cb623a7172dde1a89b04afe78d19": {
+    "corner_summary": "Driver maintained control, slight oversteer at S7 corner.",
+    "coaching_line": "Gentle throttle input for better traction and steering correction.",
+    "severity": "warn",
+    "confidence_reasoning": "Braking score (0.32) indicates potential for improved braking, while throttle (0.44) suggests room for more controlled acceleration."
+  },
+  "74dae664d5e90455fee66601fd7f917b": {
+    "corner_summary": "Heavy braking at S17 with minimal throttle input, maintaining stability.",
+    "coaching_line": "Focus on consistent throttle application for better acceleration control.",
+    "severity": "warn",
+    "confidence_reasoning": "Low throttle score indicates potential for improved performance."
+  },
+  "2080c78f76bd831c199a5b63bfc05635": {
+    "corner_summary": "Driver maintained control, but minimal throttle input and high braking force used.",
+    "coaching_line": "Focus on smooth throttle application for better acceleration and fuel efficiency.",
+    "severity": "warn",
+    "confidence_reasoning": "Braking score indicates strong deceleration, while low throttle score suggests insufficient power delivery."
+  },
+  "216e8b6e00734bb9a4cbc9dc628411e0": {
+    "corner_summary": "Heavy braking at S37 with low throttle and stable steering, no time loss.",
+    "coaching_line": "Maintain consistent pressure on the brakes for better control.",
+    "severity": "warn",
+    "confidence_reasoning": "Braking score of 0.46 indicates moderate deceleration, while throttle score is zero, suggesting no power application. Steering stability at 0.50 shows controlled turning."
+  },
+  "2dbda13beb3f0a2a3b5ede60a72203f0": {
+    "corner_summary": "Driver maintained control during heavy braking, but could improve throttle response and steering stability.",
+    "coaching_line": "Focus on quicker throttle application for better acceleration out of the corner.",
+    "severity": "warn",
+    "confidence_reasoning": "Braking score is good (0.50), indicating controlled deceleration. However, throttle and steering scores are low (0.02 and 0.50 respectively), suggesting room for improvement in maintaining speed and stability during corner exit."
+  },
+  "88b3e59b2f033387bb309e834c3c1567": {
+    "corner_summary": "Driver maintained control, but could improve throttle application and steering stability",
+    "coaching_line": "Focus on smooth throttle input and maintain steady steering",
+    "severity": "warn",
+    "confidence_reasoning": "Braking score indicates good control, but low throttle and steering scores suggest room for improvement"
+  },
+  "7bf4e7b82f8ab1961d695b6c3d6beabe": {
+    "corner_summary": "Heavy braking at S67 with minimal throttle input, steering stability maintained.",
+    "coaching_line": "Maintain consistent braking pressure and prepare for quicker throttle application next turn.",
+    "severity": "warn",
+    "confidence_reasoning": "Low throttle score indicates potential for reduced acceleration, while high steering stability suggests good control."
+  },
+  "e0dd8745ece3764db8f4fb9a5ad28fb5": {
+    "corner_summary": "Heavy braking at S77 with minimal throttle input, steering stability average.",
+    "coaching_line": "Maintain consistent pressure on the brakes for better control.",
+    "severity": "warn",
+    "confidence_reasoning": "Low throttle usage and time loss indicate a cautious approach, but further improvement in throttle application could enhance cornering speed."
+  },
+  "b7e7ebf94a4aec08f6a0a66b1a9987d0": {
+    "corner_summary": "Driver maintained control, but could improve throttle input and steering stability",
+    "coaching_line": "Focus on smooth throttle application for better acceleration",
+    "severity": "warn",
+    "confidence_reasoning": "Braking score indicates good control, but low throttle and steering scores suggest room for improvement"
+  }
+}

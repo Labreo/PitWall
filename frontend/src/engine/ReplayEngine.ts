@@ -2,7 +2,8 @@ import { TelemetryPoint, Segment, Lap } from '../types/telemetry';
 import { CoachingEvent } from '../types/coaching';
 import { interpolateTelemetry } from './interpolation';
 import { useReplayStore } from '../store/replayStore';
-import { speechCoach } from '../services/SpeechCoach';
+import { CoachingScheduler } from './coachingScheduler';
+import { coachingAudioQueue } from './coachingAudioQueue';
 
 export type EngineCallback = (
   interpolated: TelemetryPoint,
@@ -15,6 +16,7 @@ export class ReplayEngine {
   private segments: Segment[] = [];
   private laps: Lap[] = [];
   private coachingEvents: CoachingEvent[] = [];
+  private scheduler: CoachingScheduler;
 
   private rAFId: number | null = null;
   private lastRealTime: number = 0;
@@ -24,9 +26,6 @@ export class ReplayEngine {
   private ghostCachedIndex: number = 0;
   private bestLapCache: Lap | null = null;
 
-  // Coaching dedup: prevent re-fire on same event ID within a forward pass
-  private lastFiredEventId: string | null = null;
-
   // Subscribers
   private callbacks: EngineCallback[] = [];
 
@@ -35,6 +34,9 @@ export class ReplayEngine {
     this.segments = segments;
     this.laps = laps;
     this.coachingEvents = coachingEvents;
+    
+    // Initialize the synchronization engine
+    this.scheduler = new CoachingScheduler(coachingEvents);
 
     // Pre-compute best lap on construction (only once)
     if (laps.length > 0) {
@@ -63,9 +65,9 @@ export class ReplayEngine {
   }
 
   public updateManual(timestamp: number) {
-    // Scrub resets dedup so events can re-fire when scrubbing back past them
-    this.lastFiredEventId = null;
-    speechCoach.reset();
+    // Scrub resets scheduler state
+    this.scheduler.reset(timestamp);
+    coachingAudioQueue.stop();
     this.processFrame(timestamp);
   }
 
@@ -83,6 +85,9 @@ export class ReplayEngine {
       newTimestamp = store.sessionEnd;
       store.togglePlay();
     }
+
+    // Trigger coaching events for this frame
+    this.scheduler.update(newTimestamp, store.isPlaying);
 
     store.setCurrentTimestamp(newTimestamp);
     this.processFrame(newTimestamp);

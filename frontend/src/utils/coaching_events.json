@@ -1,12 +1,14 @@
 [
   {
-    "id": "1ce4bb93-ee72-4e27-99af-d7b21cca1154",
+    "id": "ea348da2-a278-448d-bb26-a28d385d7483",
     "timestamp": 129600,
     "lap_number": 1,
     "corner_id": "S5",
     "severity": "warn",
     "category": "throttle",
-    "message": "Minimize steering corrections. Hold a smoother arc through the apex.",
+    "message": "Focus on maintaining consistent steering input for smoother corner entries.",
+    "corner_summary": "Driver maintained control during heavy braking, but steering stability could be improved.",
+    "confidence_reasoning": "Braking score and time loss indicate controlled deceleration, while low steering stability suggests potential for oversteer.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -18,13 +20,15 @@
     }
   },
   {
-    "id": "73a02493-a51f-4a0d-861d-6cf21e306198",
+    "id": "381a1149-c8ed-4f45-bc2b-3ee67477ff06",
     "timestamp": 160200,
     "lap_number": 1,
     "corner_id": "S7",
     "severity": "warn",
     "category": "throttle",
-    "message": "Minimize steering corrections. Hold a smoother arc through the apex.",
+    "message": "Gentle throttle input for better traction and steering correction.",
+    "corner_summary": "Driver maintained control, slight oversteer at S7 corner.",
+    "confidence_reasoning": "Braking score (0.32) indicates potential for improved braking, while throttle (0.44) suggests room for more controlled acceleration.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -36,13 +40,15 @@
     }
   },
   {
-    "id": "09714079-27de-405c-b500-13a4182f0cb1",
+    "id": "6dde67bd-de08-4930-98a7-24e80c9bfbdc",
     "timestamp": 242100,
     "lap_number": 2,
     "corner_id": "S17",
     "severity": "warn",
-    "category": "throttle",
-    "message": "Minimize steering corrections. Hold a smoother arc through the apex.",
+    "category": "apex",
+    "message": "Focus on consistent throttle application for better acceleration control.",
+    "corner_summary": "Heavy braking at S17 with minimal throttle input, maintaining stability.",
+    "confidence_reasoning": "Low throttle score indicates potential for improved performance.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -54,13 +60,15 @@
     }
   },
   {
-    "id": "c6150782-7eaa-404a-aec1-304fe8798392",
+    "id": "868bfbda-7873-4faf-ae44-af6bd1a842e4",
     "timestamp": 348200,
     "lap_number": 3,
     "corner_id": "S27",
     "severity": "warn",
-    "category": "throttle",
-    "message": "Minimize steering corrections. Hold a smoother arc through the apex.",
+    "category": "apex",
+    "message": "Focus on smooth throttle application for better acceleration and fuel efficiency.",
+    "corner_summary": "Driver maintained control, but minimal throttle input and high braking force used.",
+    "confidence_reasoning": "Braking score indicates strong deceleration, while low throttle score suggests insufficient power delivery.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -72,13 +80,15 @@
     }
   },
   {
-    "id": "1c31a275-59af-4e51-a472-63635c8aca9a",
+    "id": "7e230252-1a5f-41d2-b1f4-1d66f347b2d5",
     "timestamp": 454000,
     "lap_number": 4,
     "corner_id": "S37",
     "severity": "warn",
-    "category": "throttle",
-    "message": "Minimize steering corrections. Hold a smoother arc through the apex.",
+    "category": "apex",
+    "message": "Maintain consistent pressure on the brakes for better control.",
+    "corner_summary": "Heavy braking at S37 with low throttle and stable steering, no time loss.",
+    "confidence_reasoning": "Braking score of 0.46 indicates moderate deceleration, while throttle score is zero, suggesting no power application. Steering stability at 0.50 shows controlled turning.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -90,13 +100,15 @@
     }
   },
   {
-    "id": "2f05176b-ca54-4ee5-8c67-7c40c8fef68c",
+    "id": "c64eb032-ad8a-4edd-a7a6-3f29ea9f5373",
     "timestamp": 559900,
     "lap_number": 5,
     "corner_id": "S47",
     "severity": "warn",
     "category": "throttle",
-    "message": "Minimize steering corrections. Hold a smoother arc through the apex.",
+    "message": "Focus on quicker throttle application for better acceleration out of the corner.",
+    "corner_summary": "Driver maintained control during heavy braking, but could improve throttle response and steering stability.",
+    "confidence_reasoning": "Braking score is good (0.50), indicating controlled deceleration. However, throttle and steering scores are low (0.02 and 0.50 respectively), suggesting room for improvement in maintaining speed and stability during corner exit.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -108,13 +120,15 @@
     }
   },
   {
-    "id": "55ef5191-9d88-4702-9bf3-37c1876fbb99",
+    "id": "c5e72414-0492-4515-9e44-775a5ed910c3",
     "timestamp": 664900,
     "lap_number": 6,
     "corner_id": "S57",
     "severity": "warn",
-    "category": "throttle",
-    "message": "Minimize steering corrections. Hold a smoother arc through the apex.",
+    "category": "apex",
+    "message": "Focus on smooth throttle input and maintain steady steering",
+    "corner_summary": "Driver maintained control, but could improve throttle application and steering stability",
+    "confidence_reasoning": "Braking score indicates good control, but low throttle and steering scores suggest room for improvement",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -126,13 +140,15 @@
     }
   },
   {
-    "id": "cc166db8-3522-4673-8bae-59b2ede187dc",
+    "id": "809389b4-0949-45af-bf37-b348aff5c307",
     "timestamp": 769900,
     "lap_number": 7,
     "corner_id": "S67",
     "severity": "warn",
-    "category": "throttle",
-    "message": "Minimize steering corrections. Hold a smoother arc through the apex.",
+    "category": "apex",
+    "message": "Maintain consistent braking pressure and prepare for quicker throttle application next turn.",
+    "corner_summary": "Heavy braking at S67 with minimal throttle input, steering stability maintained.",
+    "confidence_reasoning": "Low throttle score indicates potential for reduced acceleration, while high steering stability suggests good control.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -144,13 +160,15 @@
     }
   },
   {
-    "id": "6d210929-8921-4081-88f5-1d543ef85004",
+    "id": "20813dd9-3731-46c3-ad68-9634b4cabb57",
     "timestamp": 874300,
     "lap_number": 8,
     "corner_id": "S77",
     "severity": "warn",
-    "category": "throttle",
-    "message": "Minimize steering corrections. Hold a smoother arc through the apex.",
+    "category": "apex",
+    "message": "Maintain consistent pressure on the brakes for better control.",
+    "corner_summary": "Heavy braking at S77 with minimal throttle input, steering stability average.",
+    "confidence_reasoning": "Low throttle usage and time loss indicate a cautious approach, but further improvement in throttle application could enhance cornering speed.",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
@@ -162,13 +180,15 @@
     }
   },
   {
-    "id": "0360ff39-8bdd-469e-9486-5e3f50c6a1ba",
+    "id": "bade1d89-6b49-489d-8629-52fb602fef98",
     "timestamp": 979100,
     "lap_number": 9,
     "corner_id": "S87",
     "severity": "warn",
-    "category": "throttle",
-    "message": "Minimize steering corrections. Hold a smoother arc through the apex.",
+    "category": "apex",
+    "message": "Focus on smooth throttle application for better acceleration",
+    "corner_summary": "Driver maintained control, but could improve throttle input and steering stability",
+    "confidence_reasoning": "Braking score indicates good control, but low throttle and steering scores suggest room for improvement",
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {

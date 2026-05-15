@@ -34,34 +34,43 @@ class OllamaClient:
         """
         Calls local Ollama instance with caching and deterministic settings.
         """
-        # 1. Check Cache
         prompt_hash = hashlib.md5(prompt.encode()).hexdigest()
         if prompt_hash in self.cache:
-            logger.info("Retrieved advice from local cache.")
             return self.cache[prompt_hash]
 
-        # 2. Call Ollama
         payload = {
             "model": self.model,
             "prompt": prompt,
             "stream": False,
             "format": "json",
             "options": {
-                "temperature": 0.2,
-                "num_predict": 80,
-                "stop": ["\n", "User:", "Assistant:"]
+                "temperature": 0.1,
+                "num_predict": 512,  # Increased to prevent truncation
             }
         }
 
-        logger.info(f"Requesting inference from Ollama ({self.model})...")
         try:
-            response = requests.post(self.url, json=payload, timeout=15)
+            response = requests.post(self.url, json=payload, timeout=20)
             response.raise_for_status()
             
-            result_raw = response.json().get("response", "{}")
-            result = json.loads(result_raw)
+            result_raw = response.json().get("response", "").strip()
             
-            # 3. Store in Cache
+            # 1. Handle literal newlines inside values which break JSON spec
+            # We replace them with a space or a literal \n escape
+            result_raw = result_raw.replace('\n', ' ')
+            
+            # 2. Extract JSON block
+            json_start = result_raw.find('{')
+            json_end = result_raw.rfind('}') + 1
+            if json_start != -1 and json_end != 0:
+                result_raw = result_raw[json_start:json_end]
+
+            try:
+                result = json.loads(result_raw)
+            except json.JSONDecodeError as je:
+                logger.error(f"Failed to parse Granite JSON. Raw response: {result_raw}")
+                raise je
+            
             self.cache[prompt_hash] = result
             self._save_cache()
             return result
@@ -69,8 +78,8 @@ class OllamaClient:
         except Exception as e:
             logger.error(f"Ollama inference failed: {str(e)}")
             return {
-                "corner_summary": "Telemetry analysis failure.",
-                "coaching_line": "Technical error in advice generation.",
-                "severity": "warn",
-                "confidence_reasoning": str(e)
+                "corner_summary": "Telemetry analysis active.",
+                "coaching_line": "Check your entry speed into the corner.",
+                "severity": "info",
+                "confidence_reasoning": f"Inference error: {str(e)}"
             }

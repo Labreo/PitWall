@@ -47,11 +47,5 @@ export function useReplayEngine(
     engineRef.current.updateManual(currentTimestamp);
   }, [currentTimestamp, isPlaying]);
 
-  // Mount/unmount speech coach — separate from engine lifecycle
-  useEffect(() => {
-    speechCoach.mount();
-    return () => speechCoach.unmount();
-  }, []);
-
   return engineRef;
 }
