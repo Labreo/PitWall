@@ -35,11 +35,11 @@ export function CornerHUD({ analytics }: CornerHUDProps) {
       className="corner-hud"
       style={{
         position: 'absolute',
-        bottom: 90,
+        top: '50%',
         right: 28,
         width: 200,
         opacity: 0,
-        transform: 'translateX(12px)',
+        transform: 'translate(12px, -50%)',
         pointerEvents: 'none',
         zIndex: 60,
         willChange: 'opacity, transform',
@@ -267,7 +267,7 @@ function showHUD(
     const t = Math.min((now - start) / duration, 1);
     const ease = 1 - Math.pow(1 - t, 3);
     root!.style.opacity = ease.toString();
-    root!.style.transform = `translateX(${(1 - ease) * 12}px)`;
+    root!.style.transform = `translate(${(1 - ease) * 12}px, -50%)`;
     if (t < 1) rafRef.current = requestAnimationFrame(tick);
   }
   rafRef.current = requestAnimationFrame(tick);
@@ -289,7 +289,7 @@ function hideHUD(
     const t = Math.min((now - start) / duration, 1);
     const ease = t * t;
     root!.style.opacity = (startOpacity * (1 - ease)).toString();
-    root!.style.transform = `translateX(${ease * 10}px)`;
+    root!.style.transform = `translate(${ease * 10}px, -50%)`;
     if (t < 1) rafRef.current = requestAnimationFrame(tick);
   }
   rafRef.current = requestAnimationFrame(tick);

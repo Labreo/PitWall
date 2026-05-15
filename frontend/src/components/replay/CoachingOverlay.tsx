@@ -35,7 +35,7 @@ const CoachingOverlayComponent: React.FC = () => {
           exit={{ opacity: 0, x: -16 }}
           transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="absolute z-[75] pointer-events-none coaching-panel"
-          style={{ bottom: 90, left: 28, width: 260 }}
+          style={{ top: '50%', left: 28, transform: 'translateY(-50%)', width: 260 }}
         >
           {/* Left accent bar — intensifies during speech */}
           <div

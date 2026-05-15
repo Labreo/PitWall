@@ -5,6 +5,7 @@ import { TelemetryHUD } from './TelemetryHUD';
 import { PlaybackControls } from './PlaybackControls';
 import { CornerHUD } from './CornerHUD';
 import { CoachingOverlay } from './CoachingOverlay';
+import { VideoBackground } from './VideoBackground';
 import { useReplayEngine } from '../../hooks/useReplayEngine';
 import { useReplayStore } from '../../store/replayStore';
 import { MOCK_TELEMETRY, MOCK_SEGMENTS, MOCK_LAPS } from '../../utils/mockData';
@@ -35,20 +36,42 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
   // Use selective subscriptions to avoid unnecessary renders
   const currentSegmentId = useReplayStore(s => s.currentSegmentId);
   const currentLapNumber = useReplayStore(s => s.currentLapNumber);
+  const ghostModeEnabled = useReplayStore(s => s.ghostModeEnabled);
+
+  // Imperative refs for top-right readout (avoid React re-renders)
+  const altRef = useRef<HTMLSpanElement>(null);
+  const ghostGapRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const engine = engineRef.current;
+    if (!engine) return;
+    const unsub = engine.subscribe((pt, ghostPt, ghostTimeDeltaMs) => {
+      if (altRef.current) altRef.current.textContent = pt.altitude.toFixed(0);
+      if (ghostGapRef.current && ghostPt !== null) {
+        const deltaS = (ghostTimeDeltaMs ?? 0) / 1000;
+        ghostGapRef.current.textContent = deltaS >= 0 ? `+${deltaS.toFixed(2)}` : deltaS.toFixed(2);
+        ghostGapRef.current.style.color = deltaS >= 0 ? '#f87171' : '#34d399';
+      }
+    });
+    return unsub;
+  }, [engineRef.current]);
 
   // ── Intro state ──
   const [introVisible, setIntroVisible] = useState(true);
   const [introPhase, setIntroPhase] = useState<'black' | 'sweep' | 'done'>('black');
+  const [revealTrack, setRevealTrack] = useState(false);
 
   useEffect(() => {
     // Phase 1: hold black for 400ms
     const t1 = setTimeout(() => setIntroPhase('sweep'), 400);
-    // Phase 2: sweep runs 1.8s (from CSS), hide intro after
+    // Phase 2: sweep runs 1.8s, hide intro
     const t2 = setTimeout(() => {
       setIntroPhase('done');
       setIntroVisible(false);
     }, 2400);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
+    // Phase 3: reveal track 200ms after intro clears (ensures SVG is in DOM)
+    const t3 = setTimeout(() => setRevealTrack(true), 2600);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, []);
 
   // ── Sector transition flash ──
@@ -101,6 +124,9 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
 
   return (
     <div className="w-full h-full relative scanline-overlay">
+
+      {/* ── Driving footage background ── */}
+      <VideoBackground />
 
       {/* ═══════════════════════════════════
            INTRO SEQUENCE
@@ -224,13 +250,12 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
         segments={segmentsWithPath as any}
         engine={engineRef.current}
         onAnalyticsReady={handleAnalyticsReady}
-        revealTrack={introPhase === 'done'}
+        revealTrack={revealTrack}
       />
 
       {/* ── Atmospheric layers ── */}
       <div className="absolute inset-0 pointer-events-none vignette z-[45]" />
       <div className="absolute inset-0 pointer-events-none edge-fade-bottom z-[45]" />
-      <div className="absolute inset-0 pointer-events-none edge-fade-top z-[45]" />
 
       {/* ── PITWALL watermark ── */}
       <motion.div
@@ -266,37 +291,82 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
         </span>
       </motion.div>
 
-      {/* ── Telemetry HUD ── */}
-      <TelemetryHUD engine={engineRef.current} />
+      {/* ── DELTA & GHOST GAP ── top-right corner ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+        className="absolute top-6 right-8 z-[60] text-right"
+      >
+        <span className="bc-label" style={{ color: 'rgba(148,163,184,0.3)' }}>ALT</span>
+        <div className="-mt-0.5">
+          <span ref={altRef} className="bc-value text-2xl" style={{ color: 'rgba(226,232,240,0.45)' }}>0</span>
+          <span className="text-[10px] ml-0.5" style={{ color: 'rgba(148,163,184,0.2)' }}>m</span>
+        </div>
 
-      {/* ── Corner Intelligence HUD ── */}
-      <CornerHUD analytics={cornerAnalytics} />
+        {/* Ghost Lap Gap — only when ghost mode on */}
+        <AnimatePresence>
+          {ghostModeEnabled && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto', marginTop: 10 }}
+              exit={{ opacity: 0, height: 0, marginTop: 0 }}
+              className="flex flex-col items-end overflow-hidden"
+            >
+              <span className="bc-label" style={{ color: 'rgba(203,213,225,0.4)' }}>VS BEST LAP</span>
+              <div className="-mt-0.5 flex items-baseline gap-0.5">
+                <span ref={ghostGapRef} className="bc-value text-2xl" style={{ color: '#34d399' }}>+0.00</span>
+                <span className="text-[10px]" style={{ color: 'rgba(203,213,225,0.2)' }}>s</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
-      {/* ── Coaching Overlay ── */}
-      <CoachingOverlay />
-
-      {/* ── Corner Event Toast ── */}
+      {/* ── LAP + SECTOR ── bottom-right corner, fixed so it never overlaps top-right ── */}
+      <motion.div
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
+        className="absolute bottom-24 right-8 z-[60] text-right"
+      >
+        <span className="bc-label">LAP</span>
+        <div className="bc-value text-4xl text-slate-200 -mt-1 tracking-tight">{currentLapNumber ?? '—'}</div>
+        <div className="mt-1.5">
+          <span className="bc-label">SECTOR</span>
+          <div className="bc-value text-lg glow-red -mt-0.5">{currentSegmentId ?? '—'}</div>
+        </div>
+      </motion.div>
+      {/* ── Corner Event Toast ── bottom-left, above G-force + speed block ── */}
       <AnimatePresence mode="wait">
         {activeSegment && activeSegment.segment_type === 'corner' && (
           <motion.div
             key={activeSegment.segment_id}
-            initial={{ opacity: 0, x: 40, scale: 0.9, filter: 'blur(8px)' }}
-            animate={{ opacity: 1, x: 0, scale: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, x: -30, scale: 0.95, filter: 'blur(4px)' }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-16 right-8 z-[60]"
+            initial={{ opacity: 0, y: 10, filter: 'blur(6px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            exit={{ opacity: 0, y: -8, filter: 'blur(4px)' }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute z-[60]"
+            style={{ bottom: '6rem', left: '14rem' }}
           >
-            <div className="flex items-center gap-3">
-              <div className="w-[3px] h-10 rounded-full" style={{
+            <div
+              className="flex items-center gap-2 px-3 py-1.5 rounded"
+              style={{
+                background: 'rgba(248,113,113,0.07)',
+                border: '1px solid rgba(248,113,113,0.18)',
+                backdropFilter: 'blur(6px)',
+              }}
+            >
+              <div className="w-[2px] h-6 rounded-full flex-shrink-0" style={{
                 background: 'linear-gradient(to bottom, #f87171, rgba(248,113,113,0.2))',
-                boxShadow: '0 0 10px rgba(248,113,113,0.4)',
+                boxShadow: '0 0 6px rgba(248,113,113,0.4)',
               }} />
-              <div className="text-right">
-                <div className="bc-label text-[8px] glow-red">{activeSegment.segment_id}</div>
-                <div className="text-[13px] font-semibold text-slate-200 leading-tight -mt-0.5">
+              <div>
+                <div className="bc-label text-[7px] glow-red">{activeSegment.segment_id}</div>
+                <div className="text-[11px] font-semibold text-slate-200 leading-tight -mt-0.5">
                   {activeSegment.classification}
                 </div>
-                <div className="text-[10px] font-mono mt-0.5" style={{ color: 'rgba(148,163,184,0.3)' }}>
+                <div className="text-[9px] font-mono" style={{ color: 'rgba(148,163,184,0.35)' }}>
                   {Math.abs(activeSegment.heading_change_degrees).toFixed(0)}° · {activeSegment.average_speed.toFixed(0)} km/h
                 </div>
               </div>
@@ -304,6 +374,16 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+
+      {/* ── Telemetry HUD (speed, g-force, heading) ── */}
+      <TelemetryHUD engine={engineRef.current} />
+
+      {/* ── Corner Intelligence HUD ── */}
+      <CornerHUD analytics={cornerAnalytics} />
+
+      {/* ── Coaching Overlay ── */}
+      <CoachingOverlay />
 
       {/* ── Playback Controls ── */}
       <PlaybackControls />

@@ -45,9 +45,26 @@ export function computeCornerAnalytics(
       t => t.timestamp >= seg.start_timestamp && t.timestamp <= seg.end_timestamp
     );
 
+    // Guard: skip segments with no matching telemetry
+    if (segPts.length === 0) {
+      const fallbackPt = telemetry[0];
+      const fp = proj(fallbackPt.longitude, fallbackPt.latitude) as [number, number];
+      return {
+        segment: seg,
+        entrySpeed: seg.average_speed,
+        minSpeed: seg.average_speed,
+        exitSpeed: seg.average_speed,
+        brakingStartTs: seg.start_timestamp,
+        apexTs: (seg.start_timestamp + seg.end_timestamp) / 2,
+        entryPt: fp, apexPt: fp, exitPt: fp, brakingPt: fp,
+        trackPts: [],
+        timeDelta: 0,
+      } as CornerAnalytics;
+    }
+
     const speeds = segPts.map(t => t.speed_kmh);
     const entrySpeed = speeds[0] ?? seg.average_speed;
-    const minSpeed = Math.min(...speeds);
+    const minSpeed = speeds.length > 0 ? Math.min(...speeds) : seg.average_speed;
     const exitSpeed = speeds[speeds.length - 1] ?? seg.average_speed;
     const minSpeedIdx = speeds.indexOf(minSpeed);
 
@@ -56,7 +73,6 @@ export function computeCornerAnalytics(
     const apexTs = apexTp?.timestamp ?? (seg.start_timestamp + seg.end_timestamp) / 2;
 
     // Braking zone start = last point before segment where speed is still > entrySpeed * 0.95
-    // i.e. first point in pre-buffer where significant deceleration begins
     let brakingStartTs = seg.start_timestamp;
     for (let i = pts.length - 1; i >= 0; i--) {
       if (pts[i].timestamp < seg.start_timestamp && pts[i].speed_kmh > entrySpeed * 1.02) {
@@ -72,9 +88,11 @@ export function computeCornerAnalytics(
 
     const trackPts = segPts.map(t => proj(t.longitude, t.latitude) as [number, number]);
 
-    // Time delta estimate: compare actual corner duration vs theoretical at average_speed
+    // Time delta estimate
     const actualDuration = seg.duration_seconds;
-    const theoreticalDuration = actualDuration * (minSpeed / seg.average_speed);
+    const theoreticalDuration = seg.average_speed > 0 
+      ? actualDuration * (minSpeed / seg.average_speed) 
+      : actualDuration;
     const timeDelta = actualDuration - theoreticalDuration;
 
     return {
@@ -322,13 +340,14 @@ function deactivateCorner(el: SVGGElement) {
 // Tiny imperative tweens — no d3.transition overhead on hot path
 function fadeIn(el: SVGElement | null, delayMs: number, targetOpacity: number) {
   if (!el) return;
+  const element = el;
   const start = performance.now() + delayMs;
   const duration = 220;
   function tick(now: number) {
     if (now < start) { requestAnimationFrame(tick); return; }
     const t = Math.min((now - start) / duration, 1);
     const ease = 1 - Math.pow(1 - t, 3); // cubic ease-out
-    el.setAttribute('opacity', (ease * targetOpacity).toString());
+    element.setAttribute('opacity', (ease * targetOpacity).toString());
     if (t < 1) requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
@@ -336,7 +355,8 @@ function fadeIn(el: SVGElement | null, delayMs: number, targetOpacity: number) {
 
 function fadeOut(el: SVGElement | null, delayMs: number) {
   if (!el) return;
-  const startOpacity = parseFloat(el.getAttribute('opacity') ?? '0');
+  const element = el;
+  const startOpacity = parseFloat(element.getAttribute('opacity') ?? '0');
   if (startOpacity === 0) return;
   const start = performance.now() + delayMs;
   const duration = 300;
@@ -344,7 +364,7 @@ function fadeOut(el: SVGElement | null, delayMs: number) {
     if (now < start) { requestAnimationFrame(tick); return; }
     const t = Math.min((now - start) / duration, 1);
     const ease = t * t; // quadratic ease-in
-    el.setAttribute('opacity', (startOpacity * (1 - ease)).toString());
+    element.setAttribute('opacity', (startOpacity * (1 - ease)).toString());
     if (t < 1) requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);

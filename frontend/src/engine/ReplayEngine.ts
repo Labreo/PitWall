@@ -125,6 +125,8 @@ export class ReplayEngine {
     const activeLap = this.laps.find(l => timestamp >= l.start_timestamp && timestamp <= l.end_timestamp);
     if (activeLap && activeLap.lap_number !== store.currentLapNumber) {
       store.setCurrentLapNumber(activeLap.lap_number);
+    } else if (!activeLap && store.currentLapNumber !== null) {
+      store.setCurrentLapNumber(null);
     }
 
     // 3. Coaching event dispatch — 100ms fire window, dedup by lastFiredEventId

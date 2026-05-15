@@ -421,7 +421,7 @@ const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments, engin
   }, [engine, drawKey]);
 
   return (
-    <div ref={containerRef} className="absolute inset-0">
+    <div ref={containerRef} className="absolute inset-0 z-[10]">
       {/* Animated background grid */}
       <div className="absolute inset-0 animated-grid" />
 

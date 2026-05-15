@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, memo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ReplayEngine } from '../../engine/ReplayEngine';
-import { useReplayStore } from '../../store/replayStore';
 import { TelemetryPoint } from '../../types/telemetry';
 
 interface TelemetryHUDProps {
@@ -29,36 +28,33 @@ function bearingLabel(deg: number): string {
   return dirs[Math.round(deg / 45) % 8];
 }
 
+/**
+ * TelemetryHUD — left-side only panels: Speed, G-Force, Heading.
+ * Right-side panels (ALT, VS BEST LAP, LAP, SECTOR) live in ReplayLayout.
+ */
 const TelemetryHUDComponent: React.FC<TelemetryHUDProps> = ({ engine }) => {
-  const speedRef = useRef<HTMLSpanElement>(null);
-  const speedContainerRef = useRef<HTMLDivElement>(null);
-  const gDotRef = useRef<HTMLDivElement>(null);
-  const gValRef = useRef<HTMLSpanElement>(null);
-  const gRingRef = useRef<HTMLDivElement>(null);
-  const ghostGapRef = useRef<HTMLSpanElement>(null);
-  const altRef = useRef<HTMLSpanElement>(null);
-  const speedBarRef = useRef<HTMLDivElement>(null);
-  const speedGlowRef = useRef<HTMLDivElement>(null);
+  const speedRef         = useRef<HTMLSpanElement>(null);
+  const speedContainerRef= useRef<HTMLDivElement>(null);
+  const gDotRef          = useRef<HTMLDivElement>(null);
+  const gValRef          = useRef<HTMLSpanElement>(null);
+  const gRingRef         = useRef<HTMLDivElement>(null);
+  const speedBarRef      = useRef<HTMLDivElement>(null);
+  const speedGlowRef     = useRef<HTMLDivElement>(null);
   const headingNeedleRef = useRef<HTMLDivElement>(null);
-  const headingDegRef = useRef<HTMLSpanElement>(null);
-  const headingLabelRef = useRef<HTMLSpanElement>(null);
-
-  const currentSegment = useReplayStore(s => s.currentSegmentId);
-  const currentLap = useReplayStore(s => s.currentLapNumber);
-  const ghostModeEnabled = useReplayStore(s => s.ghostModeEnabled);
+  const headingDegRef    = useRef<HTMLSpanElement>(null);
+  const headingLabelRef  = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
     if (!engine) return;
     let prevPoint: TelemetryPoint | null = null;
 
-    const unsub = engine.subscribe((p, ghostPt, ghostTimeDeltaMs) => {
+    const unsub = engine.subscribe((p) => {
       const spd = Math.round(p.speed_kmh);
 
       // ── Speed number ──
       if (speedRef.current) {
-        speedRef.current.textContent = spd.toString().padStart(3, ' ');
+        speedRef.current.textContent = spd.toString().padStart(3, ' ');
       }
-
       if (speedContainerRef.current) {
         speedContainerRef.current.style.color = speedColor(p.speed_kmh);
       }
@@ -114,26 +110,10 @@ const TelemetryHUDComponent: React.FC<TelemetryHUDProps> = ({ engine }) => {
         }
       }
       prevPoint = p;
-
-      // ── Ghost Gap (real time delta from engine) ──
-      if (ghostGapRef.current) {
-        if (ghostModeEnabled && ghostPt) {
-          const deltaS = ghostTimeDeltaMs / 1000;
-          if (deltaS >= 0) {
-            ghostGapRef.current.textContent = `+${deltaS.toFixed(2)}`;
-            ghostGapRef.current.style.color = '#f87171'; // behind best
-          } else {
-            ghostGapRef.current.textContent = `${deltaS.toFixed(2)}`;
-            ghostGapRef.current.style.color = '#34d399'; // ahead of best
-          }
-        }
-      }
-
-      // ── Altitude ──
-      if (altRef.current) altRef.current.textContent = p.altitude.toFixed(0);
     });
+
     return unsub;
-  }, [engine, ghostModeEnabled]);
+  }, [engine]);
 
   return (
     <>
@@ -193,13 +173,11 @@ const TelemetryHUDComponent: React.FC<TelemetryHUDProps> = ({ engine }) => {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.45 }}
-        className="absolute bottom-[13.5rem] left-28 z-[60] flex items-center gap-3"
+        className="absolute bottom-[20rem] left-8 z-[60] flex items-center gap-3"
       >
-        {/* Compass ring */}
         <div className="relative w-8 h-8 flex items-center justify-center"
           style={{ border: '1px solid rgba(34,211,238,0.12)', borderRadius: '50%' }}
         >
-          {/* Cardinal marks */}
           {[0, 90, 180, 270].map(deg => (
             <div key={deg} className="absolute w-px h-1.5 rounded-full"
               style={{
@@ -214,7 +192,6 @@ const TelemetryHUDComponent: React.FC<TelemetryHUDProps> = ({ engine }) => {
               }}
             />
           ))}
-          {/* Needle */}
           <div ref={headingNeedleRef} className="absolute inset-0 flex items-start justify-center" style={{ transition: 'transform 120ms linear' }}>
             <div className="w-px h-3 mt-0.5 rounded-full" style={{ background: '#22d3ee', boxShadow: '0 0 4px rgba(34,211,238,0.6)' }} />
           </div>
@@ -225,53 +202,6 @@ const TelemetryHUDComponent: React.FC<TelemetryHUDProps> = ({ engine }) => {
             <span ref={headingDegRef} className="bc-value text-sm font-mono" style={{ color: 'rgba(34,211,238,0.7)' }}>000°</span>
             <span ref={headingLabelRef} className="text-[8px] font-bold tracking-wider" style={{ color: 'rgba(34,211,238,0.35)' }}>N</span>
           </div>
-        </div>
-      </motion.div>
-
-      {/* ── DELTA & GHOST GAP ── */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
-        className="absolute top-6 right-8 z-[60] text-right"
-      >
-        <span className="bc-label">SESSION TIME</span>
-        <div className="-mt-0.5">
-          <span ref={altRef} className="bc-value text-3xl" style={{ color: 'rgba(226,232,240,0.5)' }}>0</span>
-          <span className="text-xs ml-0.5" style={{ color: 'rgba(148,163,184,0.25)' }}>m</span>
-        </div>
-
-        {/* Ghost Lap Gap */}
-        <AnimatePresence>
-          {ghostModeEnabled && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
-              exit={{ opacity: 0, height: 0, marginTop: 0 }}
-              className="flex flex-col items-end"
-            >
-              <span className="bc-label" style={{ color: 'rgba(203,213,225,0.5)' }}>VS BEST LAP</span>
-              <div className="-mt-0.5 flex items-baseline gap-0.5">
-                <span ref={ghostGapRef} className="bc-value text-3xl" style={{ color: '#34d399' }}>+0.00</span>
-                <span className="text-xs" style={{ color: 'rgba(203,213,225,0.2)' }}>s</span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
-
-      {/* ── LAP + SECTOR ── */}
-      <motion.div
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: 0.25 }}
-        className="absolute bottom-24 right-8 z-[60] text-right"
-      >
-        <span className="bc-label">LAP</span>
-        <div className="bc-value text-4xl text-slate-200 -mt-1 tracking-tight">{currentLap ?? '—'}</div>
-        <div className="mt-2">
-          <span className="bc-label">SECTOR</span>
-          <div className="bc-value text-lg glow-red -mt-0.5">{currentSegment ?? '—'}</div>
         </div>
       </motion.div>
     </>
