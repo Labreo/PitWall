@@ -62,6 +62,7 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
   const currentLapNumber = useReplayStore(s => s.currentLapNumber);
   const ghostModeEnabled = useReplayStore(s => s.ghostModeEnabled);
   const showSummary = useReplayStore(s => s.showSummary);
+  const isDemo = useReplayStore(s => s.isDemo);
 
   const summaryData = useMemo(() => {
     return buildSessionSummary(
@@ -412,6 +413,31 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
           {sessionInfo?.date || '29.08.2019'}
         </span>
       </motion.div>
+      
+      {/* ── LIVE DEMO BANNER ── */}
+      {isDemo && (
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 2.5 }}
+          className="absolute top-20 left-6 z-[60] flex items-center gap-4"
+        >
+          <div className="flex flex-col items-start">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="px-2 py-0.5 bg-rose-500/20 border border-rose-500/40 rounded-[2px]">
+                <span className="text-[8px] font-black tracking-[0.2em] text-rose-400 uppercase">PRE-RENDERED DEMO</span>
+              </div>
+              <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+            </div>
+            <div className="flex flex-col border-l border-white/10 pl-3">
+              <span className="text-[10px] font-bold tracking-widest text-slate-200 uppercase">Donington Park Session</span>
+              <span className="text-[7px] font-medium tracking-tight text-rose-400/60 uppercase max-w-[180px] leading-tight mt-1">
+                Full AI Pipeline (Granite + Docling) and Custom Uploads require the local backend environment.
+              </span>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* ── DELTA & GHOST GAP ── top-right corner ── */}
       <motion.div

@@ -23,7 +23,8 @@ export const useReplayStore = create<ReplayState>((set, get) => ({
   showSummary: false,
   theoreticalLapData: null,
   isTheoreticalReplayActive: false,
-  isDemoMode: true,
+  isDemoMode: true, // This is for demo hotkeys
+  isDemo: false, // This is for the "LIVE DEMO" UI banner
   showDiagnostics: false,
   initialTelemetry: [],
   initialLaps: [],
@@ -106,4 +107,5 @@ export const useReplayStore = create<ReplayState>((set, get) => ({
   },
 
   setSpeechActive: (active) => set({ isSpeechActive: active }),
+  setIsDemo: (isDemo) => set({ isDemo }),
 }));

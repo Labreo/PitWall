@@ -245,5 +245,26 @@
     "severity": "warn",
     "confidence_reasoning": "The high brake score (0.46) indicates extensive braking force application, aligning with the theory of suitable brake balance for safety. The steering stability (0.50) suggests a balanced approach to corner entry, consistent with the instructor's opinion on braking technique.",
     "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "85e9bd239d75574339816f8147a7a01d": {
+    "corner_summary": "Driver executed heavy braking without significant throttle input, maintaining steering stability.",
+    "coaching_line": "Maintain consistent brake balance for improved corner entry speed.",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry shows high braking score (0.46) and low throttle score (0.00), indicating aggressive but controlled braking, aligning with theory of early braking system commissioning for safety and balance.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "e17076245b8480beba60fba9b87f37cb": {
+    "corner_summary": "Driver maintained optimal braking balance and steering stability during heavy braking, with no time loss.",
+    "coaching_line": "Maintain consistent brake pressure for controlled entry",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry Braking Score (0.44) indicates balanced application of brakes according to 27.5.1, supporting successful corner exit as per RossBentley-Trail-Braking-20210928-1 theory.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "9873b4ca747fdd479e181e2d0ced7721": {
+    "corner_summary": "Driver executed heavy braking at S77 with no loss, maintaining steering stability.",
+    "coaching_line": "Ensure consistent trail braking for better corner entry speed.",
+    "severity": "warn",
+    "confidence_reasoning": "The driver's high braking score (0.37) indicates aggressive braking, which is appropriate for optimizing entry speed. However, to maintain stability and consistency, focus on gradual trail braking as per theory (27.5.1).",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
   }
 }

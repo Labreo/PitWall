@@ -16,6 +16,22 @@ const UploadScreen: React.FC<UploadScreenProps> = ({ onComplete }) => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [backendAlive, setBackendAlive] = useState<boolean | null>(null);
+
+  // Check backend health on mount
+  React.useEffect(() => {
+    const check = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/status/check', { method: 'HEAD' }).catch(() => ({ ok: false }));
+        setBackendAlive(res.ok);
+      } catch {
+        setBackendAlive(false);
+      }
+    };
+    check();
+    const timer = setInterval(check, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -95,6 +111,26 @@ const UploadScreen: React.FC<UploadScreenProps> = ({ onComplete }) => {
               >
                 Initialize analytical session from source video
               </motion.p>
+
+              {/* Pipeline Connection Status */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="flex items-center justify-center gap-3 mt-4"
+              >
+                <div className="flex items-center gap-2 px-2 py-0.5 rounded-sm border border-white/5 bg-white/[0.02]">
+                  <div className={`w-1.5 h-1.5 rounded-full ${backendAlive ? 'bg-cyan-500 animate-pulse' : 'bg-rose-500'}`} />
+                  <span className={`text-[8px] font-mono tracking-widest uppercase ${backendAlive ? 'text-cyan-500/70' : 'text-rose-500/70'}`}>
+                    Pipeline: {backendAlive ? 'Online' : 'Offline'}
+                  </span>
+                </div>
+                {!backendAlive && (
+                  <span className="text-[7px] font-mono text-zinc-600 uppercase tracking-tighter">
+                    (Local Backend Required for Uploads)
+                  </span>
+                )}
+              </motion.div>
             </div>
 
             {/* Dropzone Environment */}
@@ -149,6 +185,15 @@ const UploadScreen: React.FC<UploadScreenProps> = ({ onComplete }) => {
                         <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest mt-1">
                           Drag and drop MP4 session file
                         </p>
+                        <a 
+                          href="http://www.race-technology.com/upload/video_download/GX013737.MP4"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="mt-4 text-[8px] font-mono text-cyan-500/50 hover:text-cyan-400 uppercase tracking-[0.2em] border-b border-cyan-500/20 transition-colors pointer-events-auto"
+                        >
+                          Download Sample Session Data
+                        </a>
                       </div>
                     </>
                   )}

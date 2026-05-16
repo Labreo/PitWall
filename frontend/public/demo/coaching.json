@@ -1,0 +1,202 @@
+[
+  {
+    "id": "2619cb77-4b7d-4a3e-95c0-13f6936f335b",
+    "timestamp": 129600,
+    "lap_number": 1,
+    "corner_id": "S5",
+    "severity": "warn",
+    "category": "throttle",
+    "message": "Maintain consistent trail braking for more control in corners",
+    "corner_summary": "The driver executed a controlled, heavy-braking maneuver with minimal time loss, demonstrating good brake balance and stability.",
+    "confidence_reasoning": "Telemetry's low Braking Score (0.14) and Steering Stability (0.50) indicate conservative, well-timed braking, aligning with theory that early commission of the braking system ensures suitable balance.",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 79.46,
+      "apex_speed": 62.66,
+      "exit_speed": 126.99,
+      "brake_score": 0.14,
+      "throttle_score": 0.12
+    }
+  },
+  {
+    "id": "3c2275ad-4fe1-4710-b35a-9ee931b76941",
+    "timestamp": 160200,
+    "lap_number": 1,
+    "corner_id": "S7",
+    "severity": "warn",
+    "category": "throttle",
+    "message": "Ensure consistent, balanced braking application for optimal track position.",
+    "corner_summary": "The driver exhibited controlled, even braking (0.32), applying moderate throttle (0.44) and maintaining steering stability (0.50) in corner S7, with no time loss (0.000s).",
+    "confidence_reasoning": "The driver's performance indicates a well-executed trail braking technique, as per theory suggesting more sweeping turns require less aggressive braking. The scores suggest a stable, controlled car, aligning with the goal of maintaining consistent driving within road racing schools and programs.",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 131.69,
+      "apex_speed": 93.36,
+      "exit_speed": 129.63,
+      "brake_score": 0.32,
+      "throttle_score": 0.44
+    }
+  },
+  {
+    "id": "76ea18aa-6e02-487b-a6a0-e3642f316214",
+    "timestamp": 242100,
+    "lap_number": 2,
+    "corner_id": "S17",
+    "severity": "warn",
+    "category": "apex",
+    "message": "Ensure consistent trail braking technique for optimal corner entry",
+    "corner_summary": "The driver executed heavy braking at S17, maintaining a steady steering input without significant throttle application. The turn was negotiated smoothly with no recorded time loss.",
+    "confidence_reasoning": "The high brake score (0.46) indicates extensive braking force application, aligning with the theory of suitable brake balance for safety. The steering stability (0.50) suggests a balanced approach to corner entry, consistent with the instructor's opinion on braking technique.",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 134.56,
+      "apex_speed": 79.64,
+      "exit_speed": 136.49,
+      "brake_score": 0.46,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "1d87f186-1ce3-4fa3-aa71-e2525f4ad1a4",
+    "timestamp": 348200,
+    "lap_number": 3,
+    "corner_id": "S27",
+    "severity": "info",
+    "category": "apex",
+    "message": "Check your entry speed into the corner.",
+    "corner_summary": "Telemetry analysis active.",
+    "confidence_reasoning": "Inference error: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=20)",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 135.75,
+      "apex_speed": 80.95,
+      "exit_speed": 137.37,
+      "brake_score": 0.46,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "33b282b5-bec4-466e-812d-12b3872c9f14",
+    "timestamp": 454000,
+    "lap_number": 4,
+    "corner_id": "S37",
+    "severity": "info",
+    "category": "apex",
+    "message": "Check your entry speed into the corner.",
+    "corner_summary": "Telemetry analysis active.",
+    "confidence_reasoning": "Inference error: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=20)",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 131.5,
+      "apex_speed": 76.78,
+      "exit_speed": 133.61,
+      "brake_score": 0.46,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "299a4fc2-1ffa-45e2-96fb-62a1de414c62",
+    "timestamp": 559900,
+    "lap_number": 5,
+    "corner_id": "S47",
+    "severity": "info",
+    "category": "throttle",
+    "message": "Check your entry speed into the corner.",
+    "corner_summary": "Telemetry analysis active.",
+    "confidence_reasoning": "Inference error: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=20)",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 143.91,
+      "apex_speed": 83.42,
+      "exit_speed": 140.73,
+      "brake_score": 0.5,
+      "throttle_score": 0.02
+    }
+  },
+  {
+    "id": "9d5eb76f-d6e0-43aa-afb3-3752c58dc65a",
+    "timestamp": 664900,
+    "lap_number": 6,
+    "corner_id": "S57",
+    "severity": "info",
+    "category": "apex",
+    "message": "Check your entry speed into the corner.",
+    "corner_summary": "Telemetry analysis active.",
+    "confidence_reasoning": "Inference error: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=20)",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 138.13,
+      "apex_speed": 85.23,
+      "exit_speed": 140.34,
+      "brake_score": 0.44,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "fd599d0f-85d5-4e87-ab1f-335c3e03fd9e",
+    "timestamp": 769900,
+    "lap_number": 7,
+    "corner_id": "S67",
+    "severity": "info",
+    "category": "apex",
+    "message": "Check your entry speed into the corner.",
+    "corner_summary": "Telemetry analysis active.",
+    "confidence_reasoning": "Inference error: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=20)",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 138.3,
+      "apex_speed": 84.41,
+      "exit_speed": 128.57,
+      "brake_score": 0.45,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "af588210-85b5-4056-b636-8134d452e5b5",
+    "timestamp": 874300,
+    "lap_number": 8,
+    "corner_id": "S77",
+    "severity": "info",
+    "category": "apex",
+    "message": "Check your entry speed into the corner.",
+    "corner_summary": "Telemetry analysis active.",
+    "confidence_reasoning": "Inference error: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=20)",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 130.6,
+      "apex_speed": 85.87,
+      "exit_speed": 131.34,
+      "brake_score": 0.37,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "5ceb29a3-be11-4bd5-8d13-37bdbf3e5d7c",
+    "timestamp": 979100,
+    "lap_number": 9,
+    "corner_id": "S87",
+    "severity": "info",
+    "category": "apex",
+    "message": "Check your entry speed into the corner.",
+    "corner_summary": "Telemetry analysis active.",
+    "confidence_reasoning": "Inference error: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=20)",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 145.73,
+      "apex_speed": 81.33,
+      "exit_speed": 110.87,
+      "brake_score": 0.54,
+      "throttle_score": 0.0
+    }
+  }
+]

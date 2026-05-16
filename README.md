@@ -358,7 +358,24 @@ PitWall is vehicle-agnostic. The telemetry pipeline reads GoPro GPMF streams ide
 
 ---
 
-## 08 // GETTING STARTED
+## 0 // ARCHITECTURE MODES
+PitWall operates in two distinct modes depending on your environment:
+
+### 1. Pre-Rendered Replay Runtime (Live Demo)
+*   **Target**: Static deployment (Vercel/GitHub Pages)
+*   **Capabilities**: 60FPS Replay, Ghost Racing, Split Timing, Pre-Cached AI Coaching
+*   **Limitation**: No custom uploads. No live AI inference.
+*   **Demo URL**: [pitwall-demo.vercel.app](https://pitwall-demo.vercel.app)
+
+### 2. Full Analytical Pipeline (Local Environment)
+*   **Target**: Local development machine
+*   **Capabilities**: **Everything.** Raw GPMF extraction, Lap Detection, **IBM Granite AI Coaching generation**, **IBM Docling RAG indexing**, and Custom Session Uploads.
+*   **Requirement**: Requires the Python backend and local AI models (Ollama) to be running.
+*   **Sample Data**: [Download Donington Park Sample MP4](http://www.race-technology.com/upload/video_download/GX013737.MP4) (Verified GPMF source)
+
+---
+
+## 08 // GETTING STARTED (LOCAL FULL PIPELINE)
 
 ### Prerequisites
 
