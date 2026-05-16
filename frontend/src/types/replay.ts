@@ -25,6 +25,8 @@ export interface ReplayState {
   showBrakingZones: boolean;
   showCornerAnalytics: boolean;
   showSummary: boolean;
+  isDemoMode: boolean;
+  showDiagnostics: boolean;
   
   // Theoretical Best
   theoreticalLapData: any | null;
@@ -58,4 +60,6 @@ export interface ReplayState {
   toggleBrakingZones: () => void;
   toggleCornerAnalytics: () => void;
   toggleSummary: () => void;
+  toggleDemoMode: () => void;
+  toggleDiagnostics: () => void;
 }

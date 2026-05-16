@@ -71,7 +71,7 @@ export class ReplayEngine {
   public start() {
     if (this.rAFId !== null) return;
     this.lastRealTime = performance.now();
-    this.loop(this.lastRealTime);
+    this.rAFId = requestAnimationFrame(this.loop);
   }
 
   public pause() {
@@ -89,18 +89,27 @@ export class ReplayEngine {
   }
 
   private loop = (time: number) => {
+    const store = useReplayStore.getState();
+    
+    // Safety: if paused or not playing, terminate loop immediately
+    if (!store.isPlaying) {
+      this.rAFId = null;
+      return;
+    }
+
     const deltaRealMs = time - this.lastRealTime;
     this.lastRealTime = time;
-
-    const store = useReplayStore.getState();
-    if (!store.isPlaying) return;
 
     // Advance virtual timestamp
     let newTimestamp = store.currentTimestamp + (deltaRealMs * store.playbackSpeed);
 
-    if (newTimestamp > store.sessionEnd) {
+    if (newTimestamp >= store.sessionEnd) {
       newTimestamp = store.sessionEnd;
+      store.setCurrentTimestamp(newTimestamp);
+      this.processFrame(newTimestamp);
       store.togglePlay();
+      this.rAFId = null;
+      return;
     }
 
     // Trigger coaching events for this frame
@@ -152,16 +161,15 @@ export class ReplayEngine {
     const activeLap = this.laps.find(l => timestamp >= l.start_timestamp && timestamp <= l.end_timestamp);
 
     // 3. Calculate Ghost Lap (Best Lap So Far)
-    // Ghost replays actual best-lap telemetry at the proportionally equivalent elapsed time.
-    // Uses a separate cached index so ghost search never corrupts main car search.
     let ghostData: TelemetryPoint | null = null;
     let ghostTimeDeltaMs = 0;
-
     let bestLapSoFar: Lap | null = null;
     if (activeLap) {
+      // Memoized best-lap-so-far lookup
       const completedLaps = this.laps.filter(l => l.lap_number < activeLap.lap_number);
       if (completedLaps.length > 0) {
-        bestLapSoFar = completedLaps.sort((a, b) => a.lap_duration_seconds - b.lap_duration_seconds)[0];
+        bestLapSoFar = completedLaps.reduce((best, curr) => 
+          curr.lap_duration_seconds < best.lap_duration_seconds ? curr : best, completedLaps[0]);
       }
     }
 

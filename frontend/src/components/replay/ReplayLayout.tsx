@@ -22,6 +22,7 @@ import { assembleTheoreticalLap } from '../../utils/theoreticalLapAssembler';
 import { FinalSessionSummary } from './FinalSessionSummary';
 import { buildSessionSummary } from '../../utils/summaryMetricsBuilder';
 import { TheoreticalReplayHUD } from './TheoreticalReplayHUD';
+import { DiagnosticOverlay } from './DiagnosticOverlay';
 
 interface ReplayLayoutProps {
   telemetry?: TelemetryPoint[];
@@ -115,12 +116,19 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
 
       if (isNearEnd && !showSummary) {
         if (!isTheoreticalReplayActive) {
+          const bestSectors = selectBestSegments(telemetry, laps, segments);
+          
+          // Safety Check: If we can't build a theoretical lap, skip to summary
+          if (bestSectors.length < 2) {
+            toggleSummary();
+            return;
+          }
+
           // Case 1: Raw Replay Ends -> Launch Theoretical Best Lap
           setPlaybackSpeed(0.25);
           
           setTimeout(() => {
             setTheoreticalOverlay(true);
-            const bestSectors = selectBestSegments(telemetry, laps, segments);
             const tLap = assembleTheoreticalLap(telemetry, bestSectors);
             setTheoreticalLapData(tLap);
             
@@ -213,12 +221,24 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
     });
   }, [segments, telemetry]);
 
+  // ── Demo Hotkeys ──
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.shiftKey && e.key === 'D') {
+        useReplayStore.getState().toggleDiagnostics();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
     <div 
       className="w-full h-full relative scanline-overlay"
       onClick={handleInteraction}
     >
       <EngineerRadioDebugPanel />
+      <DiagnosticOverlay />
 
       {/* ── Driving footage background ── */}
       <VideoBackground />

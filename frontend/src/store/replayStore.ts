@@ -23,6 +23,8 @@ export const useReplayStore = create<ReplayState>((set, get) => ({
   showSummary: false,
   theoreticalLapData: null,
   isTheoreticalReplayActive: false,
+  isDemoMode: true,
+  showDiagnostics: false,
   initialTelemetry: [],
   initialLaps: [],
   initialSegments: [],
@@ -84,6 +86,8 @@ export const useReplayStore = create<ReplayState>((set, get) => ({
   toggleBrakingZones: () => set((state) => ({ showBrakingZones: !state.showBrakingZones })),
   toggleCornerAnalytics: () => set((state) => ({ showCornerAnalytics: !state.showCornerAnalytics })),
   toggleSummary: () => set((state) => ({ showSummary: !state.showSummary })),
+  toggleDemoMode: () => set((state) => ({ isDemoMode: !state.isDemoMode })),
+  toggleDiagnostics: () => set((state) => ({ showDiagnostics: !state.showDiagnostics })),
 
   setActiveCoachingEvent: (event) => {
     if (dismissTimer) clearTimeout(dismissTimer);
