@@ -396,7 +396,6 @@ Compatible GPS data sources: GoPro Hero 5+, Racelogic VBOX, AiM Solo, Harry's La
 
 ## 10 // ROADMAP
 
-- [ ] **Watson TTS** — Real-time AI engineer voiceover during replay
 - [ ] **Granite Vision** — Automatic detection of track hazards, flags, and competitor positions from raw video frames
 - [ ] **The Garage** — Persistent session history for multi-day driver progress tracking
 - [ ] **Cloud Reconstruction** — IBM Cloud offloading for heavy GPMF extraction on mobile upload
