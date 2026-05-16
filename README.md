@@ -246,11 +246,11 @@ When the session ends, PitWall automatically generates a complete race engineeri
 graph TD
     A[GoPro MP4 Upload] --> B[ffmpeg GPMF Extraction]
     B --> C[gopro2json Parsing]
-    C --> D[Normalization · 10Hz Resampling]
-    D --> E[Lap Detection · Heading-Based Crossing]
-    E --> F[Corner Segmentation · Curvature Algorithm]
-    F --> G[Corner Profiling · Entry/Apex/Exit]
-    G --> H[Session JSON · D3-Ready Output]
+    C --> D["Normalization · 10Hz Resampling"]
+    D --> E["Lap Detection · Heading-Based Crossing"]
+    E --> F["Corner Segmentation · Curvature Algorithm"]
+    F --> G["Corner Profiling · Entry/Apex/Exit"]
+    G --> H["Session JSON · D3-Ready Output"]
 
     H --> I[Physics Intelligence Engine]
     I --> J[Braking Point Analysis]
@@ -258,18 +258,18 @@ graph TD
     I --> L[Sector Delta Calculation]
     I --> M[Theoretical Best Assembler]
 
-    subgraph IBM AI Pipeline
-    N[IBM Docling · Racing PDFs] --> O[Knowledge Base]
-    O --> P[IBM Granite · Coaching Generation]
-    P --> Q[Coaching Scheduler · Timestamp Sync]
+    subgraph IBM_AI_Pipeline ["IBM AI Pipeline"]
+    N["IBM Docling · Racing PDFs"] --> O[Knowledge Base]
+    O --> P["IBM Granite · Coaching Generation"]
+    P --> Q["Coaching Scheduler · Timestamp Sync"]
     end
 
     I --> P
     M --> R[Video Sector Sync]
 
-    subgraph Frontend · Mission Control
+    subgraph Frontend_Mission_Control ["Frontend · Mission Control"]
     S[D3 GPS Trace Player] 
-    T[TelemetryHUD · Live Readouts]
+    T["TelemetryHUD · Live Readouts"]
     U[Ghost Racing Engine]
     V[Track Intelligence Layers]
     W[Perfect Lap Reconstruction]
