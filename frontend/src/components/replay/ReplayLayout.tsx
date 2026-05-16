@@ -23,6 +23,7 @@ import { FinalSessionSummary } from './FinalSessionSummary';
 import { buildSessionSummary } from '../../utils/summaryMetricsBuilder';
 import { TheoreticalReplayHUD } from './TheoreticalReplayHUD';
 import { DiagnosticOverlay } from './DiagnosticOverlay';
+import { MicroGhostDeltaMeter } from './MicroGhostDeltaMeter';
 
 interface ReplayLayoutProps {
   telemetry?: TelemetryPoint[];
@@ -477,6 +478,9 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
 
       {/* ── Theoretical Replay HUD ── */}
       <TheoreticalReplayHUD />
+
+      {/* ── Micro Ghost Delta Meter ── */}
+      <MicroGhostDeltaMeter engine={engineRef.current} />
 
       {/* ── Playback Controls ── */}
       <PlaybackControls />
