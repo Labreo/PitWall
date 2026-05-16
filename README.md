@@ -343,6 +343,12 @@ The prototype is validated on real telemetry from a professional motorcycle ride
 
 PitWall is vehicle-agnostic. The telemetry pipeline reads GoPro GPMF streams identically for cars and motorcycles. The Donington Park dataset was selected for its data quality and public availability.
 
+> [!TIP]
+> **Test PitWall Locally**  
+> You can download the official sample GoPro MP4 used for development here:  
+> [Download Sample GoPro Footage (Donington Park)](http://www.race-technology.com/upload/video_download/GX013737.MP4)  
+> *Note: Place this file as `session.mp4` in the `frontend/public/` directory to enable the synchronized video background in the demo.*
+
 <!-- 
   IMAGE 8: DONINGTON TRACK RECONSTRUCTION
   Use the refined_track_segments.png output from your Python pipeline
