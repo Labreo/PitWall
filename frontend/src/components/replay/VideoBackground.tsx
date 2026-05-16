@@ -14,7 +14,20 @@ const VideoBackgroundComponent: React.FC = () => {
       const video = videoRef.current;
       if (!video) return;
 
-      const { isPlaying, playbackSpeed, currentTimestamp } = state;
+      const { isPlaying, playbackSpeed, currentTimestamp, isTheoreticalReplayActive, theoreticalLapData } = state;
+
+      // Determine target video time
+      let targetTime = currentTimestamp / 1000;
+
+      if (isTheoreticalReplayActive && theoreticalLapData?.mappings) {
+        const mapping = theoreticalLapData.mappings.find((m: any) => 
+          currentTimestamp >= m.newStart && currentTimestamp < m.newEnd
+        );
+        if (mapping) {
+          const relativePos = currentTimestamp - mapping.newStart;
+          targetTime = (mapping.originalStart + relativePos) / 1000;
+        }
+      }
 
       // Sync speed
       if (video.playbackRate !== playbackSpeed) {
@@ -23,7 +36,6 @@ const VideoBackgroundComponent: React.FC = () => {
       }
 
       // Seek if timestamp diverged (scrub or large jump)
-      const targetTime = currentTimestamp / 1000;
       if (Math.abs(video.currentTime - targetTime) > SEEK_THRESHOLD_S) {
         video.currentTime = targetTime;
       }

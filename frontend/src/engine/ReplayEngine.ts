@@ -47,6 +47,20 @@ export class ReplayEngine {
     splitStateMachine.initialize(laps, segments);
   }
 
+  public setTelemetry(telemetry: TelemetryPoint[], laps: Lap[], segments: Segment[]) {
+    this.telemetry = telemetry;
+    this.laps = laps;
+    this.segments = segments;
+    this.cachedIndex = 0;
+    this.ghostCachedIndex = 0;
+    this.scheduler.reset(0);
+    
+    if (laps.length > 0) {
+      this.bestLapCache = [...laps].sort((a, b) => a.lap_duration_seconds - b.lap_duration_seconds)[0];
+    }
+    splitStateMachine.initialize(laps, segments);
+  }
+
   public subscribe(cb: EngineCallback) {
     this.callbacks.push(cb);
     return () => {

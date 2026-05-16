@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SessionSummaryData } from '../../types/summary';
+import { useReplayStore } from '../../store/replayStore';
 import { Trophy, Target, Zap, Activity, ChevronRight, X } from 'lucide-react';
 
 interface FinalSessionSummaryProps {
@@ -219,20 +220,40 @@ export const FinalSessionSummary: React.FC<FinalSessionSummaryProps> = ({ data, 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 2.2 }}
-        className="mt-20 flex gap-6"
+        className="mt-20 flex flex-col items-center gap-6"
       >
-        <button 
-          onClick={onClose}
-          className="px-10 py-3 bg-cyan-600 text-white font-bold text-xs tracking-[0.2em] uppercase hover:bg-cyan-500 transition-all shadow-[0_0_30px_rgba(34,211,238,0.2)]"
-        >
-          Resume Session Analysis
-        </button>
-        <button 
-          onClick={() => window.location.hash = 'upload'}
-          className="px-10 py-3 border border-white/10 text-slate-400 font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/5 transition-all"
-        >
-          Archive & Exit
-        </button>
+        <div className="flex gap-6">
+          <button 
+            onClick={() => {
+              useReplayStore.getState().startTheoreticalReplay();
+              onClose();
+            }}
+            className="px-10 py-3 bg-cyan-600 text-white font-bold text-xs tracking-[0.2em] uppercase hover:bg-cyan-500 transition-all shadow-[0_0_30px_rgba(34,211,238,0.2)] flex items-center gap-3"
+          >
+            <Activity className="w-4 h-4" />
+            Replay Theoretical Best
+          </button>
+          
+          <button 
+            onClick={() => {
+              useReplayStore.getState().resetToNormalReplay();
+              onClose();
+            }}
+            className="px-10 py-3 border border-cyan-500/30 text-cyan-400 font-bold text-xs tracking-[0.2em] uppercase hover:bg-cyan-500/10 transition-all flex items-center gap-3"
+          >
+            <ChevronRight className="w-4 h-4 rotate-180" />
+            Standard Replay
+          </button>
+        </div>
+
+        <div className="flex gap-6 opacity-40">
+          <button 
+            onClick={() => window.location.hash = 'upload'}
+            className="text-[10px] text-slate-500 font-bold tracking-[0.2em] uppercase hover:text-white transition-all"
+          >
+            Archive Session & Exit
+          </button>
+        </div>
       </motion.div>
     </motion.div>
   );

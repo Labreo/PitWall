@@ -6,6 +6,7 @@ import { ReplayEngine } from '../../engine/ReplayEngine';
 import { CornerIntelligenceLayer, CornerAnalytics } from './CornerIntelligenceLayer';
 import { BrakingZoneLayer } from './BrakingZoneLayer';
 import { GhostReplayLayer } from './GhostReplayLayer';
+import { TheoreticalLapReplayLayer } from '../replay/TheoreticalLapReplayLayer';
 
 interface TrackMapProps {
   telemetry: TelemetryPoint[];
@@ -494,6 +495,11 @@ export const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments
           drawKey={drawKey}
         />
       )}
+      <TheoreticalLapReplayLayer
+        svgRef={svgRef}
+        projection={(coords) => projectionRef.current ? projectionRef.current(coords[0], coords[1]) : null}
+        drawKey={drawKey}
+      />
     </div>
   );
 };

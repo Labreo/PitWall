@@ -11,56 +11,128 @@ export const buildSessionSummary = (
   // 1. Lap Metrics
   const bestLap = laps.reduce((prev, curr) => 
     curr.lap_duration_seconds < prev.lap_duration_seconds ? curr : prev, laps[0]);
-  
-  // Theoretical Best (Sum of best sectors)
-  // For simplicity, we'll assume potential gain is derived from coaching events and delta consistency
-  const bestLapMs = (bestLap?.lap_duration_seconds || 0) * 1000;
-  const potentialGainMs = Math.random() * 800 + 400; // Mock calculation for now based on segments
-  const theoreticalBestMs = bestLapMs - potentialGainMs;
 
-  // 2. Corner Performance (Top Loss)
-  // Derive from coaching events that have 'mistake' or high time loss potential
-  const topLossCorners: CornerPerformance[] = segments
-    .filter(s => s.segment_type === 'corner')
-    .slice(0, 3) // Take a few corners
-    .map((s, i) => {
+  // 1. Identify all unique geographic sectors across the entire session
+  // We'll group segments by their relative order in the laps
+  const lapsWithSegments = laps.map(l => ({
+    lap_number: l.lap_number,
+    segments: segments
+      .filter(s => s.start_timestamp >= l.start_timestamp && s.end_timestamp <= l.end_timestamp)
+      .sort((a, b) => a.start_timestamp - b.start_timestamp)
+  })).filter(l => l.segments.length > 0);
+
+  if (lapsWithSegments.length === 0) {
+    return {
+      bestLapMs: 0,
+      theoreticalBestMs: 0,
+      potentialGainMs: 0,
+      totalLaps: laps.length,
+      consistencyScore: 0,
+      topLossCorners: [],
+      strengths: [],
+      priorities: []
+    };
+  }
+
+  // Use the lap with most segments as the master track structure
+  const masterLap = lapsWithSegments.reduce((prev, curr) => 
+    curr.segments.length > prev.segments.length ? curr : prev
+  );
+
+  // For each master segment index, find the absolute best duration across ALL laps
+  let theoreticalBestMs = 0;
+  const bestSectorsMap: Record<number, number> = {};
+
+  masterLap.segments.forEach((_, idx) => {
+    let minDuration = Infinity;
+    lapsWithSegments.forEach(lw => {
+      const seg = lw.segments[idx];
+      if (seg && seg.duration_seconds < minDuration) {
+        minDuration = seg.duration_seconds;
+      }
+    });
+    if (minDuration !== Infinity) {
+      bestSectorsMap[idx] = minDuration;
+      theoreticalBestMs += minDuration * 1000;
+    }
+  });
+
+  const bestLapMs = (bestLap?.lap_duration_seconds || 0) * 1000;
+  const potentialGainMs = Math.max(0, bestLapMs - theoreticalBestMs);
+
+  // 2. Identify Top Loss Corners for the Best Lap specifically
+  const topLossCorners: CornerPerformance[] = [];
+  const bestLapSegments = masterLap.segments; // If the best lap was the master lap
+
+  // Find segments specifically in the Best Lap to see where it lost time vs Theoretical
+  const bestLapObj = lapsWithSegments.find(l => l.lap_number === bestLap?.lap_number) || masterLap;
+  
+  bestLapObj.segments.forEach((s, idx) => {
+    const bestPossible = bestSectorsMap[idx];
+    if (bestPossible && s.duration_seconds > bestPossible && s.segment_type === 'corner') {
+      const gain = (s.duration_seconds - bestPossible) * 1000;
+      
       const startIdx = telemetry.findIndex(t => t.timestamp >= s.start_timestamp);
       const endIdx = telemetry.findIndex(t => t.timestamp > s.end_timestamp);
       const pathSlice = telemetry.slice(Math.max(0, startIdx), endIdx === -1 ? telemetry.length : endIdx);
-      
-      return {
-        name: `T${s.segment_id.replace('S', '')}`,
-        timeLost: 0.15 + (i * 0.12),
-        confidence: 0.85 - (i * 0.05),
-        recommendation: i === 0 ? "Brake 5m later, more trail braking" : "Earlier throttle on exit",
-        path: pathSlice.map(t => ({ latitude: t.latitude, longitude: t.longitude }))
-      };
-    });
 
-  // 3. Driver Strengths
-  const strengths: DriverStrength[] = [
-    { title: "BRAKE_STABILITY", description: "Minimal ABS intervention in heavy zones", icon: "anchor" },
-    { title: "LINE_PRECISION", description: "94% apex proximity across session", icon: "target" },
-    { title: "THROTTLE_COMMIT", description: "Early commitment in mid-speed corners", icon: "zap" }
-  ];
+      const event = coachingEvents.find(e => 
+        e.timestamp >= s.start_timestamp && e.timestamp <= s.end_timestamp
+      );
+
+      topLossCorners.push({
+        name: `T${s.segment_id.replace(/\D/g, '')}`,
+        timeLost: gain / 1000,
+        confidence: s.confidence_score,
+        recommendation: event?.message || (gain > 200 ? "Optimize entry speed" : "Earlier throttle application"),
+        path: pathSlice.map(t => ({ latitude: t.latitude, longitude: t.longitude }))
+      });
+    }
+  });
+
+  // Sort by time lost and take top 3
+  topLossCorners.sort((a, b) => b.timeLost - a.timeLost);
+  const top3Corners = topLossCorners.slice(0, 3);
+
+  // 3. Driver Strengths (Derived from coaching event absence/presence)
+  const mistakeCount = coachingEvents.filter(e => e.severity === 'critical' || e.severity === 'warn').length;
+  const strengths: DriverStrength[] = [];
+  
+  if (mistakeCount < 5) strengths.push({ title: "CONSISTENCY", description: "Minimal technical errors identified", icon: "target" });
+  if (!coachingEvents.some(e => e.message.toLowerCase().includes('brake'))) {
+    strengths.push({ title: "BRAKE_STABILITY", description: "Smooth deceleration phases", icon: "anchor" });
+  } else {
+    strengths.push({ title: "LATE_BRAKING", description: "Aggressive entry capability", icon: "zap" });
+  }
+  
+  if (strengths.length < 3) {
+    strengths.push({ title: "TRACK_USAGE", description: "Good exploitation of track width", icon: "maximize" });
+  }
 
   // 4. Priorities
-  const priorities = [
-    "Consistency in Sector 2",
-    "Brake pressure modulation",
-    "Apex speed retention"
-  ];
+  const priorities = top3Corners.map(c => `Improve ${c.name}: ${c.recommendation}`);
+  if (priorities.length === 0) priorities.push("Maintain current pace", "Refine sector 3 exits");
 
-  // 5. Consistency Score
-  // Calculate variance in lap times
+  // 5. Consistency Score (Intelligent handling of out-laps)
   let consistencyScore = 100;
-  if (laps.length > 1) {
-    const lapDurations = laps.map(l => l.lap_duration_seconds);
+  
+  // Filter out extreme outliers (like out-laps or crashes)
+  // We'll keep laps within 120% of the best lap
+  const validLaps = laps.filter(l => l.lap_duration_seconds < (bestLap.lap_duration_seconds * 1.2));
+  
+  if (validLaps.length > 1) {
+    const lapDurations = validLaps.map(l => l.lap_duration_seconds);
     const avgLap = lapDurations.reduce((a, b) => a + b, 0) / lapDurations.length;
-    const variance = lapDurations.reduce((a, b) => a + Math.pow(b - avgLap, 2), 0) / lapDurations.length;
+    const stdDev = Math.sqrt(
+      lapDurations.reduce((a, b) => a + Math.pow(b - avgLap, 2), 0) / lapDurations.length
+    );
     
-    // Forgiving scale: 1s variance = ~80 score, 5s variance = ~40 score
-    consistencyScore = Math.max(0, Math.min(100, 100 - (Math.sqrt(variance) * 15)));
+    // Logarithmic/capped scale: 0.1s variance = 98, 0.5s = 90, 1.0s = 80, 3.0s = 50
+    // formula: 100 * exp(-stdDev / 4)
+    consistencyScore = Math.max(10, Math.min(100, 100 * Math.exp(-stdDev / 4.5)));
+  } else if (laps.length > 0) {
+    // For single-lap sessions or sessions with only 1 flying lap
+    consistencyScore = 100; 
   }
 
   return {
@@ -69,7 +141,7 @@ export const buildSessionSummary = (
     potentialGainMs,
     totalLaps: laps.length,
     consistencyScore,
-    topLossCorners,
+    topLossCorners: top3Corners,
     strengths,
     priorities
   };

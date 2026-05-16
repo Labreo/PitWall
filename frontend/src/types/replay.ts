@@ -25,6 +25,15 @@ export interface ReplayState {
   showBrakingZones: boolean;
   showCornerAnalytics: boolean;
   showSummary: boolean;
+  
+  // Theoretical Best
+  theoreticalLapData: any | null;
+  isTheoreticalReplayActive: boolean;
+
+  // Initial Session Data (for resetting)
+  initialTelemetry: any[];
+  initialLaps: any[];
+  initialSegments: any[];
 
   // Actions
   togglePlay: () => void;
@@ -33,7 +42,11 @@ export interface ReplayState {
   setCurrentTimestamp: (timestamp: number) => void;
   setCurrentSegmentId: (id: string | null) => void;
   setCurrentLapNumber: (num: number | null) => void;
-  initializeSession: (start: number, end: number) => void;
+  initializeSession: (telemetry: any[], laps: any[], segments: any[]) => void;
+  resetToNormalReplay: () => void;
+  startTheoreticalReplay: () => void;
+  setTheoreticalLapData: (data: any) => void;
+  setTheoreticalReplayActive: (active: boolean) => void;
   toggleGhostMode: () => void;
   setGhostSource: (source: GhostSource) => void;
   setGhostSelectedLap: (lap: number) => void;

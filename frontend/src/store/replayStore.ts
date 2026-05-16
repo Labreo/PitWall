@@ -3,7 +3,7 @@ import { ReplayState } from '../types/replay';
 
 let dismissTimer: ReturnType<typeof setTimeout> | null = null;
 
-export const useReplayStore = create<ReplayState>((set) => ({
+export const useReplayStore = create<ReplayState>((set, get) => ({
   isPlaying: false,
   playbackSpeed: 1.0,
   currentTimestamp: 0,
@@ -21,6 +21,11 @@ export const useReplayStore = create<ReplayState>((set) => ({
   showBrakingZones: true,
   showCornerAnalytics: true,
   showSummary: false,
+  theoreticalLapData: null,
+  isTheoreticalReplayActive: false,
+  initialTelemetry: [],
+  initialLaps: [],
+  initialSegments: [],
 
   togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
   setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
@@ -28,7 +33,49 @@ export const useReplayStore = create<ReplayState>((set) => ({
   setCurrentTimestamp: (timestamp) => set({ currentTimestamp: timestamp }),
   setCurrentSegmentId: (id) => set({ currentSegmentId: id }),
   setCurrentLapNumber: (num) => set({ currentLapNumber: num }),
-  initializeSession: (start, end) => set({ sessionStart: start, sessionEnd: end, currentTimestamp: start }),
+  
+  initializeSession: (telemetry, laps, segments) => {
+    const start = telemetry[0]?.timestamp || 0;
+    const end = telemetry[telemetry.length - 1]?.timestamp || 0;
+    set({ 
+      initialTelemetry: telemetry,
+      initialLaps: laps,
+      initialSegments: segments,
+      sessionStart: start,
+      sessionEnd: end,
+      currentTimestamp: start,
+      isTheoreticalReplayActive: false
+    });
+  },
+
+  resetToNormalReplay: () => {
+    const { initialTelemetry } = get();
+    const start = initialTelemetry[0]?.timestamp || 0;
+    const end = initialTelemetry[initialTelemetry.length - 1]?.timestamp || 0;
+    set({
+      isTheoreticalReplayActive: false,
+      sessionStart: start,
+      sessionEnd: end,
+      currentTimestamp: start,
+      isPlaying: true
+    });
+  },
+
+  startTheoreticalReplay: () => {
+    const { theoreticalLapData } = get();
+    if (!theoreticalLapData) return;
+    
+    set({
+      isTheoreticalReplayActive: true,
+      sessionStart: 0,
+      sessionEnd: theoreticalLapData.totalDurationMs,
+      currentTimestamp: 0,
+      isPlaying: true
+    });
+  },
+
+  setTheoreticalLapData: (data) => set({ theoreticalLapData: data }),
+  setTheoreticalReplayActive: (active) => set({ isTheoreticalReplayActive: active }),
   toggleGhostMode: () => set((state) => ({ ghostModeEnabled: !state.ghostModeEnabled })),
   setGhostSource: (source) => set({ ghostSource: source }),
   setGhostSelectedLap: (lap) => set({ ghostSelectedLap: lap }),

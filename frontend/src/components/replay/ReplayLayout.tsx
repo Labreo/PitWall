@@ -16,9 +16,12 @@ import { CoachingSubtitles } from './CoachingSubtitles';
 import { EngineerRadioDebugPanel } from './EngineerRadioDebugPanel';
 import { SplitTimingHUD } from './SplitTimingHUD';
 import { coachingAudioQueue } from '../../engine/coachingAudioQueue';
+import { CoachingEvent } from '../../types/coaching';
+import { selectBestSegments } from '../../utils/theoreticalSegmentSelector';
+import { assembleTheoreticalLap } from '../../utils/theoreticalLapAssembler';
 import { FinalSessionSummary } from './FinalSessionSummary';
 import { buildSessionSummary } from '../../utils/summaryMetricsBuilder';
-import { CoachingEvent } from '../../types/coaching';
+import { TheoreticalReplayHUD } from './TheoreticalReplayHUD';
 
 interface ReplayLayoutProps {
   telemetry?: TelemetryPoint[];
@@ -35,10 +38,15 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
 }) => {
   const engineRef = useReplayEngine(telemetry, segments, laps, REAL_COACHING_EVENTS as any);
 
-  // Audio Unlock Handler
+  const initializeSession = useReplayStore(s => s.initializeSession);
+  useEffect(() => {
+    initializeSession(telemetry, laps, segments);
+  }, [telemetry, laps, segments, initializeSession]);
+
   const handleInteraction = () => {
     coachingAudioQueue.unlock();
   };
+
   const cornerAnalyticsRef = useRef<CornerAnalytics[]>([]);
   const [cornerAnalytics, setCornerAnalytics] = useState<CornerAnalytics[]>([]);
 
@@ -62,6 +70,29 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
     );
   }, [telemetry, laps, segments]);
 
+  const [theoreticalOverlay, setTheoreticalOverlay] = useState(false);
+  const setTheoreticalLapData = useReplayStore(s => s.setTheoreticalLapData);
+  const setTheoreticalReplayActive = useReplayStore(s => s.setTheoreticalReplayActive);
+  const seekTo = useReplayStore(s => s.seekTo);
+  const togglePlay = useReplayStore(s => s.togglePlay);
+  const setPlaybackSpeed = useReplayStore(s => s.setPlaybackSpeed);
+
+  // Sync engine telemetry when mode changes
+  useEffect(() => {
+    const unsub = useReplayStore.subscribe((state, prevState) => {
+      if (state.isTheoreticalReplayActive !== prevState.isTheoreticalReplayActive) {
+        if (engineRef.current) {
+          if (state.isTheoreticalReplayActive && state.theoreticalLapData) {
+            engineRef.current.setTelemetry(state.theoreticalLapData.telemetry, [], []);
+          } else {
+            engineRef.current.setTelemetry(state.initialTelemetry, state.initialLaps, state.initialSegments);
+          }
+        }
+      }
+    });
+    return unsub;
+  }, [engineRef.current]);
+
   // Imperative refs for top-right readout (avoid React re-renders)
   const altRef = useRef<HTMLSpanElement>(null);
   const ghostGapRef = useRef<HTMLSpanElement>(null);
@@ -77,10 +108,40 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
         ghostGapRef.current.style.color = deltaS >= 0 ? '#f87171' : '#34d399';
       }
 
-      // Auto-trigger summary at end of session
-      const { sessionEnd, showSummary, toggleSummary } = useReplayStore.getState();
-      if (pt.timestamp >= sessionEnd - 100 && !showSummary) {
-        setTimeout(toggleSummary, 1500); // Linger on final frame then reveal
+      // Auto-trigger logic
+      const { sessionEnd, showSummary, toggleSummary, isTheoreticalReplayActive } = useReplayStore.getState();
+      
+      const isNearEnd = pt.timestamp >= sessionEnd - 100;
+
+      if (isNearEnd && !showSummary) {
+        if (!isTheoreticalReplayActive) {
+          // Case 1: Raw Replay Ends -> Launch Theoretical Best Lap
+          setPlaybackSpeed(0.25);
+          
+          setTimeout(() => {
+            setTheoreticalOverlay(true);
+            const bestSectors = selectBestSegments(telemetry, laps, segments);
+            const tLap = assembleTheoreticalLap(telemetry, bestSectors);
+            setTheoreticalLapData(tLap);
+            
+            setTimeout(() => {
+              setTheoreticalOverlay(false);
+              
+              // Trigger state change (subscription will handle engine swap)
+              useReplayStore.setState({ 
+                isTheoreticalReplayActive: true,
+                sessionStart: 0, 
+                sessionEnd: tLap.totalDurationMs,
+                currentTimestamp: 0,
+                isPlaying: true
+              });
+              setPlaybackSpeed(1.0);
+            }, 3000);
+          }, 1500);
+        } else {
+          // Case 2: Theoretical Best Lap Ends -> Launch Intelligence Summary
+          toggleSummary();
+        }
       }
     });
     return unsub;
@@ -388,6 +449,9 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
       {/* ── Cinematic Coaching Subtitles ── */}
       <CoachingSubtitles />
 
+      {/* ── Theoretical Replay HUD ── */}
+      <TheoreticalReplayHUD />
+
       {/* ── Playback Controls ── */}
       <PlaybackControls />
 
@@ -398,6 +462,42 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
             data={summaryData} 
             onClose={() => useReplayStore.getState().toggleSummary()} 
           />
+        )}
+      </AnimatePresence>
+
+      {/* ── Theoretical Lap Generation Overlay ── */}
+      <AnimatePresence>
+        {theoreticalOverlay && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-md flex flex-col items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="text-center"
+            >
+              <div className="text-[10px] font-mono text-cyan-400 tracking-[0.5em] uppercase mb-4">
+                Session_Processing
+              </div>
+              <h2 className="text-4xl font-black text-white tracking-tighter mb-8">
+                GENERATING OPTIMAL LAP
+              </h2>
+              <div className="w-64 h-[1px] bg-white/10 mx-auto relative overflow-hidden">
+                <motion.div
+                  initial={{ x: '-100%' }}
+                  animate={{ x: '100%' }}
+                  transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+                  className="absolute inset-0 bg-cyan-400 shadow-[0_0_15px_rgba(34,211,238,0.5)]"
+                />
+              </div>
+              <div className="mt-8 text-[9px] font-mono text-slate-500 uppercase tracking-widest">
+                Stitching Best Sectors ... OK
+              </div>
+            </motion.div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
