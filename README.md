@@ -383,9 +383,11 @@ cd pitwall
 
 **2. Backend setup**
 ```bash
-cd backend
+# Install dependencies from root
 pip install -r requirements.txt
-python -m app
+
+# Start the analysis & upload orchestrator
+python -m backend.app
 ```
 
 **3. Frontend setup**
