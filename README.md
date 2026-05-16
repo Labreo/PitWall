@@ -320,7 +320,8 @@ PitWall is vehicle-agnostic. The telemetry pipeline reads GoPro GPMF streams ide
   Suggested filename: docs/images/donington_reconstruction.png
 -->
 <div align="center">
-  <img src="docs/images/donington_reconstruction.png" alt="Donington Park GPS Reconstruction" width="70%"/>
+  <img width="70%" alt="image" src="https://github.com/user-attachments/assets/3839390a-051c-491a-a749-8208041fae8a" />
+  <img src="data/processed/refined_track_segments.png" alt="Donington Park GPS Reconstruction" width="70%"/>
   <p><em>Donington Park reconstructed from raw GPS coordinates — no template, no fixed map</em></p>
 </div>
 
