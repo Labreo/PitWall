@@ -44,7 +44,7 @@ class OllamaClient:
             "stream": False,
             "format": "json",
             "options": {
-                "temperature": 0.1,
+                "temperature": 0.7,
                 "num_predict": 512,  # Increased to prevent truncation
             }
         }

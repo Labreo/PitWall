@@ -30,7 +30,13 @@ class EnrichedPromptBuilder:
         # 2. Knowledge Retrieval
         theory_context = self.retriever.retrieve_coaching_knowledge(topic)
 
-        # 3. Prompt Assembly
+        # 3. Handle Repetition Context
+        repetition_count = context.get("repetition_count", 0)
+        repetition_instruction = ""
+        if repetition_count > 0:
+            repetition_instruction = f"NOTE: This is the {repetition_count + 1}th time you are coaching this corner in this session. DO NOT repeat your previous advice verbatim. Focus on a different technical nuance or use a more urgent tone."
+
+        # 4. Prompt Assembly
         prompt = f"""
 SYSTEM INSTRUCTION: You are a professional Race Engineer. 
 Your task is to provide technical coaching based on TELEMETRY DATA and established MOTORSPORT THEORY.
@@ -43,6 +49,8 @@ DETERMINISTIC TELEMETRY FINDINGS:
 - Steering Stability: {steer:.2f}
 - Recorded Time Loss: {time_loss:.3f}s
 - Engineering Priority: {priority}
+
+{repetition_instruction}
 
 {theory_context}
 

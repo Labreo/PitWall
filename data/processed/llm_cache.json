@@ -224,5 +224,26 @@
     "severity": "warn",
     "confidence_reasoning": "According to theory 27.5.1 Braking and more sweeping turns (theory 3), less trail braking is used with more aggressive turn entries, indicating the driver's successful execution of heavy braking without compromising stability.",
     "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "b6cc6122c90f84cf24cd8e19641d7a05": {
+    "corner_summary": "The driver executed a controlled, heavy-braking maneuver with minimal time loss, demonstrating good brake balance and stability.",
+    "coaching_line": "Maintain consistent trail braking for more control in corners",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry's low Braking Score (0.14) and Steering Stability (0.50) indicate conservative, well-timed braking, aligning with theory that early commission of the braking system ensures suitable balance.",
+    "source_attribution": "\"MPhil_EJ_Goodman_2009_reduced\""
+  },
+  "91825c888f8a441aadcd949b18041ccc": {
+    "corner_summary": "The driver exhibited controlled, even braking (0.32), applying moderate throttle (0.44) and maintaining steering stability (0.50) in corner S7, with no time loss (0.000s).",
+    "coaching_line": "Ensure consistent, balanced braking application for optimal track position.",
+    "severity": "warn",
+    "confidence_reasoning": "The driver's performance indicates a well-executed trail braking technique, as per theory suggesting more sweeping turns require less aggressive braking. The scores suggest a stable, controlled car, aligning with the goal of maintaining consistent driving within road racing schools and programs.",
+    "source_attribution": "SOURCE: MPhil_EJ_Goodman_2009_reduced"
+  },
+  "4f505e3ee592a658a7212d59968614c5": {
+    "corner_summary": "The driver executed heavy braking at S17, maintaining a steady steering input without significant throttle application. The turn was negotiated smoothly with no recorded time loss.",
+    "coaching_line": "Ensure consistent trail braking technique for optimal corner entry",
+    "severity": "warn",
+    "confidence_reasoning": "The high brake score (0.46) indicates extensive braking force application, aligning with the theory of suitable brake balance for safety. The steering stability (0.50) suggests a balanced approach to corner entry, consistent with the instructor's opinion on braking technique.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
   }
 }

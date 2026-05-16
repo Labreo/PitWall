@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 class CoachingEventGenerator:
     def __init__(self, ollama_client=None):
         self.ollama_client = ollama_client or OllamaClient()
+        self.advice_history = {} # Track corner_id -> count of coaching events
 
     def run_pipeline(self, telemetry_path: str) -> list[dict[str, Any]]:
         """
@@ -68,7 +69,12 @@ class CoachingEventGenerator:
             
             trigger_ts = matching_seg['start_timestamp'] + 600
 
-            # 6. Generate deterministic advice via Ollama
+            # 6. Generate varied advice via Ollama
+            # Track repetitions to force variety in prompt
+            repetition_count = self.advice_history.get(ctx["corner_id"], 0)
+            ctx["repetition_count"] = repetition_count
+            self.advice_history[ctx["corner_id"]] = repetition_count + 1
+
             prompt = build_granite_prompt(ctx)
             advice_data = self.ollama_client.generate_advice(prompt)
             
