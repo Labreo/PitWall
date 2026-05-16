@@ -14,6 +14,7 @@ const UploadScreen: React.FC<UploadScreenProps> = ({ onComplete }) => {
   const [uploading, setUploading] = useState(false);
   const [transferring, setTransferring] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -37,6 +38,7 @@ const UploadScreen: React.FC<UploadScreenProps> = ({ onComplete }) => {
 
       const data = await response.json();
       setSessionId(data.session_id);
+      setVideoUrl(data.video_url);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'SYSTEM_FAULT');
       setUploading(false);
@@ -185,6 +187,7 @@ const UploadScreen: React.FC<UploadScreenProps> = ({ onComplete }) => {
         ) : (
           <UploadProgress 
             sessionId={sessionId} 
+            videoUrl={videoUrl}
             onComplete={onComplete} 
           />
         )}

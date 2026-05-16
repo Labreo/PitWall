@@ -33,7 +33,10 @@ async def upload_video(background_tasks: BackgroundTasks, file: UploadFile = Fil
     orchestrator = PipelineOrchestrator(session_id)
     background_tasks.add_task(orchestrator.run, str(file_path))
     
-    return {"session_id": session_id}
+    return {
+        "session_id": session_id,
+        "video_url": f"http://localhost:8000/data/uploads/{session_id}.mp4"
+    }
 
 @router.get("/status/{session_id}")
 async def get_status(session_id: str):
