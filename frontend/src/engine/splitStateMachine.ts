@@ -28,6 +28,7 @@ class SplitStateMachine {
   
   // Processed History
   private completedSectorsByLap = new Map<number, CompletedSectorResult[]>();
+  private lastProcessedTimestamp: number = -1;
 
   subscribe(listener: StateMachineListener) {
     this.listeners.push(listener);
@@ -49,10 +50,23 @@ class SplitStateMachine {
     this.completedSectorsByLap.clear();
     this.activeLapNumber = null;
     this.activeSegmentId = null;
+    this.lastProcessedTimestamp = -1;
     this.notify();
   }
 
   processToTimestamp(timestamp: number) {
+    // Optimization: If timestamp is just moving forward incrementally, 
+    // we only do a full re-evaluation if it's a "jump" (scrubbing)
+    const isForward = timestamp >= this.lastProcessedTimestamp && timestamp < this.lastProcessedTimestamp + 1000;
+    const isJump = !isForward;
+
+    if (!isJump && this.activeLapNumber !== null) {
+      // In normal forward playback, we just check the current active segment's end
+      this.incrementalUpdate(timestamp);
+      this.lastProcessedTimestamp = timestamp;
+      return;
+    }
+
     // 1. Snapshot previous state for change detection
     const prevLap = this.activeLapNumber;
     const prevSegment = this.activeSegmentId;
@@ -123,6 +137,8 @@ class SplitStateMachine {
     let newCompletedCount = 0;
     this.completedSectorsByLap.forEach(list => newCompletedCount += list.length);
 
+    this.lastProcessedTimestamp = timestamp;
+
     if (
       this.activeLapNumber !== prevLap || 
       this.activeSegmentId !== prevSegment ||
@@ -131,6 +147,66 @@ class SplitStateMachine {
     ) {
       this.notify();
     }
+  }
+
+  private incrementalUpdate(timestamp: number) {
+    if (this.activeLapNumber === null) return;
+    const lapSplits = this.sessionSplitsMap.get(this.activeLapNumber);
+    if (!lapSplits) return;
+
+    let changed = false;
+
+    for (const split of lapSplits.splits) {
+      // Find the segment we are currently in or ahead of
+      if (timestamp < split.start_timestamp) break;
+
+      if (timestamp >= split.end_timestamp) {
+        // Did we just finish this? Check if it's already in completed list
+        const lapCompleted = this.completedSectorsByLap.get(this.activeLapNumber) || [];
+        if (!lapCompleted.some(c => c.segment_id === split.segment_id)) {
+          const bestBefore = theoreticalBestTracker.getBestDuration(split.split_index);
+          const isNewBest = theoreticalBestTracker.processCompletedSector(
+            split.split_index, 
+            split.duration_seconds, 
+            this.activeLapNumber
+          );
+          
+          const result = evaluateSectorDelta(split.duration_seconds, bestBefore, isNewBest);
+          
+          lapCompleted.push({
+            segment_id: split.segment_id,
+            split_index: split.split_index,
+            duration_seconds: split.duration_seconds,
+            delta_seconds: result.delta_seconds,
+            status: result.status,
+            lap_number: this.activeLapNumber,
+            cumulative_time_seconds: split.cumulative_time_seconds
+          });
+          
+          this.completedSectorsByLap.set(this.activeLapNumber, lapCompleted);
+          changed = true;
+        }
+      } else {
+        // We are currently IN this split
+        if (this.activeSegmentId !== split.segment_id) {
+          this.activeSegmentId = split.segment_id;
+          changed = true;
+        }
+        break;
+      }
+    }
+
+    // Check for lap transition
+    if (timestamp > lapSplits.splits[lapSplits.splits.length - 1].end_timestamp) {
+      const nextLap = this.sessionSplitsMap.get(this.activeLapNumber + 1);
+      if (nextLap && timestamp >= nextLap.splits[0].start_timestamp) {
+        this.activeLapNumber++;
+        this.activeSegmentId = nextLap.splits[0].segment_id;
+        changed = true;
+      }
+    }
+
+    if (changed) this.notify();
   }
 
   // Getters for React UI to consume

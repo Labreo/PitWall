@@ -103,10 +103,16 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
     if (!engine) return;
     const unsub = engine.subscribe((pt, ghostPt, ghostTimeDeltaMs) => {
       if (altRef.current) altRef.current.textContent = pt.altitude.toFixed(0);
-      if (ghostGapRef.current && ghostPt !== null) {
-        const deltaS = (ghostTimeDeltaMs ?? 0) / 1000;
-        ghostGapRef.current.textContent = deltaS >= 0 ? `+${deltaS.toFixed(2)}` : deltaS.toFixed(2);
-        ghostGapRef.current.style.color = deltaS >= 0 ? '#f87171' : '#34d399';
+      if (ghostGapRef.current) {
+        if (ghostPt !== null) {
+          const deltaS = (ghostTimeDeltaMs ?? 0) / 1000;
+          ghostGapRef.current.textContent = deltaS >= 0 ? `+${deltaS.toFixed(2)}` : deltaS.toFixed(2);
+          ghostGapRef.current.style.color = deltaS >= 0 ? '#f87171' : '#34d399';
+          ghostGapRef.current.style.opacity = '1';
+        } else {
+          ghostGapRef.current.textContent = '--.--';
+          ghostGapRef.current.style.color = 'rgba(148,163,184,0.3)';
+        }
       }
 
       // Auto-trigger logic
