@@ -27,6 +27,7 @@ export const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments
   const breatheCancelledRef = useRef(false);
   // Increments each time the SVG is fully redrawn, so the animation effect re-subscribes with fresh DOM refs
   const [drawKey, setDrawKey] = useState(0);
+  const [trackReady, setTrackReady] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -304,6 +305,7 @@ export const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments
 
     // Signal animation effect to re-cache DOM refs now that SVG is populated
     setDrawKey(k => k + 1);
+    setTrackReady(true);
 
     return () => { breatheCancelledRef.current = true; };
   }, [telemetry, segments, dimensions]);
@@ -457,32 +459,41 @@ export const TrackMapComponent: React.FC<TrackMapProps> = ({ telemetry, segments
       </div>
 
       {/* Corner intelligence overlay — appends into shared SVG */}
-      <CornerIntelligenceLayer
-        svgRef={svgRef}
-        telemetry={telemetry}
-        segments={segments}
-        dimensions={dimensions}
-        onAnalyticsReady={onAnalyticsReady}
-      />
+      {trackReady && (
+        <CornerIntelligenceLayer
+          svgRef={svgRef}
+          telemetry={telemetry}
+          segments={segments}
+          dimensions={dimensions}
+          onAnalyticsReady={onAnalyticsReady}
+          drawKey={drawKey}
+        />
+      )}
       
       {/* Braking clouds overlay */}
-      <BrakingZoneLayer
-        svgRef={svgRef}
-        telemetry={telemetry}
-        segments={segments}
-        laps={laps}
-        dimensions={dimensions}
-      />
+      {trackReady && (
+        <BrakingZoneLayer
+          svgRef={svgRef}
+          telemetry={telemetry}
+          segments={segments}
+          laps={laps}
+          dimensions={dimensions}
+          drawKey={drawKey}
+        />
+      )}
 
       {/* Ghost racing overlay */}
-      <GhostReplayLayer
-        svgRef={svgRef}
-        telemetry={telemetry}
-        segments={segments}
-        laps={laps}
-        dimensions={dimensions}
-        engine={engine}
-      />
+      {trackReady && (
+        <GhostReplayLayer
+          svgRef={svgRef}
+          telemetry={telemetry}
+          segments={segments}
+          laps={laps}
+          dimensions={dimensions}
+          engine={engine}
+          drawKey={drawKey}
+        />
+      )}
     </div>
   );
 };

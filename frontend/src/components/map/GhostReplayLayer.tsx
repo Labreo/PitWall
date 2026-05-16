@@ -17,6 +17,7 @@ interface GhostReplayLayerProps {
   laps: Lap[];
   dimensions: { width: number; height: number };
   engine: ReplayEngine | null;
+  drawKey?: number;
 }
 
 /**
@@ -30,7 +31,7 @@ interface GhostReplayLayerProps {
  * - Subscribes to ReplayEngine imperative callback (NOT React state) for 60fps
  */
 export const GhostReplayLayer: React.FC<GhostReplayLayerProps> = ({
-  svgRef, telemetry, segments, laps, dimensions, engine
+  svgRef, telemetry, segments, laps, dimensions, engine, drawKey
 }) => {
   // Low-frequency config from store
   const ghostEnabled = useReplayStore(s => s.ghostModeEnabled);
@@ -267,7 +268,7 @@ export const GhostReplayLayer: React.FC<GhostReplayLayerProps> = ({
       unsub();
       svg.select(`#${layerId}`).transition().duration(500).attr('opacity', 0).remove();
     };
-  }, [svgRef, engine, telemetry, laps, dimensions, ghostEnabled, ghostSource, ghostSelectedLapNum, ghostOffsetMs, ghostShowTrail]);
+  }, [svgRef, engine, telemetry, laps, dimensions, ghostEnabled, ghostSource, ghostSelectedLapNum, ghostOffsetMs, ghostShowTrail, drawKey]);
 
   return null;
 };

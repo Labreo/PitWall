@@ -21,12 +21,14 @@ interface ReplayLayoutProps {
   telemetry?: TelemetryPoint[];
   segments?: Segment[];
   laps?: Lap[];
+  sessionInfo?: { filename: string; date: string } | null;
 }
 
 const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
   telemetry = MOCK_TELEMETRY,
   segments = MOCK_SEGMENTS,
   laps = MOCK_LAPS,
+  sessionInfo = null,
 }) => {
   const engineRef = useReplayEngine(telemetry, segments, laps, REAL_COACHING_EVENTS as any);
 
@@ -171,7 +173,7 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
                 {[
                   { text: 'PITWALL TELEMETRY v2.1', delay: 0.05, col: 'rgba(34,211,238,0.9)', mono: true },
                   { text: '────────────────────────────────', delay: 0.15, col: 'rgba(34,211,238,0.15)', mono: true },
-                  { text: 'LOADING SESSION  DONINGTON PARK GP', delay: 0.25, col: 'rgba(148,163,184,0.5)', mono: true },
+                  { text: `LOADING SESSION  ${(sessionInfo?.filename || 'DONINGTON PARK GP').toUpperCase()}`, delay: 0.25, col: 'rgba(148,163,184,0.5)', mono: true },
                   { text: 'TELEMETRY POINTS  ████████████  OK', delay: 0.35, col: 'rgba(148,163,184,0.4)', mono: true },
                   { text: 'GPS TRACK DATA    ████████████  OK', delay: 0.45, col: 'rgba(148,163,184,0.4)', mono: true },
                   { text: 'SECTOR MAP        ████████████  OK', delay: 0.55, col: 'rgba(148,163,184,0.4)', mono: true },
@@ -297,11 +299,11 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
         className="absolute top-5 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-4"
       >
         <span className="text-[9px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'rgba(148,163,184,0.35)' }}>
-          DONINGTON PARK GP
+          {sessionInfo?.filename || 'DONINGTON PARK GP'}
         </span>
         <div className="w-px h-3" style={{ background: 'rgba(148,163,184,0.15)' }} />
         <span className="text-[9px] font-mono tracking-wider" style={{ color: 'rgba(148,163,184,0.25)' }}>
-          29.08.2019
+          {sessionInfo?.date || '29.08.2019'}
         </span>
       </motion.div>
 

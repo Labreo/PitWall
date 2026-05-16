@@ -10,6 +10,7 @@ interface CornerIntelligenceLayerProps {
   segments: Segment[];
   dimensions: { width: number; height: number };
   onAnalyticsReady?: (analytics: CornerAnalytics[]) => void;
+  drawKey?: number;
 }
 
 export interface CornerAnalytics {
@@ -118,6 +119,7 @@ export function CornerIntelligenceLayer({
   segments,
   dimensions,
   onAnalyticsReady,
+  drawKey,
 }: CornerIntelligenceLayerProps) {
   const analyticsRef = useRef<CornerAnalytics[]>([]);
   const layerRef = useRef<SVGGElement | null>(null);
@@ -270,7 +272,7 @@ export function CornerIntelligenceLayer({
         .attr('letter-spacing', '0.15em')
         .text(ca.segment.segment_id);
     });
-  }, [telemetry, segments, dimensions, svgRef, onAnalyticsReady]);
+  }, [telemetry, segments, dimensions, svgRef, onAnalyticsReady, drawKey]);
 
   // Imperative activation — subscribe to store, no React re-renders
   useEffect(() => {

@@ -12,10 +12,11 @@ interface BrakingZoneLayerProps {
   segments: Segment[];
   laps: Lap[];
   dimensions: { width: number; height: number };
+  drawKey?: number;
 }
 
 export const BrakingZoneLayer: React.FC<BrakingZoneLayerProps> = ({
-  svgRef, telemetry, segments, laps, dimensions
+  svgRef, telemetry, segments, laps, dimensions, drawKey
 }) => {
   const visible = useReplayStore(s => s.showBrakingZones);
 
@@ -101,7 +102,7 @@ export const BrakingZoneLayer: React.FC<BrakingZoneLayerProps> = ({
     return () => {
       svg.select(`#${layerId}`).transition().duration(500).attr('opacity', 0).remove();
     };
-  }, [svgRef, telemetry, segments, laps, dimensions, visible]);
+  }, [svgRef, telemetry, segments, laps, dimensions, visible, drawKey]);
 
   return null;
 };
