@@ -273,7 +273,6 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
       <div className="absolute inset-0 pointer-events-none vignette z-[45]" />
       <div className="absolute inset-0 pointer-events-none edge-fade-bottom z-[45]" />
 
-      {/* ── PITWALL watermark ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

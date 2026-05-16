@@ -76,14 +76,14 @@ const UploadScreen: React.FC<UploadScreenProps> = ({ onComplete }) => {
                 Telemetry Ingest Engine v2.4
               </motion.div>
               
-              <motion.h1 
+              <motion.div 
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="text-7xl font-black text-white tracking-tighter"
+                className="flex flex-col items-center"
               >
-                PIT<span className="text-cyan-500">WALL</span>
-              </motion.h1>
+                <img src="/logo.png" alt="PitWall Logo" className="w-[380px] h-auto drop-shadow-[0_0_30px_rgba(34,211,238,0.2)]" />
+              </motion.div>
               
               <motion.p 
                 initial={{ opacity: 0 }}
