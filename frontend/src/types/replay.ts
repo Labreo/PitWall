@@ -26,6 +26,7 @@ export interface ReplayState {
   showCornerAnalytics: boolean;
   showSummary: boolean;
   isDemoMode: boolean;
+  isDemo: boolean;
   showDiagnostics: boolean;
   
   // Theoretical Best
@@ -62,4 +63,5 @@ export interface ReplayState {
   toggleSummary: () => void;
   toggleDemoMode: () => void;
   toggleDiagnostics: () => void;
+  setIsDemo: (isDemo: boolean) => void;
 }
