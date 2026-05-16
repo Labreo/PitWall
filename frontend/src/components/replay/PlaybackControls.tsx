@@ -29,6 +29,7 @@ const PlaybackControlsComponent: React.FC = () => {
   const ghostOffsetMs = useReplayStore(s => s.ghostOffsetMs);
   const ghostShowTrail = useReplayStore(s => s.ghostShowTrail);
   const showBrakingZones = useReplayStore(s => s.showBrakingZones);
+  const showCornerAnalytics = useReplayStore(s => s.showCornerAnalytics);
   const togglePlay = useReplayStore(s => s.togglePlay);
   const setPlaybackSpeed = useReplayStore(s => s.setPlaybackSpeed);
   const seekTo = useReplayStore(s => s.seekTo);
@@ -37,6 +38,7 @@ const PlaybackControlsComponent: React.FC = () => {
   const setGhostOffsetMs = useReplayStore(s => s.setGhostOffsetMs);
   const toggleGhostTrail = useReplayStore(s => s.toggleGhostTrail);
   const toggleBrakingZones = useReplayStore(s => s.toggleBrakingZones);
+  const toggleCornerAnalytics = useReplayStore(s => s.toggleCornerAnalytics);
 
   // DOM refs for high-frequency updates (avoids re-render on every frame)
   const progressFillRef = useRef<HTMLDivElement>(null);
@@ -138,6 +140,25 @@ const PlaybackControlsComponent: React.FC = () => {
 
         {/* Toggles + Ghost Config + Speed */}
         <div className="flex items-center gap-3">
+          {/* Corner Analytics Toggle */}
+          <button
+            onClick={toggleCornerAnalytics}
+            className="flex items-center gap-1.5 px-2 py-1 rounded transition-all duration-200"
+            style={{
+              background: showCornerAnalytics ? 'rgba(251,191,36,0.1)' : 'transparent',
+              border: `1px solid ${showCornerAnalytics ? 'rgba(251,191,36,0.3)' : 'rgba(148,163,184,0.1)'}`,
+            }}
+          >
+            <div className={`w-1.5 h-1.5 rounded-full ${showCornerAnalytics ? 'bg-amber-400' : 'bg-slate-600'}`}
+              style={showCornerAnalytics ? { boxShadow: '0 0 6px rgba(251,191,36,0.6)' } : {}} />
+            <span className="text-[9px] font-semibold tracking-[0.1em] uppercase"
+              style={{ color: showCornerAnalytics ? 'rgba(251,191,36,0.9)' : 'rgba(148,163,184,0.4)' }}>
+              CORNER
+            </span>
+          </button>
+
+          <div className="w-px h-3" style={{ background: 'rgba(148,163,184,0.1)' }} />
+
           {/* Braking Zones Toggle */}
           <button
             onClick={toggleBrakingZones}

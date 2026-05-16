@@ -41,11 +41,22 @@ class CoachingAudioQueue {
     this.execute(event);
   }
 
-  private execute(event: CoachingEvent) {
+  private async execute(event: CoachingEvent) {
     const store = useCoachingStore.getState();
     
     // Cancel any current speech (interrupt)
     this.stop();
+
+    // Play F1 Radio Beep
+    try {
+      const beep = new Audio('/formula-1-radio-notification.mp3');
+      beep.volume = 0.5;
+      await beep.play();
+      // Wait for beep to establish before engineer speaks (approx duration of beep)
+      await new Promise(resolve => setTimeout(resolve, 800));
+    } catch (err) {
+      console.warn('[RADIO] Beep failed:', err);
+    }
 
     console.log(`[RADIO] SPEAK_START: ${event.id}`);
     store.setActiveEvent(event);

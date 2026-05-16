@@ -121,6 +121,7 @@ export function CornerIntelligenceLayer({
   onAnalyticsReady,
   drawKey,
 }: CornerIntelligenceLayerProps) {
+  const visible = useReplayStore(s => s.showCornerAnalytics);
   const analyticsRef = useRef<CornerAnalytics[]>([]);
   const layerRef = useRef<SVGGElement | null>(null);
   // Map segment_id → DOM group element for fast imperative lookup
@@ -131,18 +132,21 @@ export function CornerIntelligenceLayer({
   useEffect(() => {
     if (!svgRef.current || telemetry.length === 0 || dimensions.width === 0) return;
 
+    const svg = d3.select(svgRef.current);
+    const layerClass = 'corner-intelligence-layer';
+
+    // Remove previous layer
+    svg.select(`.${layerClass}`).remove();
+    cornerEls.current.clear();
+
+    if (!visible) return;
+
     const proj = createTrackProjection(telemetry, dimensions.width, dimensions.height, 80);
     const analytics = computeCornerAnalytics(telemetry, segments, proj);
     analyticsRef.current = analytics;
     onAnalyticsReady?.(analytics);
 
-    const svg = d3.select(svgRef.current);
-
-    // Remove previous layer
-    svg.select('.corner-intelligence-layer').remove();
-    cornerEls.current.clear();
-
-    const layer = svg.append('g').attr('class', 'corner-intelligence-layer');
+    const layer = svg.append('g').attr('class', layerClass);
     layerRef.current = layer.node();
 
     const lineGen = d3.line<[number, number]>().x(d => d[0]).y(d => d[1]).curve(d3.curveCatmullRom.alpha(0.5));
@@ -272,7 +276,7 @@ export function CornerIntelligenceLayer({
         .attr('letter-spacing', '0.15em')
         .text(ca.segment.segment_id);
     });
-  }, [telemetry, segments, dimensions, svgRef, onAnalyticsReady, drawKey]);
+  }, [telemetry, segments, dimensions, svgRef, onAnalyticsReady, drawKey, visible]);
 
   // Imperative activation — subscribe to store, no React re-renders
   useEffect(() => {

@@ -19,6 +19,7 @@ export const useReplayStore = create<ReplayState>((set) => ({
   activeCoachingEvent: null,
   isSpeechActive: false,
   showBrakingZones: true,
+  showCornerAnalytics: true,
 
   togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
   setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
@@ -33,6 +34,7 @@ export const useReplayStore = create<ReplayState>((set) => ({
   setGhostOffsetMs: (offset) => set({ ghostOffsetMs: offset }),
   toggleGhostTrail: () => set((state) => ({ ghostShowTrail: !state.ghostShowTrail })),
   toggleBrakingZones: () => set((state) => ({ showBrakingZones: !state.showBrakingZones })),
+  toggleCornerAnalytics: () => set((state) => ({ showCornerAnalytics: !state.showCornerAnalytics })),
 
   setActiveCoachingEvent: (event) => {
     if (dismissTimer) clearTimeout(dismissTimer);

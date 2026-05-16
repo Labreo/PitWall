@@ -23,6 +23,7 @@ export interface ReplayState {
 
   // Visualization Toggles
   showBrakingZones: boolean;
+  showCornerAnalytics: boolean;
 
   // Actions
   togglePlay: () => void;
@@ -41,4 +42,5 @@ export interface ReplayState {
   dismissCoachingEvent: () => void;
   setSpeechActive: (active: boolean) => void;
   toggleBrakingZones: () => void;
+  toggleCornerAnalytics: () => void;
 }
