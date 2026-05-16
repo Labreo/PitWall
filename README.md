@@ -7,7 +7,6 @@
 [![Performance](https://img.shields.io/badge/Replay-60FPS%20Deterministic-emerald?style=for-the-badge)](https://github.com/labreo/pitwall)
 [![IBM Granite](https://img.shields.io/badge/AI-IBM%20Granite-violet?style=for-the-badge)](https://github.com/labreo/pitwall)
 [![IBM Docling](https://img.shields.io/badge/Knowledge-IBM%20Docling-blue?style=for-the-badge)](https://github.com/labreo/pitwall)
-[![Langflow](https://img.shields.io/badge/Orchestration-Langflow-orange?style=for-the-badge)](https://github.com/labreo/pitwall)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 </div>
@@ -217,26 +216,12 @@ When the session ends, PitWall automatically generates a complete race engineeri
 
 ## 04 // IBM AI INTEGRATION
 
-<!-- 
-  IMAGE 7: LANGFLOW PIPELINE DIAGRAM
-  Shoot: Screenshot of your Langflow visual pipeline.
-  Show the nodes connected: Telemetry Input → Docling Knowledge Base
-  → Granite Model → Coaching Output. This is the IBM proof screenshot.
-  Make sure it's clean and the node labels are readable.
-  Suggested filename: docs/images/langflow_pipeline.png
--->
-<div align="center">
-  <img src="docs/images/langflow_pipeline.png" alt="Langflow AI Pipeline" width="75%"/>
-  <p><em>IBM AI Pipeline — Langflow orchestrating Docling knowledge grounding and Granite coaching generation</em></p>
-</div>
-
 | IBM Tool | Role | Integration Point |
 |---|---|---|
 | **IBM Granite** | Coaching language generation + Intelligence Summary recommendations | Receives structured corner performance data from the physics engine. Produces coaching lines and debrief text. |
 | **IBM Docling** | Racing theory PDF parsing → structured knowledge base | Pre-parses FIA regulations, racing line theory, and track guides. Grounds all Granite output in real motorsport knowledge. |
-| **Langflow** | Visual AI pipeline orchestration | Wires Docling knowledge base → Granite model → coaching output. Handles prompt templating and model routing. |
 
-**Architecture principle:** IBM tools sit on top of deterministic engineering. Granite is the narrator of findings produced by real algorithms. This is visible in the codebase and in the Langflow pipeline diagram above.
+**Architecture principle:** IBM tools sit on top of deterministic engineering. Granite is the narrator of findings produced by real algorithms. Every coaching line is traceable to a specific computed metric — not an LLM estimate.
 
 ---
 
@@ -268,7 +253,7 @@ graph TD
     M --> R[Video Sector Sync]
 
     subgraph Frontend_Mission_Control ["Frontend · Mission Control"]
-    S[D3 GPS Trace Player] 
+    S[D3 GPS Trace Player]
     T["TelemetryHUD · Live Readouts"]
     U[Ghost Racing Engine]
     V[Track Intelligence Layers]
@@ -320,7 +305,7 @@ The prototype is validated on real telemetry from a professional motorcycle ride
 PitWall is vehicle-agnostic. The telemetry pipeline reads GoPro GPMF streams identically for cars and motorcycles. The Donington Park dataset was selected for its data quality and public availability.
 
 <!-- 
-  IMAGE 8: DONINGTON TRACK RECONSTRUCTION
+  IMAGE 7: DONINGTON TRACK RECONSTRUCTION
   Shoot: The refined_track_segments.png output from your Python pipeline
   OR a screenshot of the GPS trace rendered in the frontend showing the
   full Donington Park layout reconstructed from real GPS coordinates.
@@ -342,7 +327,6 @@ PitWall is vehicle-agnostic. The telemetry pipeline reads GoPro GPMF streams ide
 - Node.js 18+
 - FFmpeg (with GPMF metadata support)
 - Ollama running `granite3.1-dense:2b` or `granite-3.0-8b-instruct`
-- Langflow instance (local or cloud)
 
 ### Installation
 
@@ -372,10 +356,6 @@ ollama pull granite3.1-dense:2b
 ollama serve
 ```
 
-**5. IBM Intelligence setup**
-
-Ensure your Langflow instance is running. Import the provided `langflow_pipeline.json` from the `/langflow` directory. Configure the Docling node to point at the PDF knowledge base in `/backend/knowledge`. The pipeline exposes a REST endpoint that the FastAPI backend calls for coaching generation.
-
 ### Upload Your Own Data
 
 PitWall accepts GoPro Hero 5+ footage natively. GPS must be enabled on the camera before recording. For best results:
@@ -399,8 +379,7 @@ Compatible GPS data sources: GoPro Hero 5+, Racelogic VBOX, AiM Solo, Harry's La
 | Backend API | FastAPI, Python |
 | Video processing | ffmpeg, gopro2json |
 | Telemetry analysis | NumPy, Pandas |
-| AI orchestration | IBM Langflow |
-| AI model | IBM Granite (Ollama local) |
+| AI model | IBM Granite (via Ollama) |
 | Knowledge base | IBM Docling |
 | Demo dataset | Donington Park · 9 laps · GoPro GPMF |
 
@@ -433,7 +412,7 @@ Every driver deserves a seat at the engineering table. PitWall builds it.
 
 Built for the **IBM AI Builders Challenge 2026** — Racing Innovation Challenge.
 
-**IBM Technologies Used:** IBM Granite · IBM Docling · IBM Langflow
+**IBM Technologies Used:** IBM Granite · IBM Docling
 
 **Demo:** [3-minute video link]
 
