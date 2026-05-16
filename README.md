@@ -112,14 +112,23 @@ The centrepiece of PitWall. The system identifies the fastest version of every g
   <p><em>Mission Control — synchronized video, telemetry, GPS trace, and ghost racing simultaneously</em></p>
 </div>
 
-A professional motorsport broadcast environment built on a deterministic replay engine:
+A high-performance motorsport broadcast environment powered by a **60FPS Deterministic Replay Engine**. Unlike standard web video players, Mission Control treats your session as a living physics simulation.
 
-- **Synchronized Multi-Stream Playback** — GoPro video, live telemetry readouts, and GPS trace animate simultaneously, locked to the same timestamp
-- **Ghost Racing System** — Session best ghost rendered on the track with live delta tracking (green/red/gold timing HUD)
-- **Sector Timing HUD** — Real-time purple/green/red delta indicators against session benchmarks and personal bests
-- **Live Telemetry** — Speed, G-force (longitudinal and lateral), and heading derived directly from GPS metadata
+#### 👻 THE GHOST SYSTEM // YOUR SILENT BENCHMARK
+The Ghost System is the heart of PitWall's competitive analysis. It doesn't just show a line; it reconstructs your fastest session lap as a dynamic, semi-transparent entity that races alongside you in real-time.
 
-The replay engine runs outside the React render loop via `requestAnimationFrame`, with D3 handling all rendering imperatively. Zero React re-renders during playback. 60FPS precision regardless of session length.
+- **Cross-Lap Synchronization** — Most systems fail to compare Lap 2 against Lap 1 because segment IDs change. PitWall uses a **Stable Split Indexing** algorithm that correlates your current position against the optimal ghost regardless of lap count or session drift.
+- **Dynamic Delta Projection** — The system computes your gap to the ghost at 60Hz. The HUD displays a precision **Live Delta** (e.g., `-0.145s`) that pulses gold for sector records, green for personal bests, and red for time loss.
+- **Interpolated Persistence** — The ghost doesn't "teleport" between GPS pings. We use high-order linear interpolation to ensure the ghost moves with the same fluid motion as the live car, providing a perfect visual reference for braking points and apex speeds.
+
+#### ⏱️ DETERMINISTIC SPLIT ENGINE
+To achieve professional-grade timing, we rebuilt the replay core from the ground up:
+
+- **State-Machine-Driven Timing** — All sector times, lap deltas, and "Theoretical Best" updates are managed by a central `SplitStateMachine`. This ensures that if you scrub the replay to a specific timestamp, the timing HUD shows the *exact* state it would have been in during a live run.
+- **Isolated Sector Analysis** — PitWall separates your current lap performance from your sector performance. You can be 5 seconds down on your lap time but still set a "Purple Sector" for a specific corner. The system isolates your technique from your total lap "debt."
+- **Zero-Latency Rendering** — By bypassing React's reconciliation loop and using direct D3 imperative writes, the replay engine maintains a locked 60FPS. This eliminates the "UI jitter" common in web-based telemetry tools.
+
+---
 
 ---
 
@@ -166,26 +175,24 @@ The track itself becomes the analysis surface. This approach — continuous spat
 -->
 <div align="center">
   <img src="docs/images/coaching_radio.png" alt="IBM Granite Coaching Radio" width="85%"/>
-  <p><em>Engineer Radio — IBM Granite coaching fires at the exact telemetry moment, not generically</em></p>
+  <p><em>Engineer Radio — IPitWall uses a sophisticated two-layer intelligence architecture—**The Brain**—that separates deterministic physics from probabilistic narrative:</em></p>
 </div>
 
-PitWall uses a strict two-layer intelligence architecture that separates physics from language:
+#### 🏗️ LAYER 1 // THE PHYSICS ENGINE
+Before a single word is generated, our deterministic Python pipeline processes your raw GPMF metadata into high-fidelity performance metrics:
+- **Deceleration Forensics** — Identification of Braking-of-Beginning (BoB) and End-of-Braking (EoB) markers via longitudinal G-force thresholding.
+- **Apex Profiling** — Real-time curvature calculation to identify the true geometric apex vs. the driver's steered apex.
+- **Line Consistency Scoring** — Spatial variance analysis using the Hausdorff distance between GPS traces of different laps.
 
-**Layer 1 — Physics Engine (Deterministic Python)**
-All performance metrics are computed before any AI model is invoked:
-- Braking point identification (deceleration threshold detection)
-- Corner entry/apex/exit speed profiling
-- Sector time delta calculation against personal best and theoretical best
-- Consistency scoring from GPS line variance
-- Fatigue detection from late-session performance degradation
+#### 🏗️ LAYER 2 // THE NARRATIVE ENGINE (IBM GRANITE)
+Once the physics are locked, **IBM Granite** takes over as your virtual Race Engineer. We ensure every coaching line is grounded in reality through a **RAG (Retrieval-Augmented Generation)** pipeline:
 
-**Layer 2 — Narrative Engine (IBM Granite)**
-IBM Granite receives structured, pre-computed findings and generates coaching language:
-- Coaching lines are specific and referenced: *"Turn 3 — braking 12 meters too late, exit speed 132 km/h against a target of 145"*
-- IBM Docling pre-parses racing theory PDFs, FIA regulations, and track guides into a structured knowledge base that grounds every coaching output
-- Coaching fires as radio audio with subtitle overlay, synchronized to the correct telemetry timestamp via the coaching scheduler
+- **IBM Docling Knowledge Base** — We used **IBM Docling** to ingest thousands of pages of professional racing theory, track guides, and vehicle dynamics references. These are chunked, embedded, and stored in a local vector index.
+- **Dynamic Theory Injection** — When the Physics Engine detects a mistake (e.g., poor trail-braking), Granite queries the knowledge base for specific technical theory related to that error and injects it into the coaching prompt.
+- **Repetition-Aware Logic** — PitWall tracks session-wide coaching history. If you repeat a mistake, Granite is instructed to pivot—focusing on a different nuance or increasing the technical urgency of the feedback.
+- **Deterministic Grounding** — Granite is strictly prohibited from inventing physics. It acts as the *narrator* of Layer 1's findings, ensuring that advice like *"You're 12m late on the brakes"* is based on computed telemetry, not an LLM hallucination.
 
-**Why this matters:** Granite explains findings. It does not produce them. This separation ensures every coaching line is traceable to a deterministic metric — not an LLM guess.
+**Result:** You get coaching that feels like a real engineer referencing a playbook, not a generic motivational AI assistant.
 
 ---
 
@@ -380,7 +387,8 @@ Compatible GPS data sources: GoPro Hero 5+, Racelogic VBOX, AiM Solo, Harry's La
 | Video processing | ffmpeg, gopro2json |
 | Telemetry analysis | NumPy, Pandas |
 | AI model | IBM Granite (via Ollama) |
-| Knowledge base | IBM Docling |
+| Knowledge base | IBM Docling (PDF Parsing + FAISS RAG) |
+| Timing Engine | Deterministic Split State Machine |
 | Demo dataset | Donington Park · 9 laps · GoPro GPMF |
 
 ---
