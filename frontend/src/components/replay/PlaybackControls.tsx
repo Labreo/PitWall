@@ -1,7 +1,7 @@
 import React, { memo, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReplayStore } from '../../store/replayStore';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Activity } from 'lucide-react';
 import { GHOST_OFFSETS, GhostOffset, GhostSource } from '../../utils/ghostTypes';
 
 const SPEEDS = [0.25, 0.5, 1, 2, 4];
@@ -39,6 +39,8 @@ const PlaybackControlsComponent: React.FC = () => {
   const toggleGhostTrail = useReplayStore(s => s.toggleGhostTrail);
   const toggleBrakingZones = useReplayStore(s => s.toggleBrakingZones);
   const toggleCornerAnalytics = useReplayStore(s => s.toggleCornerAnalytics);
+  const showSummary = useReplayStore(s => s.showSummary);
+  const toggleSummary = useReplayStore(s => s.toggleSummary);
 
   // DOM refs for high-frequency updates (avoids re-render on every frame)
   const progressFillRef = useRef<HTMLDivElement>(null);
@@ -274,6 +276,23 @@ const PlaybackControlsComponent: React.FC = () => {
               </button>
             ))}
           </div>
+          <div className="w-px h-3" style={{ background: 'rgba(148,163,184,0.15)' }} />
+
+          {/* Session Summary Toggle */}
+          <button
+            onClick={toggleSummary}
+            className="flex items-center gap-1.5 px-3 py-1 rounded transition-all duration-200"
+            style={{
+              background: showSummary ? 'rgba(34,211,238,0.1)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${showSummary ? 'rgba(34,211,238,0.4)' : 'rgba(148,163,184,0.15)'}`,
+            }}
+          >
+            <Activity size={10} className={showSummary ? 'text-cyan-400' : 'text-slate-500'} />
+            <span className="text-[9px] font-bold tracking-[0.2em] uppercase"
+              style={{ color: showSummary ? '#22d3ee' : 'rgba(148,163,184,0.4)' }}>
+              Summary
+            </span>
+          </button>
         </div>
       </div>
     </motion.div>

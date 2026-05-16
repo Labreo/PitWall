@@ -16,6 +16,9 @@ import { CoachingSubtitles } from './CoachingSubtitles';
 import { EngineerRadioDebugPanel } from './EngineerRadioDebugPanel';
 import { SplitTimingHUD } from './SplitTimingHUD';
 import { coachingAudioQueue } from '../../engine/coachingAudioQueue';
+import { FinalSessionSummary } from './FinalSessionSummary';
+import { buildSessionSummary } from '../../utils/summaryMetricsBuilder';
+import { CoachingEvent } from '../../types/coaching';
 
 interface ReplayLayoutProps {
   telemetry?: TelemetryPoint[];
@@ -48,6 +51,16 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
   const currentSegmentId = useReplayStore(s => s.currentSegmentId);
   const currentLapNumber = useReplayStore(s => s.currentLapNumber);
   const ghostModeEnabled = useReplayStore(s => s.ghostModeEnabled);
+  const showSummary = useReplayStore(s => s.showSummary);
+
+  const summaryData = useMemo(() => {
+    return buildSessionSummary(
+      telemetry,
+      laps,
+      segments,
+      REAL_COACHING_EVENTS as CoachingEvent[]
+    );
+  }, [telemetry, laps, segments]);
 
   // Imperative refs for top-right readout (avoid React re-renders)
   const altRef = useRef<HTMLSpanElement>(null);
@@ -62,6 +75,12 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
         const deltaS = (ghostTimeDeltaMs ?? 0) / 1000;
         ghostGapRef.current.textContent = deltaS >= 0 ? `+${deltaS.toFixed(2)}` : deltaS.toFixed(2);
         ghostGapRef.current.style.color = deltaS >= 0 ? '#f87171' : '#34d399';
+      }
+
+      // Auto-trigger summary at end of session
+      const { sessionEnd, showSummary, toggleSummary } = useReplayStore.getState();
+      if (pt.timestamp >= sessionEnd - 100 && !showSummary) {
+        setTimeout(toggleSummary, 1500); // Linger on final frame then reveal
       }
     });
     return unsub;
@@ -371,6 +390,16 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
 
       {/* ── Playback Controls ── */}
       <PlaybackControls />
+
+      {/* ── Final Session Summary Overlay ── */}
+      <AnimatePresence>
+        {showSummary && (
+          <FinalSessionSummary 
+            data={summaryData} 
+            onClose={() => useReplayStore.getState().toggleSummary()} 
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
