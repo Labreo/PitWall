@@ -40,8 +40,6 @@ async def upload_video(background_tasks: BackgroundTasks, file: UploadFile = Fil
 
 @router.get("/status/{session_id}")
 async def get_status(session_id: str):
-    if session_id == "check":
-        return {"status": "ok", "engine": "PitWall Pipeline"}
     if session_id not in state_store:
         raise HTTPException(status_code=404, detail="Session not found")
     return state_store[session_id]

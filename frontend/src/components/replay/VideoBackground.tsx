@@ -58,6 +58,7 @@ const VideoBackgroundComponent: React.FC = () => {
       src="/session.mp4"
       className="absolute inset-0 w-full h-full object-cover pointer-events-none"
       style={{ zIndex: 0, opacity: 0.45 }}
+      muted
       playsInline
       preload="auto"
     />

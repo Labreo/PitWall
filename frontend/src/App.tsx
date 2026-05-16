@@ -3,8 +3,6 @@ import { ReplayLayout } from './components/replay/ReplayLayout';
 import { TelemetryPoint, Segment, Lap } from './types/telemetry';
 import { deriveGForces } from './utils/deriveGForces';
 import UploadScreen from './components/upload/UploadScreen';
-import { loadDemoSession } from './utils/staticSessionLoader';
-import { useReplayStore } from './store/replayStore';
 
 type LoadState = 'loading' | 'ready' | 'error';
 type ViewState = 'upload' | 'replay';
@@ -41,51 +39,6 @@ function App() {
     const loadData = async () => {
       setLoadState('loading');
       try {
-        // First, check if we are in demo mode (Vercel deployment or explicit hash)
-        const isLocal = window.location.hostname === 'localhost';
-        const forceDemo = window.location.hash === '#demo';
-        
-        let shouldLoadDemo = !isLocal || forceDemo;
-
-        // If local and not forcing demo, we should check if backend is alive
-        // But for simplicity of this task, I'll use a simpler heuristic:
-        // If we are at /#replay and not /#demo, we try local first.
-        
-        let sessionData;
-        if (shouldLoadDemo) {
-          console.log('🏁 Loading Production Demo Session...');
-          sessionData = await loadDemoSession();
-          
-          // Sync with ReplayStore
-          const store = useReplayStore.getState();
-          store.setIsDemo(true);
-          store.initializeSession(sessionData.telemetry, sessionData.laps, sessionData.segments);
-          
-          // Load theoretical best if available
-          try {
-            const tRes = await fetch('/demo/theoretical_best.json');
-            if (tRes.ok) {
-              const tData = await tRes.json();
-              store.setTheoreticalLapData(tData);
-            }
-          } catch (e) {
-            console.warn('Could not load pre-cached theoretical lap', e);
-          }
-
-          // Derive G-forces from GPS data (if raw fields are zero)
-          deriveGForces(sessionData.telemetry);
-
-          setTelemetry(sessionData.telemetry);
-          setSegments(sessionData.segments);
-          setLaps(sessionData.laps);
-          setSessionInfo(sessionData.session);
-          setLoadState('ready');
-          setView('replay');
-          return;
-        }
-
-        // Standard Local Backend Load (Fallback)
-        useReplayStore.getState().setIsDemo(false);
         const [telemetryRes, segmentsRes] = await Promise.all([
           fetch('/data/normalized_session.json'),
           fetch('/data/segments.json'),
@@ -99,10 +52,39 @@ function App() {
           segmentsRes.json(),
         ]);
 
-        // ... existing local load logic ...
+        // Try loading laps.json — fall back to a single synthesised lap
         let lapsData: Lap[];
-        const lapsRes = await fetch('/data/laps.json');
-        lapsData = lapsRes.ok ? await lapsRes.json() : [];
+        try {
+          const lapsRes = await fetch('/data/laps.json');
+          if (lapsRes.ok) {
+            lapsData = await lapsRes.json();
+          } else {
+            throw new Error('no laps.json');
+          }
+        } catch {
+          // Synthesise a single lap from session bounds
+          const sessionStart = telemetryData[0].timestamp;
+          const sessionEnd = telemetryData[telemetryData.length - 1].timestamp;
+          lapsData = [{
+            lap_number: 1,
+            start_timestamp: sessionStart,
+            end_timestamp: sessionEnd,
+            lap_duration_seconds: (sessionEnd - sessionStart) / 1000,
+          }];
+        }
+
+        // Try loading session_info.json
+        try {
+          const infoRes = await fetch('/data/session_info.json');
+          if (infoRes.ok) {
+            setSessionInfo(await infoRes.json());
+          }
+        } catch (err) {
+          console.warn("Could not load session info:", err);
+        }
+
+        // Derive G-forces from GPS data (raw accelerometer fields are zero)
+        deriveGForces(telemetryData);
 
         setTelemetry(telemetryData);
         setSegments(segmentsData);
