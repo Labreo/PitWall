@@ -56,7 +56,7 @@ Cinematic Forensics Sequence
 (GPMF extraction → lap detection → corner segmentation → session build)
         ↓
 Mission Control Replay
-(GPS trace · telemetry HUD · ghost racing · track intelligence layers · Granite coaching)
+(GPS trace · telemetry HUD · ghost racing · track intelligence layers · Granite coaching · audio pace notes)
         ↓
 Theoretical Best Lap Reconstruction
 (fastest sectors stitched · video sync · sector provenance)
@@ -115,27 +115,44 @@ The centrepiece of PitWall. The system identifies the fastest version of every g
 A high-performance motorsport broadcast environment powered by a **60FPS Deterministic Replay Engine**. Unlike standard web video players, Mission Control treats your session as a living physics simulation.
 
 #### 👻 THE GHOST SYSTEM // YOUR SILENT BENCHMARK
-The Ghost System is the heart of PitWall's competitive analysis. It doesn't just show a line; it reconstructs your fastest session lap as a dynamic, semi-transparent entity that races alongside you in real-time.
+The Ghost System reconstructs your fastest session lap as a dynamic, semi-transparent entity that races alongside you in real time.
 
-- **Cross-Lap Synchronization** — Most systems fail to compare Lap 2 against Lap 1 because segment IDs change. PitWall uses a **Stable Split Indexing** algorithm that correlates your current position against the optimal ghost regardless of lap count or session drift.
-- **Dynamic Delta Projection** — The system computes your gap to the ghost at 60Hz. The HUD displays a precision **Live Delta** (e.g., `-0.145s`) that pulses gold for sector records, green for personal bests, and red for time loss.
-- **Interpolated Persistence** — The ghost doesn't "teleport" between GPS pings. We use high-order linear interpolation to ensure the ghost moves with the same fluid motion as the live car, providing a perfect visual reference for braking points and apex speeds.
+- **Cross-Lap Synchronization** — A Stable Split Indexing algorithm correlates your current position against the optimal ghost regardless of lap count or session drift
+- **Dynamic Delta Projection** — Gap to ghost computed at 60Hz. The HUD displays a precision Live Delta (e.g. `-0.145s`) that pulses gold for sector records, green for personal bests, red for time loss
+- **Interpolated Persistence** — The ghost uses high-order linear interpolation between GPS pings, ensuring fluid motion that matches the live car marker exactly
+
+#### 📊 MICRO-GHOST DELTA METER
+A continuous horizontal bar running beneath the replay HUD — borrowed directly from professional sim-racing tools like iRacing and Assetto Corsa.
+
+<!-- 
+  IMAGE 4: MICRO-GHOST DELTA METER
+  Shoot: The delta meter bar active during replay, showing a clear
+  green or red state mid-corner. Ideally capture it at the moment
+  it transitions from green to red inside a corner — that's the
+  most visually informative frame. Show the timing HUD alongside it.
+  Suggested filename: docs/images/delta_meter.png
+-->
+<div align="center">
+  <img src="docs/images/delta_meter.png" alt="Micro-Ghost Delta Meter" width="85%"/>
+  <p><em>Micro-Ghost Delta Meter — millisecond-precision gap tracking against session best, continuously</em></p>
+</div>
+
+- Grows **green** when gaining on session best, **red** when losing, **gold** at sector records
+- Updates at 60Hz in lockstep with the replay engine clock — no sampling lag
+- Tells the driver exactly which millisecond inside a corner the time was lost or gained
+- Bypasses React state entirely via direct DOM writes — zero UI latency
 
 #### ⏱️ DETERMINISTIC SPLIT ENGINE
-To achieve professional-grade timing, we rebuilt the replay core from the ground up:
-
-- **State-Machine-Driven Timing** — All sector times, lap deltas, and "Theoretical Best" updates are managed by a central `SplitStateMachine`. This ensures that if you scrub the replay to a specific timestamp, the timing HUD shows the *exact* state it would have been in during a live run.
-- **Isolated Sector Analysis** — PitWall separates your current lap performance from your sector performance. You can be 5 seconds down on your lap time but still set a "Purple Sector" for a specific corner. The system isolates your technique from your total lap "debt."
-- **Zero-Latency Rendering** — By bypassing React's reconciliation loop and using direct D3 imperative writes, the replay engine maintains a locked 60FPS. This eliminates the "UI jitter" common in web-based telemetry tools.
-
----
+- **State-Machine-Driven Timing** — All sector times, lap deltas, and Theoretical Best updates are managed by a central `SplitStateMachine`. Scrubbing the replay to any timestamp shows the exact state it would have been in during a live run
+- **Isolated Sector Analysis** — Separates lap performance from sector performance. A driver can be 5 seconds down on lap time and still set a purple sector for a specific corner
+- **Zero-Latency Rendering** — D3 imperative writes bypass React reconciliation entirely. 60FPS locked regardless of session length
 
 ---
 
 ### 🔥 TRACK INTELLIGENCE LAYERS
 
 <!-- 
-  IMAGE 4: TRACK INTELLIGENCE LAYERS
+  IMAGE 5: TRACK INTELLIGENCE LAYERS
   Shoot: The track map with intelligence overlays toggled ON.
   Ideal shot: Consistency Heat Layer active showing green-to-red gradient
   across the circuit, with Braking Zone clouds visible at the heavy
@@ -157,16 +174,16 @@ The GPS track map is not a static visualization. It is a live performance surfac
 | **Braking Zones** | Translucent heatmap clouds showing where braking begins and how consistent it is |
 | **Corner Analytics** | Real-time corner classification firing as the car passes each segment |
 
-The track itself becomes the analysis surface. This approach — continuous spatial intelligence across the full circuit rather than discrete event markers — is the core design philosophy of PitWall's visualization layer.
+The track itself becomes the analysis surface. Continuous spatial intelligence across the full circuit rather than discrete event markers — this is the core design philosophy of PitWall's visualization layer.
 
 > **Design note:** This visualization approach is inspired by cricket's Wagon Wheel statistic, adapted from discrete event mapping into a continuous spatial intelligence model for motorsport.
 
 ---
 
-### 🧠 IBM-ENHANCED COACHING
+### 🧠 IBM-ENHANCED COACHING + AUDIO PACE NOTES
 
 <!-- 
-  IMAGE 5: GRANITE COACHING RADIO
+  IMAGE 6: GRANITE COACHING RADIO
   Shoot: The coaching radio subtitle firing mid-corner during replay.
   The subtitle should show a specific, data-referenced coaching line —
   ideally something like "Turn 3 — braking 12m late, exit 132 vs target 145."
@@ -175,31 +192,42 @@ The track itself becomes the analysis surface. This approach — continuous spat
 -->
 <div align="center">
   <img src="docs/images/coaching_radio.png" alt="IBM Granite Coaching Radio" width="85%"/>
-  <p><em>Engineer Radio — IPitWall uses a sophisticated two-layer intelligence architecture—**The Brain**—that separates deterministic physics from probabilistic narrative:</em></p>
+  <p><em>Engineer Radio — IBM Granite coaching fires at the exact telemetry moment, synchronized to audio</em></p>
 </div>
 
+PitWall uses a strict two-layer intelligence architecture that separates deterministic physics from probabilistic narrative.
+
 #### 🏗️ LAYER 1 // THE PHYSICS ENGINE
-Before a single word is generated, our deterministic Python pipeline processes your raw GPMF metadata into high-fidelity performance metrics:
-- **Deceleration Forensics** — Identification of Braking-of-Beginning (BoB) and End-of-Braking (EoB) markers via longitudinal G-force thresholding.
-- **Apex Profiling** — Real-time curvature calculation to identify the true geometric apex vs. the driver's steered apex.
-- **Line Consistency Scoring** — Spatial variance analysis using the Hausdorff distance between GPS traces of different laps.
+All performance metrics are computed before any AI model is invoked:
+- **Deceleration Forensics** — Identification of Braking-of-Beginning (BoB) and End-of-Braking (EoB) markers via longitudinal G-force thresholding
+- **Apex Profiling** — Real-time curvature calculation to identify the true geometric apex vs the driver's steered apex
+- **Line Consistency Scoring** — Spatial variance analysis using Hausdorff distance between GPS traces of different laps
 
 #### 🏗️ LAYER 2 // THE NARRATIVE ENGINE (IBM GRANITE)
-Once the physics are locked, **IBM Granite** takes over as your virtual Race Engineer. We ensure every coaching line is grounded in reality through a **RAG (Retrieval-Augmented Generation)** pipeline:
+Once the physics are locked, IBM Granite acts as a virtual race engineer through a **RAG pipeline**:
 
-- **IBM Docling Knowledge Base** — We used **IBM Docling** to ingest thousands of pages of professional racing theory, track guides, and vehicle dynamics references. These are chunked, embedded, and stored in a local vector index.
-- **Dynamic Theory Injection** — When the Physics Engine detects a mistake (e.g., poor trail-braking), Granite queries the knowledge base for specific technical theory related to that error and injects it into the coaching prompt.
-- **Repetition-Aware Logic** — PitWall tracks session-wide coaching history. If you repeat a mistake, Granite is instructed to pivot—focusing on a different nuance or increasing the technical urgency of the feedback.
-- **Deterministic Grounding** — Granite is strictly prohibited from inventing physics. It acts as the *narrator* of Layer 1's findings, ensuring that advice like *"You're 12m late on the brakes"* is based on computed telemetry, not an LLM hallucination.
+- **IBM Docling Knowledge Base** — IBM Docling ingests professional racing theory PDFs, track guides, and vehicle dynamics references. These are chunked, embedded, and stored in a local FAISS vector index
+- **Dynamic Theory Injection** — When the Physics Engine detects a mistake (e.g. poor trail-braking), Granite queries the knowledge base for specific technical theory related to that error and injects it into the coaching prompt
+- **Repetition-Aware Logic** — PitWall tracks session-wide coaching history. Repeated mistakes trigger a pivot in coaching focus — different nuance, increased technical urgency
+- **Deterministic Grounding** — Granite is strictly prohibited from inventing physics. It narrates Layer 1's findings. *"You are 12m late on the brakes"* is computed telemetry, not an LLM estimate
 
-**Result:** You get coaching that feels like a real engineer referencing a playbook, not a generic motivational AI assistant.
+#### 🔊 AUDIO PACE NOTES
+Granite's coaching does not stay on screen. It speaks.
+
+- Coaching events fire as **synchronized audio** at the exact GPS-timestamped moment during replay
+- Short, sharp pace note format — the language of real race engineering radio: *"Turn 3. Brake late. Exit speed low."*
+- Subtitle overlay runs simultaneously for accessibility and demo clarity
+- Audio queue system ensures notes never stack or overlap — the most critical event per corner wins
+- Watson TTS integration pending IBM Cloud verification — current implementation uses Web Speech API
+
+**Result:** You hear your engineer coaching you through the lap. Reading subtitles during 60FPS replay breaks immersion. Hearing them does not.
 
 ---
 
 ### 📊 INTELLIGENCE SUMMARY
 
 <!-- 
-  IMAGE 6: INTELLIGENCE SUMMARY SCREEN
+  IMAGE 7: INTELLIGENCE SUMMARY SCREEN
   Shoot: The full Intelligence Summary screen after a complete session.
   Show the PB vs Theoretical Best delta prominently, the consistency
   score, and at least two Critical Corner cards with their mini-maps.
@@ -225,8 +253,8 @@ When the session ends, PitWall automatically generates a complete race engineeri
 
 | IBM Tool | Role | Integration Point |
 |---|---|---|
-| **IBM Granite** | Coaching language generation + Intelligence Summary recommendations | Receives structured corner performance data from the physics engine. Produces coaching lines and debrief text. |
-| **IBM Docling** | Racing theory PDF parsing → structured knowledge base | Pre-parses FIA regulations, racing line theory, and track guides. Grounds all Granite output in real motorsport knowledge. |
+| **IBM Granite** | Coaching language generation + audio pace notes + Intelligence Summary recommendations | Receives structured corner performance data from the physics engine. Narrates findings as text and synchronized audio. |
+| **IBM Docling** | Racing theory PDF parsing → FAISS vector knowledge base | Pre-parses FIA regulations, racing line theory, and track guides. Grounds all Granite output via RAG retrieval. |
 
 **Architecture principle:** IBM tools sit on top of deterministic engineering. Granite is the narrator of findings produced by real algorithms. Every coaching line is traceable to a specific computed metric — not an LLM estimate.
 
@@ -251,26 +279,28 @@ graph TD
     I --> M[Theoretical Best Assembler]
 
     subgraph IBM_AI_Pipeline ["IBM AI Pipeline"]
-    N["IBM Docling · Racing PDFs"] --> O[Knowledge Base]
-    O --> P["IBM Granite · Coaching Generation"]
+    N["IBM Docling · Racing PDFs"] --> O["FAISS Vector Index"]
+    O --> P["IBM Granite · RAG Coaching"]
     P --> Q["Coaching Scheduler · Timestamp Sync"]
+    Q --> R["Audio Pace Notes · Web Speech API"]
     end
 
     I --> P
-    M --> R[Video Sector Sync]
+    M --> S[Video Sector Sync]
 
     subgraph Frontend_Mission_Control ["Frontend · Mission Control"]
-    S[D3 GPS Trace Player]
-    T["TelemetryHUD · Live Readouts"]
-    U[Ghost Racing Engine]
-    V[Track Intelligence Layers]
-    W[Perfect Lap Reconstruction]
-    X[Intelligence Summary]
+    T[D3 GPS Trace Player]
+    U["TelemetryHUD · Live Readouts"]
+    V["Ghost Racing Engine"]
+    W["Micro-Ghost Delta Meter"]
+    X[Track Intelligence Layers]
+    Y[Perfect Lap Reconstruction]
+    Z[Intelligence Summary]
     end
 
-    Q --> S
-    R --> W
-    H --> S
+    Q --> T
+    S --> Y
+    H --> T
 ```
 
 ---
@@ -296,6 +326,8 @@ graph TD
 | State management | Zustand | Low-frequency UI state only |
 | HUD updates | DOM Ref callbacks | Direct DOM writes for zero-latency telemetry display |
 | Ghost system | Interpolation-based replay | Timestamp-synchronized against replay engine clock |
+| Delta meter | D3 imperative bar | 60Hz updates, direct DOM write, no React overhead |
+| Split timing | Deterministic state machine | Scrub-safe, replay-position-accurate sector state |
 
 ### Why GPS, Not TORCS
 
@@ -312,16 +344,15 @@ The prototype is validated on real telemetry from a professional motorcycle ride
 PitWall is vehicle-agnostic. The telemetry pipeline reads GoPro GPMF streams identically for cars and motorcycles. The Donington Park dataset was selected for its data quality and public availability.
 
 <!-- 
-  IMAGE 7: DONINGTON TRACK RECONSTRUCTION
-  Shoot: The refined_track_segments.png output from your Python pipeline
-  OR a screenshot of the GPS trace rendered in the frontend showing the
-  full Donington Park layout reconstructed from real GPS coordinates.
-  Label it clearly — judges need to see this is a real track, not a template.
+  IMAGE 8: DONINGTON TRACK RECONSTRUCTION
+  Use the refined_track_segments.png output from your Python pipeline
+  OR a screenshot of the GPS trace in the frontend.
+  Judges need to see this is a real track, not a template.
   Suggested filename: docs/images/donington_reconstruction.png
 -->
 <div align="center">
-  <img width="70%" alt="image" src="https://github.com/user-attachments/assets/3839390a-051c-491a-a749-8208041fae8a" />
-  <img src="data/processed/refined_track_segments.png" alt="Donington Park GPS Reconstruction" width="70%"/>
+  <img width="70%" alt="Donington Park GPS Reconstruction" src="data/processed/refined_track_segments.png" />
+  <img width="70%" alt="Donington Park GPS Reconstruction" src="https://github.com/user-attachments/assets/3839390a-051c-491a-a749-8208041fae8a" />
   <p><em>Donington Park reconstructed from raw GPS coordinates — no template, no fixed map</em></p>
 </div>
 
@@ -388,14 +419,16 @@ Compatible GPS data sources: GoPro Hero 5+, Racelogic VBOX, AiM Solo, Harry's La
 | Video processing | ffmpeg, gopro2json |
 | Telemetry analysis | NumPy, Pandas |
 | AI model | IBM Granite (via Ollama) |
-| Knowledge base | IBM Docling (PDF Parsing + FAISS RAG) |
-| Timing Engine | Deterministic Split State Machine |
+| Knowledge base | IBM Docling (PDF parsing + FAISS RAG) |
+| Audio coaching | Web Speech API (Watson TTS pending verification) |
+| Timing engine | Deterministic Split State Machine |
 | Demo dataset | Donington Park · 9 laps · GoPro GPMF |
 
 ---
 
 ## 10 // ROADMAP
 
+- [ ] **Watson TTS** — IBM Cloud voice synthesis replacing Web Speech API for production-grade audio pace notes
 - [ ] **Granite Vision** — Automatic detection of track hazards, flags, and competitor positions from raw video frames
 - [ ] **The Garage** — Persistent session history for multi-day driver progress tracking
 - [ ] **Cloud Reconstruction** — IBM Cloud offloading for heavy GPMF extraction on mobile upload
