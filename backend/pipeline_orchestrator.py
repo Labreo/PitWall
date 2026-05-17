@@ -145,14 +145,49 @@ class PipelineOrchestrator:
         import datetime
         date_str = datetime.datetime.now().strftime("%B %d, %Y")
 
+        # Try to load coaching events for summary context
+        coaching_events = []
+        try:
+            with open("frontend/public/data/coaching_events.json", "r") as f:
+                coaching_events = json.load(f)
+        except Exception as e:
+            logger.warning(f"Could not load coaching events for AI summary: {e}")
+
+        debrief = "Session timing completed. Maintain focus on optimizing entry braking stability and early throttle exits across all high-speed sectors."
+        if coaching_events:
+            event_summaries = []
+            for ev in coaching_events[:4]: # Take first 4 events as context
+                event_summaries.append(f"- Lap {ev.get('lap_number')}, Corner {ev.get('corner_id')}: {ev.get('message')}")
+            
+            event_text = "\n".join(event_summaries)
+            prompt = f"""
+SYSTEM INSTRUCTION: You are a Lead Race Engineer debriefing a professional driver after a track session. 
+Write a highly professional, concise engineering debrief (3-4 sentences, max 80 words) based on the session observations.
+Address the driver directly. Use an authoritative, analytical, yet encouraging tone. Focus on specific technical recommendations.
+
+SESSION OBSERVATIONS:
+{event_text}
+
+ENGINEER DEBRIEF:
+"""
+            try:
+                from ollama_client import OllamaClient
+                client = OllamaClient()
+                debrief = client.generate_text(prompt)
+            except Exception as e:
+                logger.error(f"Failed to generate session AI debrief: {e}")
+
+
         info = {
             "filename": self.state.original_filename or "Unknown Session",
             "date": date_str,
-            "session_id": self.session_id
+            "session_id": self.session_id,
+            "ai_debrief": debrief
         }
         
         with open(self.session_info_path, "w") as f:
             json.dump(info, f, indent=2)
+
 
         # Automatically link/copy the uploaded video to frontend/public/session.mp4
         target_path = Path("frontend/public/session.mp4")

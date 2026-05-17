@@ -62,4 +62,7 @@ export interface ReplayState {
   toggleSummary: () => void;
   toggleDemoMode: () => void;
   toggleDiagnostics: () => void;
+  videoUrl: string | null;
+  setVideoUrl: (url: string | null) => void;
 }
+

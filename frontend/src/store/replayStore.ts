@@ -28,8 +28,11 @@ export const useReplayStore = create<ReplayState>((set, get) => ({
   initialTelemetry: [],
   initialLaps: [],
   initialSegments: [],
+  videoUrl: null,
 
+  setVideoUrl: (url) => set({ videoUrl: url }),
   togglePlay: () => set((state) => ({ isPlaying: !state.isPlaying })),
+
   setPlaybackSpeed: (speed) => set({ playbackSpeed: speed }),
   seekTo: (timestamp) => set({ currentTimestamp: timestamp }),
   setCurrentTimestamp: (timestamp) => set({ currentTimestamp: timestamp }),

@@ -493,9 +493,13 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
       <AnimatePresence>
         {showSummary && (
           <FinalSessionSummary 
-            data={summaryData} 
+            data={{
+              ...summaryData,
+              aiDebrief: (sessionInfo as any)?.ai_debrief
+            } as any} 
             onClose={() => useReplayStore.getState().toggleSummary()} 
           />
+
         )}
       </AnimatePresence>
 

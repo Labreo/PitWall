@@ -241,11 +241,13 @@ Granite's coaching does not stay on screen. It speaks.
 
 When the session ends, PitWall automatically generates a complete race engineering debrief:
 
-- **PB vs Theoretical Best** — exact potential gain in seconds (e.g. *-1.245s*)
-- **Consistency Score** — 0–100 calculated from flying-lap variance, ignoring out-laps
-- **Critical Time Loss Corners** — top 3 corners costing the most time, each with a mini-map wireframe and IBM Granite recommendation
-- **Driver Strengths** — technical skill recognition: Brake Stability, Line Precision, Throttle Control
-- **Actionable Priorities** — specific to-do list for next session
+- **Chief Engineer AI Debrief** — A high-level, session-wide technical analysis generated dynamically by IBM Granite, addressing the driver directly to summarize performance trends, braking discipline, and throttle exit optimization.
+- **PB vs Theoretical Best** — exact potential gain in seconds (e.g. *-1.245s*) derived from sector analysis.
+- **Consistency Score** — 0–100 calculated from flying-lap variance, ignoring out-laps.
+- **Critical Time Loss Corners** — top 3 corners costing the most time, each with a mini-map wireframe and dynamic IBM Granite recommendations pulled from the session's grounded logs.
+- **Driver Strengths** — technical skill recognition: Brake Stability, Line Precision, Throttle Control.
+- **Actionable Priorities** — specific to-do list for next session.
+
 
 ---
 
@@ -253,7 +255,7 @@ When the session ends, PitWall automatically generates a complete race engineeri
 
 | IBM Tool | Role | Integration Point |
 |---|---|---|
-| **IBM Granite** | Coaching language generation + audio pace notes + Intelligence Summary recommendations | Receives structured corner performance data from the physics engine. Narrates findings as text and synchronized audio. |
+| **IBM Granite** | Coaching language generation + audio pace notes + Chief Engineer Debrief + Intelligence Summary recommendations | Receives structured corner performance data from the physics engine. Narrates findings as text and synchronized audio. |
 | **IBM Docling** | Racing theory PDF parsing → FAISS vector knowledge base | Pre-parses FIA regulations, racing line theory, and track guides. Grounds all Granite output via RAG retrieval. |
 
 **Architecture principle:** IBM tools sit on top of deterministic engineering. Granite is the narrator of findings produced by real algorithms. Every coaching line is traceable to a specific computed metric — not an LLM estimate.
@@ -347,7 +349,9 @@ PitWall is vehicle-agnostic. The telemetry pipeline reads GoPro GPMF streams ide
 > **Test PitWall Locally**  
 > You can download the official sample GoPro MP4 used for development here:  
 > [Download Sample GoPro Footage (Donington Park)](http://www.race-technology.com/upload/video_download/GX013737.MP4)  
-> *Note: Place this file as `session.mp4` in the `frontend/public/` directory to enable the synchronized video background in the demo.*
+> *Note: Simply open the PitWall interface in your browser, drag and drop this downloaded MP4 file onto the upload screen, and the website will automatically handle and display the synchronized video background locally! No manual folder copying or CLI setup required!*
+
+
 
 <!-- 
   IMAGE 8: DONINGTON TRACK RECONSTRUCTION
@@ -371,9 +375,25 @@ PitWall is vehicle-agnostic. The telemetry pipeline reads GoPro GPMF streams ide
 - Python 3.10+
 - Node.js 18+
 - FFmpeg (with GPMF metadata support)
-- Ollama running `granite3.1-dense:2b` or `granite-3.0-8b-instruct`
+- Ollama running `granite3.1-dense:2b`
 
-### Installation
+### 🚀 Option A: One-Click Quick Start (Recommended)
+
+To make running PitWall extremely frictionless, we have included a beautiful, cyberpunk-styled startup launcher script that automatically installs dependencies, checks your system, and launches both frontend and backend concurrently.
+
+Simply run:
+```bash
+./run.sh
+```
+
+- It will check your Node, npm, and Python versions.
+- It will ensure all required python and npm packages are installed.
+- It will spin up the FastAPI Backend and React dev server together.
+- Press **[Ctrl+C]** at any time to cleanly shut down all background processes with zero zombie ports.
+
+---
+
+### 🛠️ Option B: Manual Setup (Alternative)
 
 **1. Clone the repository**
 ```bash

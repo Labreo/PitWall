@@ -20,9 +20,10 @@ interface UploadProgressProps {
   sessionId: string;
   videoUrl: string | null;
   onComplete: () => void;
+  onReset: () => void;
 }
 
-const UploadProgress: React.FC<UploadProgressProps> = ({ sessionId, videoUrl, onComplete }) => {
+const UploadProgress: React.FC<UploadProgressProps> = ({ sessionId, videoUrl, onComplete, onReset }) => {
   const [state, setState] = useState<PipelineState | null>(null);
 
   useEffect(() => {
@@ -50,12 +51,16 @@ const UploadProgress: React.FC<UploadProgressProps> = ({ sessionId, videoUrl, on
 
   if (!state) return null;
 
+  const failedStage = state.stages.find(s => s.status === 'failed');
+
   return (
     <TelemetryReconstructionView 
       stage={state.current_stage_index}
       overallStatus={state.overall_status}
+      errorMsg={failedStage?.error || undefined}
       videoUrl={videoUrl}
       onComplete={onComplete}
+      onReset={onReset}
     />
   );
 };

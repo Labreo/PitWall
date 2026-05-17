@@ -74,7 +74,6 @@ class OllamaClient:
             self.cache[prompt_hash] = result
             self._save_cache()
             return result
-
         except Exception as e:
             logger.error(f"Ollama inference failed: {str(e)}")
             return {
@@ -83,3 +82,38 @@ class OllamaClient:
                 "severity": "info",
                 "confidence_reasoning": f"Inference error: {str(e)}"
             }
+
+    def generate_text(self, prompt: str) -> str:
+        """
+        Calls local Ollama instance to generate freeform text with caching.
+        """
+        prompt_hash = hashlib.md5(prompt.encode()).hexdigest()
+        if prompt_hash in self.cache:
+            return self.cache[prompt_hash]
+
+        payload = {
+            "model": self.model,
+            "prompt": prompt,
+            "stream": False,
+            "options": {
+                "temperature": 0.5,
+                "num_predict": 256,
+            }
+        }
+
+        try:
+            response = requests.post(self.url, json=payload, timeout=20)
+            response.raise_for_status()
+            
+            result = response.json().get("response", "").strip()
+            self.cache[prompt_hash] = result
+            self._save_cache()
+            return result
+        except Exception as e:
+            logger.error(f"Ollama text generation failed: {str(e)}")
+            return "Session timing completed. Maintain focus on optimizing entry braking stability and early throttle exits across all high-speed sectors."
+
+if __name__ == "__main__":
+    client = OllamaClient()
+    print(client.generate_text("Explain in 1 sentence why track limits are important in racing."))
+

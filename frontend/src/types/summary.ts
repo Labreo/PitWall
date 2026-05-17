@@ -23,4 +23,5 @@ export interface SessionSummaryData {
   topLossCorners: CornerPerformance[];
   strengths: DriverStrength[];
   priorities: string[];
+  aiDebrief?: string;
 }

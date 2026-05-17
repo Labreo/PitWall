@@ -53,7 +53,7 @@ class TelemetryIngestor:
             # Step 1: Extract .bin using ffmpeg
             # Map 0:3 is a common GoPro GPMF track, or handler_name GoPro MET
             ff_result = subprocess.run(
-                [ffmpeg_cmd, "-y", "-i", str(video_path), "-codec", "copy", "-map", "0:m:handler_name:\ \ \ \ \ GoPro\ MET", "-f", "rawvideo", str(bin_path)],
+                [ffmpeg_cmd, "-y", "-i", str(video_path), "-codec", "copy", "-map", r"0:m:handler_name:\ \ \ \ \ GoPro\ MET", "-f", "rawvideo", str(bin_path)],
                 capture_output=True,
                 text=True
             )
@@ -66,7 +66,7 @@ class TelemetryIngestor:
                     text=True
                 )
                 if ff_result_fallback.returncode != 0:
-                    raise ExtractionError(f"ffmpeg extraction failed: {ff_result_fallback.stderr}")
+                    raise ExtractionError("No GoPro GPMF telemetry stream found. Ensure GoPro GPS was enabled during recording, or test using the verified Donington Park MP4.")
                     
             logger.info(f"Converting GPMF binary to JSON using {gopro2json_cmd}...")
             
@@ -79,7 +79,7 @@ class TelemetryIngestor:
             
             if result.returncode != 0:
                 logger.warning(f"gopro2json returned non-zero. Stderr: {result.stderr}")
-                raise ExtractionError(f"Extraction failed: {result.stderr}")
+                raise ExtractionError("GoPro telemetry parsing failed. The GPMF binary stream was empty or could not be decoded.")
 
             # Clean up the intermediate bin file
             if bin_path.exists():
@@ -88,6 +88,8 @@ class TelemetryIngestor:
             logger.info(f"Successfully extracted raw telemetry to {output_json_path}")
             return str(output_json_path)
 
+        except ExtractionError as e:
+            raise e
         except Exception as e:
             raise ExtractionError(f"An unexpected error occurred during extraction: {str(e)}")
 

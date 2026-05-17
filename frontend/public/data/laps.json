@@ -1,56 +1,8 @@
 [
   {
     "lap_number": 1,
-    "start_timestamp": 96800,
-    "end_timestamp": 239000,
-    "lap_duration_seconds": 142.2
-  },
-  {
-    "lap_number": 2,
-    "start_timestamp": 239000,
-    "end_timestamp": 345200,
-    "lap_duration_seconds": 106.2
-  },
-  {
-    "lap_number": 3,
-    "start_timestamp": 345200,
-    "end_timestamp": 450900,
-    "lap_duration_seconds": 105.7
-  },
-  {
-    "lap_number": 4,
-    "start_timestamp": 450900,
-    "end_timestamp": 557000,
-    "lap_duration_seconds": 106.1
-  },
-  {
-    "lap_number": 5,
-    "start_timestamp": 557000,
-    "end_timestamp": 661900,
-    "lap_duration_seconds": 104.9
-  },
-  {
-    "lap_number": 6,
-    "start_timestamp": 661900,
-    "end_timestamp": 766800,
-    "lap_duration_seconds": 104.9
-  },
-  {
-    "lap_number": 7,
-    "start_timestamp": 766800,
-    "end_timestamp": 870900,
-    "lap_duration_seconds": 104.1
-  },
-  {
-    "lap_number": 8,
-    "start_timestamp": 870900,
-    "end_timestamp": 976200,
-    "lap_duration_seconds": 105.3
-  },
-  {
-    "lap_number": 9,
-    "start_timestamp": 976200,
-    "end_timestamp": 1083100,
-    "lap_duration_seconds": 106.9
+    "start_timestamp": 0,
+    "end_timestamp": 31900,
+    "lap_duration_seconds": 31.9
   }
 ]

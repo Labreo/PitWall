@@ -266,5 +266,20 @@
     "severity": "warn",
     "confidence_reasoning": "The driver's high braking score (0.37) indicates aggressive braking, which is appropriate for optimizing entry speed. However, to maintain stability and consistency, focus on gradual trail braking as per theory (27.5.1).",
     "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
-  }
+  },
+  "2db09661f94d176197b5d4554dac1455": {
+    "corner_summary": "The driver executed heavy braking at S67 with minimal throttle input, maintaining steering stability.",
+    "coaching_line": "Maintain consistent brake pressure to avoid abrupt changes in speed",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory (Goodman 2009), early braking is crucial for safety. The high braking score indicates the driver applied sufficient force, while minimal throttle input suggests they didn't overtake the braking zone's speed requirement.",
+    "source_attribution": "MPhil_EJ_Goodman_2009"
+  },
+  "8fd114ae2ed3b9127589a3f3eec2a3b1": {
+    "corner_summary": "Driver entered S87 corner with minimal braking, likely trail-braking due to its sweep, indicated by low Brake Score (0.54) and Throttle Score (0.00), maintaining Steering Stability (0.50) and avoiding Time Loss.",
+    "coaching_line": "Ensure consistent braking application for corners with sweep to optimize traction and stability.",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry data suggests the driver is employing trail-braking, aligning with theory that more sweeping turns require less aggressive braking. This maintains traction and stability without significant time loss (Recorded Time Loss: 0.000s).",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "98090ec8481bd090bd051b2a88dec639": "During today's session, I noticed you maintained a consistent yet slightly higher entry speed for Corners S1 and S3 compared to previous sessions. This approach resulted in improved car stability through these turns. To further enhance your performance, consider refining your speed control around corners like S2 and S4, where smoother transitions could yield better lap times. Keep up the strong work ethic; your focus on data-driven adjustments is commendable. Let's continue to fine-tune these details for optimal track performance."
 }

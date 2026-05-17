@@ -7,6 +7,8 @@ const VideoBackgroundComponent: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const isPlayingRef = useRef(false);
   const playbackSpeedRef = useRef(1.0);
+  
+  const videoUrl = useReplayStore(s => s.videoUrl);
 
   // Sync play/pause and speed via store subscription (no re-render)
   useEffect(() => {
@@ -52,10 +54,17 @@ const VideoBackgroundComponent: React.FC = () => {
     return unsub;
   }, []);
 
+  // Explicitly reload video when the source changes (e.g. on new drop upload)
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.load();
+    }
+  }, [videoUrl]);
+
   return (
     <video
       ref={videoRef}
-      src="/session.mp4"
+      src={videoUrl || "/session.mp4"}
       className="absolute inset-0 w-full h-full object-cover pointer-events-none"
       style={{ zIndex: 0, opacity: 0.45 }}
       muted
@@ -66,3 +75,4 @@ const VideoBackgroundComponent: React.FC = () => {
 };
 
 export const VideoBackground = memo(VideoBackgroundComponent);
+

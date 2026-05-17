@@ -5,6 +5,7 @@ import { Activity, ShieldCheck, ChevronRight } from 'lucide-react';
 import UploadProgress from './UploadProgress';
 import TelemetryGridBackground from './TelemetryGridBackground';
 import UploadAtmosphere from './UploadAtmosphere';
+import { useReplayStore } from '../../store/replayStore';
 
 interface UploadScreenProps {
   onComplete: () => void;
@@ -21,7 +22,12 @@ const UploadScreen: React.FC<UploadScreenProps> = ({ onComplete }) => {
     const file = acceptedFiles[0];
     if (!file) return;
 
+    // Create a local object URL instantly so the browser can play it directly
+    const localUrl = URL.createObjectURL(file);
+    useReplayStore.getState().setVideoUrl(localUrl);
+
     setUploading(true);
+
     setTransferring(true);
     setError(null);
 
@@ -189,7 +195,15 @@ const UploadScreen: React.FC<UploadScreenProps> = ({ onComplete }) => {
             sessionId={sessionId} 
             videoUrl={videoUrl}
             onComplete={onComplete} 
+            onReset={() => {
+              setUploading(false);
+              setTransferring(false);
+              setSessionId(null);
+              setVideoUrl(null);
+              setError(null);
+            }}
           />
+
         )}
       </AnimatePresence>
     </div>
