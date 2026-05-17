@@ -118,7 +118,17 @@ class PipelineOrchestrator:
         with open(self.normalized_path, "r") as f:
             data = json.load(f)
         df = pd.DataFrame(data)
-        segments = segmenter.segment_track(df)
+        
+        # Load detected laps if available to enable geographic alignment
+        laps = None
+        if os.path.exists(self.laps_path):
+            try:
+                with open(self.laps_path, "r") as f:
+                    laps = json.load(f)
+            except Exception as e:
+                logger.warning(f"Could not load laps for corner segmentation: {e}")
+                
+        segments = segmenter.segment_track(df, laps)
         with open(self.segments_path, "w") as f:
             json.dump(segments, f, indent=2)
         return segments

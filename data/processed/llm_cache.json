@@ -290,5 +290,159 @@
     "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
   },
   "ed714169f9bfce897a080345903e7bc5": "\"During our session, notable improvements were observed in your corner entry techniques. For T2 and T3, ensure the throttle is applied slightly later at the apex to enhance car stability and traction. In T4, focus on maintaining consistent brake balance and reducing trail braking for a smoother transition. A slight increase in mid-corner speed could help mitigate the 0.400s time loss you experienced there. Keep refining these details, and I'm confident we'll see further gains in your lap times.\"",
-  "3fe512c7113fab7c38c24f55480e632c": "\"Driver, your performance was commendable today, particularly evident in our technical observations. During Lap 1's Corner S5 and S7, focus on maintaining a steady trail braking pattern to enhance control and track positioning. On Lap 2's Corner S17, ensure consistent brake application for optimal corner entry speed. Lastly, the balanced braking technique you employed in Corner S27 significantly improved your corner entry velocity. Keep refining these aspects, and I'm confident we'll see further improvements in your lap times.\""
+  "3fe512c7113fab7c38c24f55480e632c": "\"Driver, your performance was commendable today, particularly evident in our technical observations. During Lap 1's Corner S5 and S7, focus on maintaining a steady trail braking pattern to enhance control and track positioning. On Lap 2's Corner S17, ensure consistent brake application for optimal corner entry speed. Lastly, the balanced braking technique you employed in Corner S27 significantly improved your corner entry velocity. Keep refining these aspects, and I'm confident we'll see further improvements in your lap times.\"",
+  "e14b8fef698cfe42f33027a48d1443fa": {
+    "corner_summary": "The driver maintained a steady braking force (0.32) and steering control (0.50) during corner S4, suggesting a balanced and cautious approach.",
+    "coaching_line": "Ensure consistent brake pressure application throughout the turn for optimal stability.",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1 Braking (Goodman, 2009), early braking system calibration is crucial for safety. This indicates the driver's adherence to such practices.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "8859d155a65967de1c9647396777c644": {
+    "corner_summary": "Driver exhibits reduced vision perception, prioritizing turn-in point over apex view, leading to 0.9s time loss.",
+    "coaching_line": "Focus on 'Owl Vision' for right bends: keep eyes ahead and turn head towards apex.",
+    "severity": "critical",
+    "confidence_reasoning": "According to theory, this behavior impairs depth perception (0.50 Steering Stability score), causing a 0.9s time loss.",
+    "source_attribution": "Racelogic-ebook-advanced-circuit-driving"
+  },
+  "df9bedebd7f24b7271d7bddac4b4d67b": {
+    "corner_summary": "Driver's performance indicates significant unsuspended weight transfer, causing excessive body roll and time loss. Corner completion is critical.",
+    "coaching_line": "Improve suspension tuning for reduced unsuspended weight transfer at S10",
+    "severity": "critical",
+    "confidence_reasoning": "Based on Relevant Motorsport Theory, high unsuspended weight transfer (0.46) leads to increased body roll and time loss (1.700s). This contradicts the simplified model's inability to account for suspension effects.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "936bb430c06be87d9ca4718e5c29bf5e": {
+    "corner_summary": "Driver experienced significant unsuspended weight transfer, causing body roll and time loss. CoG height affects weight distribution.",
+    "coaching_line": "Focus on optimizing suspension rates to minimize unsuspended weight transfer during heavy braking.",
+    "severity": "critical",
+    "confidence_reasoning": "According to theory, excessive unsuspended weight transfer increases body roll and time loss. Lower coG height reduces this effect, as per Figure 14-1.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "8bda7fc28b889f512cd8eb459c5b187e": {
+    "corner_summary": "Driver's weight distribution during heavy braking leading to a slight body roll and time loss.",
+    "coaching_line": "Optimize unsuspended component weight transfer for reduced body roll and improved corner exit speed.",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry indicates significant unsuspended weight transfer contributing to the recorded time loss. This aligns with theory, emphasizing that such weight transfer can affect vehicle dynamics and stability without altering total weight transfer.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "29234554a28ec4837418cacdcd4d73f6": {
+    "corner_summary": "Driver's braking and throttle application could be improved for better weight transfer efficiency, potentially reducing time loss.",
+    "coaching_line": "Focus on more precise unsuspended weight transfer control to minimize body roll.",
+    "severity": "critical",
+    "confidence_reasoning": "Telemetry indicates significant potential for improving weight transfer, as per theory. This is crucial for enhanced cornering performance and reduced time loss.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "7003f0842e28ba05608a30058f002719": {
+    "corner_summary": "Driver executed heavy braking (0.14 Brake Score) with minimal throttle input (0.12 Throttle Score), indicating a well-controlled and gradual deceleration, potentially for improved stability. Recorded time loss is negligible (0.000s), suggesting efficient braking application.",
+    "coaching_line": "Maintain consistent brake pressure to ensure optimal control and stability during cornering",
+    "severity": "warn",
+    "confidence_reasoning": "Based on theory, a lower Brake Score indicates more controlled braking, which aligns with the 0.14 value here (MPhil_EJ_Goodman_2009_reduced). The Throttle Score being low further supports this, implying minimal power transfer during braking. This suggests the driver is effectively managing their vehicle's kinetic energy to maintain speed and stability.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "81c59f4ece26c13389916b943ce24a2a": {
+    "corner_summary": "Driver initiated heavy braking, indicating high deceleration demand but minimal trail braking application.",
+    "coaching_line": "Reduce brake pressure to maintain stability and consistency in corner entry",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry Brake Score (0.18) suggests insufficient load on the brakes, implying potential for wheel lockup or reduced grip. Theory 27.5.1 emphasizes early commissioning of the braking system to achieve a suitable balance.",
+    "source_attribution": "SOURCE: MPhil_EJ_Goodman_2009_reduced"
+  },
+  "fe6e51ababa03fbbdc8cb53c331873b0": {
+    "corner_summary": "Driver's nose is blocking vision, leading to reduced depth perception and potential loss of speed.",
+    "coaching_line": "Focus on 'Owl Vision' for right hand bends: keep eyes ahead, turn head towards apex without fixating on a specific point",
+    "severity": "warn",
+    "confidence_reasoning": "Driver's braking score is low (0.26), indicating potential loss of speed during braking, which aligns with reduced depth perception due to nose blocking vision. Remedial action from previous session demonstrates improvement but emphasizes the need for consistent practice.",
+    "source_attribution": "Racelogic-ebook-advanced-circuit-driving"
+  },
+  "476252d0dc1adea4ce5047b4c345a35f": {
+    "corner_summary": "Driver's performance at S6 indicates moderate weight transfer, with significant unsuspended component influence. Recorded time loss suggests potential for improved body control.",
+    "coaching_line": "Focus on optimizing suspension rates to balance unsuspended and suspended weight transfer.",
+    "severity": "warn",
+    "confidence_reasoning": "Based on theory, substantial weight transfer from unsuspended components (Braking Score: 0.20) is evident, contributing to recorded time loss (Recorded Time Loss: 0.300s). This emphasizes the importance of properly tuned suspension for better cornering stability.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "e0a1e6beee9f147a33809ca5c5a283d7": {
+    "corner_summary": "Driver's braking intensity is high, but throttle application and steering stability are moderate, leading to significant time loss.",
+    "coaching_line": "Improve unsuspended weight transfer management for better cornering efficiency",
+    "severity": "critical",
+    "confidence_reasoning": "According to theory 14.1.1, the driver's unsuspended weight transfer through suspension arms should be optimized for minimal impact on body roll and maximum stability.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "e4631e0ef0549523b6cc6c1863a4a947": {
+    "corner_summary": "The driver exhibited a moderate braking approach, with a balance between front and rear brakes, but not optimal for high-speed corners (0.40 Braking Score). Steering stability was acceptable, though could be improved (0.50 Steering Stability), resulting in a 1.001s time loss.",
+    "coaching_line": "Focus on more pronounced front brake application and reduced rear brake use for enhanced corner entry control.",
+    "severity": "critical",
+    "confidence_reasoning": "According to theory, optimal braking balance for high-speed corners involves a higher front-to-rear ratio, which was not fully achieved (0.40 Braking Score). This discrepancy led to significant time loss (1.001s), indicating the need for improved braking technique.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "fdd4ebddb2bf03388686e63d446dc5fa": {
+    "corner_summary": "Driver exhibits reduced visual peripheral awareness during corner exit, potentially leading to hazard overlook and loss of control.",
+    "coaching_line": "Focus on 'Owl Vision' for right hand bends: keep eyes ahead and turn head towards apex without fixating on the turn-in point.",
+    "severity": "critical",
+    "confidence_reasoning": "Driver's low Steering Stability score (0.50) suggests compromised control, likely due to insufficient visual cues, aligning with 'Owl Vision' deficiency (0.49).",
+    "source_attribution": "Racelogic-ebook-advanced-circuit-driving"
+  },
+  "716848007bb264dbb1c2429de8c9fded": {
+    "corner_summary": "Driver's performance at S8 (light) corner is characterized by moderate throttle application, fair steering stability, and significant time loss due to uncontrolled weight transfer from unsuspended components.",
+    "coaching_line": "Optimize suspension settings for reduced body roll and improved weight distribution control.",
+    "severity": "critical",
+    "confidence_reasoning": "According to 14.1.1 theory, unsuspended weight transfer contributes to increased body roll. The substantial time loss (0.701s) indicates significant weight transfer from these components, emphasizing the need for enhanced suspension control.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "6ddb5815bbb57b24c63781f4bfda12e5": {
+    "corner_summary": "Driver's performance shows significant unsuspended weight transfer, contributing to a 0.900s time loss with low steering stability and throttle scores.",
+    "coaching_line": "Optimize suspension design for reduced unsuspended weight transfer",
+    "severity": "critical",
+    "confidence_reasoning": "Telemetry indicates substantial weight transfer from unsuspended components, contrary to the simplified model in the referenced theory. This discrepancy suggests underperformance due to increased body roll and decreased steering stability.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "a9b0d25c69ec244f5cbd7bf8b606b82a": {
+    "corner_summary": "Driver exhibits significant unsuspended weight transfer, potentially causing body roll at S8 corner with a recorded time loss of 1.001s.",
+    "coaching_line": "Optimize suspension system for reduced unsuspended weight transfer to mitigate body roll during cornering",
+    "severity": "critical",
+    "confidence_reasoning": "According to MPhil_EJ_Goodman_2009_reduced, substantial unsuspended weight transfer can lead to increased body roll at high lateral accelerations. The recorded time loss (1.001s) underscores this risk.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "588ed0ae86af6271e5f678dabb770442": {
+    "corner_summary": "Driver's performance indicates significant unsuspended weight transfer, likely contributing to body roll and reduced cornering speed.",
+    "coaching_line": "Optimize suspension stiffness for unsuspended components to minimize weight transfer and improve cornering stability.",
+    "severity": "critical",
+    "confidence_reasoning": "According to theory, weight transfer from unsuspended components acts through suspension arms, affecting the car's roll characteristics. Lower stiffness reduces this effect, improving body control during high-speed turns like S8.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "489d2dd7c7e2fbcbb196a11c315ee67e": {
+    "corner_summary": "Driver's performance is suboptimal, with excessive weight transfer from unsuspended components causing instability and time loss.",
+    "coaching_line": "Optimize suspension response to manage unsuspended mass weight transfer effectively.",
+    "severity": "critical",
+    "confidence_reasoning": "According to theory 14.1.1, significant height difference between suspended and unsuspended COGs can cause body roll. High throttle and braking scores suggest excessive unsuspended weight transfer, leading to instability and time loss (0.801s). Theory 14 states that weight transfer must be considered before calculating suspension rates due to effects of roll stiffness.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "79645b3d956e625edc36d5e0a1b7fc1e": {
+    "corner_summary": "Driver's performance in corner S8 is marked by significant unsuspended weight transfer, contributing to a 1.001s time loss.",
+    "coaching_line": "Focus on optimizing anti-roll and suspension geometry to minimize weight transfer effects during braking.",
+    "severity": "critical",
+    "confidence_reasoning": "The telemetry indicates substantial unsuspended weight transfer, key contributors to body roll. According to theory, these components significantly impact the car's dynamics. A simplified model doesn't account for roll stiffness, making it crucial to consider suspension characteristics for precise weight distribution control.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "193cc85a277bb71189f53127271c13c2": {
+    "corner_summary": "During heavy braking (0.28 Brake Score) at S10, the driver experienced a significant time loss (0.600s), indicating a potential issue with brake balance or trail braking technique.",
+    "coaching_line": "Improve brake balance for better control and reduced time loss in turns",
+    "severity": "critical",
+    "confidence_reasoning": "According to Theory 27.5.1 (Braking), an unbalanced braking system can lead to excessive time losses. The low Brake Score suggests this issue.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "2bafd00575efbd480a56c51e3808845a": {
+    "corner_summary": "Driver's performance at S10 shows significant unsuspended weight transfer, contributing to a high braking score and time loss. Steering stability is moderate.",
+    "coaching_line": "Optimize suspension tuning for reduced weight transfer from unsuspended components to improve corner exit stability.",
+    "severity": "critical",
+    "confidence_reasoning": "According to MPhil_EJ_Goodman_2009_reduced, weight transfer from unsuspended components impacts the car's roll behavior and should be managed for optimal performance. This corner data indicates substantial unsuspended weight transfer, contributing to time loss.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "6f68ee15f873e4ac38d42410ad2c0687": {
+    "corner_summary": "Driver's weight transfer at corner S10 is significantly influenced by unsuspended components, causing a disproportionate lateral load on the suspension arms, leading to increased body roll.",
+    "coaching_line": "Optimize suspension stiffness for better weight distribution control.",
+    "severity": "critical",
+    "confidence_reasoning": "Telemetry indicates high unsuspended weight transfer (0.75), which aligns with theory's prediction of substantial impact on lateral body dynamics due to discrepant COG heights.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  }
 }

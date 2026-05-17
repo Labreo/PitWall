@@ -32,7 +32,7 @@ class CornerSegmenter:
             "merged_fragment_count": 0
         }
 
-    def segment_track(self, df: pd.DataFrame):
+    def segment_track(self, df: pd.DataFrame, laps: list = None):
         logger.info("Smoothing GPS coordinates...")
         df = smooth_gps_coordinates(df, window_size=5, 
                                     max_speed_kmh=self.config.gps_outlier_max_speed_kmh,
@@ -80,11 +80,24 @@ class CornerSegmenter:
         
         segments = self._merge_fragments(segments)
         
-        # Assign IDs, score, and class
-        for i, seg in enumerate(segments):
-            seg['segment_id'] = f"S{i+1}"
+        # Map segment IDs geographically across laps
+        if laps is None:
+            from lap_detector import LapDetector
+            try:
+                laps = LapDetector().detect_laps(df)
+            except Exception as e:
+                logger.warning(f"Could not dynamically detect laps in CornerSegmenter: {e}")
+                laps = []
+                
+        if laps:
+            segments = self._map_geographic_segments(segments, laps)
+        else:
+            for i, seg in enumerate(segments):
+                seg['segment_id'] = f"S{i+1}"
+        
+        # Assign score and class
+        for seg in segments:
             dur = seg['duration_seconds']
-            
             if seg['segment_type'] == 'corner':
                 seg['confidence_score'] = round(min(1.0, dur / 3.0), 2)
                 seg['classification'] = classify_segment(seg)
@@ -98,6 +111,80 @@ class CornerSegmenter:
         with open("data/processed/segmentation_debug.json", "w") as f:
             json.dump(self.debug_stats, f, indent=2)
             
+        return segments
+
+    def _map_geographic_segments(self, segments: list, laps: list) -> list:
+        # 1. Map each segment to a lap number
+        segments_with_laps = []
+        for seg in segments:
+            lap = None
+            for l in laps:
+                if l["start_timestamp"] <= seg["start_timestamp"] <= l["end_timestamp"]:
+                    lap = l
+                    break
+            if lap is not None:
+                segments_with_laps.append((seg, lap["lap_number"]))
+                
+        # Group segments by lap
+        segments_by_lap = {}
+        for seg, lap_num in segments_with_laps:
+            if lap_num not in segments_by_lap:
+                segments_by_lap[lap_num] = []
+                
+            path = seg.get("gps_path", [])
+            if path:
+                center_lat = sum(p["latitude"] for p in path) / len(path)
+                center_lon = sum(p["longitude"] for p in path) / len(path)
+            else:
+                center_lat, center_lon = 0.0, 0.0
+                
+            segments_by_lap[lap_num].append({
+                "seg": seg,
+                "center": (center_lat, center_lon)
+            })
+            
+        lap_numbers = sorted(list(segments_by_lap.keys()))
+        if not lap_numbers:
+            # Fallback
+            for i, seg in enumerate(segments):
+                seg["segment_id"] = f"S{i+1}"
+            return segments
+            
+        # Choose reference lap (the one with the most segments)
+        ref_lap_num = max(lap_numbers, key=lambda ln: len(segments_by_lap[ln]))
+        ref_segments = sorted(segments_by_lap[ref_lap_num], key=lambda x: x["seg"]["start_timestamp"])
+        
+        # Assign track-level segment_id to reference segments
+        for index, ref in enumerate(ref_segments):
+            ref["seg"]["segment_id"] = f"S{index+1}"
+            
+        # Match other laps to reference
+        for ln in lap_numbers:
+            if ln == ref_lap_num:
+                continue
+                
+            for cand in segments_by_lap[ln]:
+                closest_ref = None
+                min_dist = float('inf')
+                
+                for ref in ref_segments:
+                    dist = ((cand["center"][0] - ref["center"][0])**2 + (cand["center"][1] - ref["center"][1])**2)**0.5
+                    if dist < min_dist:
+                        min_dist = dist
+                        closest_ref = ref
+                        
+                # Spatial threshold: ~0.0008 degrees (approx 80m)
+                SPATIAL_THRESHOLD = 0.0008
+                if closest_ref and min_dist < SPATIAL_THRESHOLD and cand["seg"]["segment_type"] == closest_ref["seg"]["segment_type"]:
+                    cand["seg"]["segment_id"] = closest_ref["seg"]["segment_id"]
+                    
+        # Fill in any missing segment IDs (e.g. out of lap segments or unmatched outliers)
+        seq_counter = 100
+        for seg in segments:
+            if "segment_id" not in seg or not seg["segment_id"]:
+                seg["segment_id"] = f"S{seq_counter}"
+                seq_counter += 1
+                
         return segments
 
     def _merge_fragments(self, segments):

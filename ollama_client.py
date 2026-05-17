@@ -50,7 +50,7 @@ class OllamaClient:
         }
 
         try:
-            response = requests.post(self.url, json=payload, timeout=20)
+            response = requests.post(self.url, json=payload, timeout=60)
             response.raise_for_status()
             
             result_raw = response.json().get("response", "").strip()
@@ -102,7 +102,7 @@ class OllamaClient:
         }
 
         try:
-            response = requests.post(self.url, json=payload, timeout=20)
+            response = requests.post(self.url, json=payload, timeout=60)
             response.raise_for_status()
             
             result = response.json().get("response", "").strip()
