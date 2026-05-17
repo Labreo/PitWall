@@ -58,6 +58,7 @@ const VideoBackgroundComponent: React.FC = () => {
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.load();
+      videoRef.current.volume = 0.25; // Set elegant 25% background volume so engine sounds play without drowning out Watson
     }
   }, [videoUrl]);
 
@@ -67,7 +68,6 @@ const VideoBackgroundComponent: React.FC = () => {
       src={videoUrl || "/session.mp4"}
       className="absolute inset-0 w-full h-full object-cover pointer-events-none"
       style={{ zIndex: 0, opacity: 0.45 }}
-      muted
       playsInline
       preload="auto"
     />
