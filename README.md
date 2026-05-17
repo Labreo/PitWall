@@ -237,7 +237,7 @@ Granite's coaching does not stay on screen. It speaks.
   Suggested filename: docs/images/intelligence_summary.png
 -->
 <div align="center">
-  <img src="docs/images/intelligence_summary.png" alt="Intelligence Summary" width="85%"/>
+  <img width="3394" height="1804" alt="image" src="https://github.com/user-attachments/assets/502a1ca0-3755-4479-b2ab-b6687c9f97c1" width="85%"/>
   <p><em>Intelligence Summary — the race engineer debrief, generated automatically after every session</em></p>
 </div>
 
