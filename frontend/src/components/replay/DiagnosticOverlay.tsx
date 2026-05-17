@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useReplayStore } from '../../store/replayStore';
 
-export const DiagnosticOverlay: React.FC = () => {
-  const showDiagnostics = useReplayStore(s => s.showDiagnostics);
+const ActiveDiagnosticOverlay: React.FC = () => {
   const currentTimestamp = useReplayStore(s => s.currentTimestamp);
   const currentLapNumber = useReplayStore(s => s.currentLapNumber);
   const currentSegmentId = useReplayStore(s => s.currentSegmentId);
@@ -12,8 +11,6 @@ export const DiagnosticOverlay: React.FC = () => {
   const [fps, setFps] = useState(0);
   
   useEffect(() => {
-    if (!showDiagnostics) return;
-    
     let frames = 0;
     let lastTime = performance.now();
     
@@ -30,9 +27,7 @@ export const DiagnosticOverlay: React.FC = () => {
     
     const id = requestAnimationFrame(update);
     return () => cancelAnimationFrame(id);
-  }, [showDiagnostics]);
-
-  if (!showDiagnostics) return null;
+  }, []);
 
   return (
     <div className="fixed bottom-24 left-8 z-[500] bg-black/90 border border-cyan-500/40 p-4 rounded-sm font-mono text-[10px] text-cyan-400 backdrop-blur-xl shadow-2xl">
@@ -77,4 +72,10 @@ export const DiagnosticOverlay: React.FC = () => {
       </div>
     </div>
   );
+};
+
+export const DiagnosticOverlay: React.FC = () => {
+  const showDiagnostics = useReplayStore(s => s.showDiagnostics);
+  if (!showDiagnostics) return null;
+  return <ActiveDiagnosticOverlay />;
 };

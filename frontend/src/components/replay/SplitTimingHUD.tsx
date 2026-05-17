@@ -12,10 +12,28 @@ interface SplitTimingHUDProps {
   engine: ReplayEngine | null;
 }
 
+const TimingDebugPanel: React.FC<{ theoBest: TheoreticalBestState; activeState: any }> = ({ theoBest, activeState }) => {
+  const currentTimestamp = useReplayStore(s => s.currentTimestamp);
+  return (
+    <div className="absolute top-12 left-4 z-[100] p-3 bg-slate-900/90 border border-slate-700 rounded-lg font-mono text-[10px] text-cyan-400 w-64 backdrop-blur-xl">
+      <div className="flex justify-between border-b border-slate-800 pb-1 mb-2 text-slate-500 font-bold uppercase tracking-wider">
+        <span>Timing Debug</span>
+        <span>{currentTimestamp.toFixed(0)}ms</span>
+      </div>
+      <div className="grid grid-cols-2 gap-y-1">
+        <span className="text-slate-500">Lap:</span> <span>{activeState.activeLapNumber ?? '---'}</span>
+        <span className="text-slate-500">Sector ID:</span> <span className="truncate">{activeState.activeSegmentId ?? '---'}</span>
+        <span className="text-slate-500">Theo Best:</span> <span>{theoBest.totalDuration.toFixed(2)}s</span>
+        <span className="text-slate-500">Sectors:</span> <span>{theoBest.segments.size} recorded</span>
+        <span className="text-slate-500">Complete:</span> <span className={theoBest.isComplete ? 'text-green-400' : 'text-amber-400'}>{theoBest.isComplete ? 'YES' : 'NO'}</span>
+      </div>
+    </div>
+  );
+};
+
 const SplitTimingHUDComponent: React.FC<SplitTimingHUDProps> = ({ engine }) => {
   const currentLapNumber = useReplayStore(s => s.currentLapNumber);
   const currentSegmentId = useReplayStore(s => s.currentSegmentId);
-  const currentTimestamp = useReplayStore(s => s.currentTimestamp);
 
   const [theoBest, setTheoBest] = useState<TheoreticalBestState>(splitStateMachine.getTheoreticalBest());
   const [activeState, setActiveState] = useState(splitStateMachine.getActiveState());
@@ -100,21 +118,7 @@ const SplitTimingHUDComponent: React.FC<SplitTimingHUDProps> = ({ engine }) => {
         {showDebug ? 'HIDE DEBUG' : 'SHOW DEBUG'}
       </button>
 
-      {showDebug && (
-        <div className="absolute top-12 left-4 z-[100] p-3 bg-slate-900/90 border border-slate-700 rounded-lg font-mono text-[10px] text-cyan-400 w-64 backdrop-blur-xl">
-          <div className="flex justify-between border-b border-slate-800 pb-1 mb-2 text-slate-500 font-bold uppercase tracking-wider">
-            <span>Timing Debug</span>
-            <span>{currentTimestamp.toFixed(0)}ms</span>
-          </div>
-          <div className="grid grid-cols-2 gap-y-1">
-            <span className="text-slate-500">Lap:</span> <span>{activeState.activeLapNumber ?? '---'}</span>
-            <span className="text-slate-500">Sector ID:</span> <span className="truncate">{activeState.activeSegmentId ?? '---'}</span>
-            <span className="text-slate-500">Theo Best:</span> <span>{theoBest.totalDuration.toFixed(2)}s</span>
-            <span className="text-slate-500">Sectors:</span> <span>{theoBest.segments.size} recorded</span>
-            <span className="text-slate-500">Complete:</span> <span className={theoBest.isComplete ? 'text-green-400' : 'text-amber-400'}>{theoBest.isComplete ? 'YES' : 'NO'}</span>
-          </div>
-        </div>
-      )}
+      {showDebug && <TimingDebugPanel theoBest={theoBest} activeState={activeState} />}
 
       <div className="absolute top-[40%] -translate-y-1/2 left-8 z-[60] flex flex-col items-start gap-2 pointer-events-none">
         <div className="flex flex-col items-start mb-2 mt-1">
