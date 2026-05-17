@@ -53,7 +53,7 @@ class TelemetryIngestor:
             # Step 1: Extract .bin using ffmpeg
             # Map 0:3 is a common GoPro GPMF track, or handler_name GoPro MET
             ff_result = subprocess.run(
-                [ffmpeg_cmd, "-y", "-i", str(video_path), "-codec", "copy", "-map", r"0:m:handler_name:\ \ \ \ \ GoPro\ MET", "-f", "rawvideo", str(bin_path)],
+                [ffmpeg_cmd, "-y", "-i", str(video_path), "-codec", "copy", "-map", "0:m:handler_name:\ \ \ \ \ GoPro\ MET", "-f", "rawvideo", str(bin_path)],
                 capture_output=True,
                 text=True
             )

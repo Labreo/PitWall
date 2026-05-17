@@ -1,29 +1,109 @@
 [
   {
-    "id": "02eeab15-61a2-42d8-9e63-2d993e479f81",
-    "timestamp": 600,
+    "id": "359b23c2-2724-476e-b3c6-18a18b74d3a4",
+    "timestamp": 129600,
     "lap_number": 1,
-    "corner_id": "S1",
-    "severity": "info",
+    "corner_id": "S5",
+    "severity": "warn",
     "category": "throttle",
+    "message": "Maintain consistent trail braking for more control in corners",
+    "corner_summary": "The driver executed a controlled, heavy-braking maneuver with minimal time loss, demonstrating good brake balance and stability.",
+    "confidence_reasoning": "Telemetry's low Braking Score (0.14) and Steering Stability (0.50) indicate conservative, well-timed braking, aligning with theory that early commission of the braking system ensures suitable balance.",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 79.46,
+      "apex_speed": 62.66,
+      "exit_speed": 126.99,
+      "brake_score": 0.14,
+      "throttle_score": 0.12
+    }
+  },
+  {
+    "id": "631bb24a-f42f-49ea-879f-f303514874f4",
+    "timestamp": 160200,
+    "lap_number": 1,
+    "corner_id": "S7",
+    "severity": "warn",
+    "category": "throttle",
+    "message": "Ensure consistent, balanced braking application for optimal track position.",
+    "corner_summary": "The driver exhibited controlled, even braking (0.32), applying moderate throttle (0.44) and maintaining steering stability (0.50) in corner S7, with no time loss (0.000s).",
+    "confidence_reasoning": "The driver's performance indicates a well-executed trail braking technique, as per theory suggesting more sweeping turns require less aggressive braking. The scores suggest a stable, controlled car, aligning with the goal of maintaining consistent driving within road racing schools and programs.",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 131.69,
+      "apex_speed": 93.36,
+      "exit_speed": 129.63,
+      "brake_score": 0.32,
+      "throttle_score": 0.44
+    }
+  },
+  {
+    "id": "fad227df-3802-456e-b5d1-4d3034d7cf52",
+    "timestamp": 242100,
+    "lap_number": 2,
+    "corner_id": "S17",
+    "severity": "warn",
+    "category": "apex",
+    "message": "Ensure consistent trail braking technique for optimal corner entry",
+    "corner_summary": "The driver executed heavy braking at S17, maintaining a steady steering input without significant throttle application. The turn was negotiated smoothly with no recorded time loss.",
+    "confidence_reasoning": "The high brake score (0.46) indicates extensive braking force application, aligning with the theory of suitable brake balance for safety. The steering stability (0.50) suggests a balanced approach to corner entry, consistent with the instructor's opinion on braking technique.",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 134.56,
+      "apex_speed": 79.64,
+      "exit_speed": 136.49,
+      "brake_score": 0.46,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "61c6b53b-29a9-48a6-907d-0799dfbf8969",
+    "timestamp": 348200,
+    "lap_number": 3,
+    "corner_id": "S27",
+    "severity": "warn",
+    "category": "apex",
+    "message": "Maintain consistent brake balance for improved corner entry speed.",
+    "corner_summary": "Driver executed heavy braking without significant throttle input, maintaining steering stability.",
+    "confidence_reasoning": "Telemetry shows high braking score (0.46) and low throttle score (0.00), indicating aggressive but controlled braking, aligning with theory of early braking system commissioning for safety and balance.",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 135.75,
+      "apex_speed": 80.95,
+      "exit_speed": 137.37,
+      "brake_score": 0.46,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "de29a2ea-53b2-42ec-98ab-dca57ad38f59",
+    "timestamp": 454000,
+    "lap_number": 4,
+    "corner_id": "S37",
+    "severity": "info",
+    "category": "apex",
     "message": "Check your entry speed into the corner.",
     "corner_summary": "Telemetry analysis active.",
     "confidence_reasoning": "Inference error: HTTPConnectionPool(host='localhost', port=11434): Read timed out. (read timeout=20)",
     "delta_time_loss": 0,
-    "confidence_score": 0.45,
+    "confidence_score": 0.52,
     "telemetry_summary": {
-      "entry_speed": 0.6,
-      "apex_speed": 0.6,
-      "exit_speed": 5.17,
-      "brake_score": 0.0,
-      "throttle_score": 0.4
+      "entry_speed": 131.5,
+      "apex_speed": 76.78,
+      "exit_speed": 133.61,
+      "brake_score": 0.46,
+      "throttle_score": 0.0
     }
   },
   {
-    "id": "4341df5b-362b-4ba3-8155-3796a591f21d",
-    "timestamp": 13700,
-    "lap_number": 1,
-    "corner_id": "S3",
+    "id": "799fc04b-5eab-4b4b-bc62-94006d47f17e",
+    "timestamp": 559900,
+    "lap_number": 5,
+    "corner_id": "S47",
     "severity": "info",
     "category": "throttle",
     "message": "Check your entry speed into the corner.",
@@ -32,11 +112,91 @@
     "delta_time_loss": 0,
     "confidence_score": 0.52,
     "telemetry_summary": {
-      "entry_speed": 5.16,
-      "apex_speed": 0.78,
-      "exit_speed": 5.51,
-      "brake_score": 0.04,
-      "throttle_score": 0.4
+      "entry_speed": 143.91,
+      "apex_speed": 83.42,
+      "exit_speed": 140.73,
+      "brake_score": 0.5,
+      "throttle_score": 0.02
+    }
+  },
+  {
+    "id": "d6975d8d-8d09-4897-9d83-1f8c1f76fd37",
+    "timestamp": 664900,
+    "lap_number": 6,
+    "corner_id": "S57",
+    "severity": "warn",
+    "category": "apex",
+    "message": "Maintain consistent brake pressure for controlled entry",
+    "corner_summary": "Driver maintained optimal braking balance and steering stability during heavy braking, with no time loss.",
+    "confidence_reasoning": "Telemetry Braking Score (0.44) indicates balanced application of brakes according to 27.5.1, supporting successful corner exit as per RossBentley-Trail-Braking-20210928-1 theory.",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 138.13,
+      "apex_speed": 85.23,
+      "exit_speed": 140.34,
+      "brake_score": 0.44,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "0a35a427-9bc9-424a-b3e3-88eb8004a412",
+    "timestamp": 769900,
+    "lap_number": 7,
+    "corner_id": "S67",
+    "severity": "warn",
+    "category": "apex",
+    "message": "Maintain consistent brake pressure to avoid abrupt changes in speed",
+    "corner_summary": "The driver executed heavy braking at S67 with minimal throttle input, maintaining steering stability.",
+    "confidence_reasoning": "According to theory (Goodman 2009), early braking is crucial for safety. The high braking score indicates the driver applied sufficient force, while minimal throttle input suggests they didn't overtake the braking zone's speed requirement.",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 138.3,
+      "apex_speed": 84.41,
+      "exit_speed": 128.57,
+      "brake_score": 0.45,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "0633dc11-c4ae-41a4-9883-737ab494fe5a",
+    "timestamp": 874300,
+    "lap_number": 8,
+    "corner_id": "S77",
+    "severity": "warn",
+    "category": "apex",
+    "message": "Ensure consistent trail braking for better corner entry speed.",
+    "corner_summary": "Driver executed heavy braking at S77 with no loss, maintaining steering stability.",
+    "confidence_reasoning": "The driver's high braking score (0.37) indicates aggressive braking, which is appropriate for optimizing entry speed. However, to maintain stability and consistency, focus on gradual trail braking as per theory (27.5.1).",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 130.6,
+      "apex_speed": 85.87,
+      "exit_speed": 131.34,
+      "brake_score": 0.37,
+      "throttle_score": 0.0
+    }
+  },
+  {
+    "id": "e0650952-3910-4c7d-9be1-19444b372251",
+    "timestamp": 979100,
+    "lap_number": 9,
+    "corner_id": "S87",
+    "severity": "warn",
+    "category": "apex",
+    "message": "Ensure consistent braking application for corners with sweep to optimize traction and stability.",
+    "corner_summary": "Driver entered S87 corner with minimal braking, likely trail-braking due to its sweep, indicated by low Brake Score (0.54) and Throttle Score (0.00), maintaining Steering Stability (0.50) and avoiding Time Loss.",
+    "confidence_reasoning": "Telemetry data suggests the driver is employing trail-braking, aligning with theory that more sweeping turns require less aggressive braking. This maintains traction and stability without significant time loss (Recorded Time Loss: 0.000s).",
+    "delta_time_loss": 0,
+    "confidence_score": 0.52,
+    "telemetry_summary": {
+      "entry_speed": 145.73,
+      "apex_speed": 81.33,
+      "exit_speed": 110.87,
+      "brake_score": 0.54,
+      "throttle_score": 0.0
     }
   }
 ]

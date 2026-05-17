@@ -15,13 +15,10 @@ class LapDetector:
         Dynamically infer a start/finish coordinate by finding a point on the track
         that is passed multiple times in the same direction.
         """
-        # Filter stationary points to avoid pitting noise, dynamically scaling for lower-speed disciplines like MTB or Karts
-        moving = df[df['speed_kmh'] > 10].copy()
+        # Filter stationary points to avoid pitting noise
+        moving = df[df['speed_kmh'] > 30].copy()
         if moving.empty:
-            moving = df[df['speed_kmh'] > 3].copy()
-        if moving.empty:
-            moving = df.copy() # Absolute fallback to all points if static/walking speed
-
+            raise ValueError("No fast moving data found to infer start/finish.")
             
         # Calculate heading for moving points
         next_lat = moving['latitude'].shift(-1).fillna(moving['latitude'])
@@ -142,18 +139,6 @@ class LapDetector:
             
             laps.append({
                 "lap_number": i + 1,
-                "start_timestamp": int(start['timestamp']),
-                "end_timestamp": int(end['timestamp']),
-                "lap_duration_seconds": duration_sec
-            })
-            
-        if not laps and not df.empty:
-            logger.info("Synthesizing a single session-wide lap for point-to-point track profile.")
-            start = df.iloc[0]
-            end = df.iloc[-1]
-            duration_sec = (end['timestamp'] - start['timestamp']) / 1000.0
-            laps.append({
-                "lap_number": 1,
                 "start_timestamp": int(start['timestamp']),
                 "end_timestamp": int(end['timestamp']),
                 "lap_duration_seconds": duration_sec

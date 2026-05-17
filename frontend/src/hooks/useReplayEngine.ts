@@ -22,8 +22,9 @@ export function useReplayEngine(
     engineRef.current = engine;
 
     useReplayStore.getState().initializeSession(
-      telemetry[0].timestamp,
-      telemetry[telemetry.length - 1].timestamp
+      telemetry,
+      laps,
+      segments
     );
 
     return () => {

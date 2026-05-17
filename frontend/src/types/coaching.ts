@@ -9,4 +9,6 @@ export interface CoachingEvent {
   message: string;
   delta_time_loss: number;
   category: CoachingCategory;
+  audio_url?: string;
+  audio_duration?: number;
 }
