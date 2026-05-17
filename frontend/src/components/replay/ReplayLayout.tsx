@@ -11,8 +11,8 @@ import { useReplayStore } from '../../store/replayStore';
 import { MOCK_TELEMETRY, MOCK_SEGMENTS, MOCK_LAPS } from '../../utils/mockData';
 import { TelemetryPoint, Segment, Lap } from '../../types/telemetry';
 import { CornerAnalytics } from '../map/CornerIntelligenceLayer';
-import REAL_COACHING_EVENTS from '../../utils/coaching_events.json';
 import { CoachingSubtitles } from './CoachingSubtitles';
+
 import { EngineerRadioDebugPanel } from './EngineerRadioDebugPanel';
 import { SplitTimingHUD } from './SplitTimingHUD';
 import { coachingAudioQueue } from '../../engine/coachingAudioQueue';
@@ -29,6 +29,7 @@ interface ReplayLayoutProps {
   telemetry?: TelemetryPoint[];
   segments?: Segment[];
   laps?: Lap[];
+  coachingEvents?: CoachingEvent[];
   sessionInfo?: { filename: string; date: string } | null;
 }
 
@@ -36,9 +37,11 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
   telemetry = MOCK_TELEMETRY,
   segments = MOCK_SEGMENTS,
   laps = MOCK_LAPS,
+  coachingEvents = [],
   sessionInfo = null,
 }) => {
-  const engineRef = useReplayEngine(telemetry, segments, laps, REAL_COACHING_EVENTS as any);
+  const engineRef = useReplayEngine(telemetry, segments, laps, coachingEvents);
+
 
   const initializeSession = useReplayStore(s => s.initializeSession);
   useEffect(() => {
@@ -68,9 +71,10 @@ const ReplayLayoutComponent: React.FC<ReplayLayoutProps> = ({
       telemetry,
       laps,
       segments,
-      REAL_COACHING_EVENTS as CoachingEvent[]
+      coachingEvents
     );
-  }, [telemetry, laps, segments]);
+  }, [telemetry, laps, segments, coachingEvents]);
+
 
   const [theoreticalOverlay, setTheoreticalOverlay] = useState(false);
   const setTheoreticalLapData = useReplayStore(s => s.setTheoreticalLapData);

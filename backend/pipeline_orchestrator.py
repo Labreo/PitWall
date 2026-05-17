@@ -126,8 +126,19 @@ class PipelineOrchestrator:
     def _generate_coaching(self):
         generator = CoachingEventGenerator()
         events = generator.run_pipeline(self.normalized_path)
-        # generator already saves to frontend/src/utils/coaching_events.json
+        
+        # Save to both paths to ensure development (static import) and production (runtime fetch) work perfectly!
+        for path in [self.coaching_output_path, "frontend/public/data/coaching_events.json"]:
+            try:
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                with open(path, "w") as f:
+                    json.dump(events, f, indent=2)
+                logger.info(f"Successfully saved coaching events to {path}")
+            except Exception as e:
+                logger.error(f"Failed to save coaching events to {path}: {e}")
+                
         return events
+
 
     def _build_replay_session(self):
         # Save session metadata for the frontend
@@ -142,5 +153,26 @@ class PipelineOrchestrator:
         
         with open(self.session_info_path, "w") as f:
             json.dump(info, f, indent=2)
+
+        # Automatically link/copy the uploaded video to frontend/public/session.mp4
+        target_path = Path("frontend/public/session.mp4")
+        if self.raw_video_path and os.path.exists(self.raw_video_path):
+            try:
+                # Remove existing file/symlink
+                if target_path.exists() or target_path.is_symlink():
+                    target_path.unlink()
+                
+                # Try symlinking (fast, lightweight)
+                os.symlink(os.path.abspath(self.raw_video_path), os.path.abspath(target_path))
+                logger.info(f"Successfully symlinked {self.raw_video_path} to {target_path}")
+            except Exception as e:
+                logger.warning(f"Failed to symlink {self.raw_video_path}: {e}. Falling back to copy...")
+                try:
+                    import shutil
+                    shutil.copy2(self.raw_video_path, target_path)
+                    logger.info(f"Successfully copied {self.raw_video_path} to {target_path}")
+                except Exception as e2:
+                    logger.error(f"Failed to copy uploaded video to {target_path}: {e2}")
             
         return True
+

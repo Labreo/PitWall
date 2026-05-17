@@ -3,6 +3,8 @@ import { ReplayLayout } from './components/replay/ReplayLayout';
 import { TelemetryPoint, Segment, Lap } from './types/telemetry';
 import { deriveGForces } from './utils/deriveGForces';
 import UploadScreen from './components/upload/UploadScreen';
+import STATIC_COACHING_EVENTS from './utils/coaching_events.json';
+
 
 type LoadState = 'loading' | 'ready' | 'error';
 type ViewState = 'upload' | 'replay';
@@ -12,7 +14,9 @@ function App() {
   const [telemetry, setTelemetry] = useState<TelemetryPoint[] | null>(null);
   const [segments, setSegments] = useState<Segment[] | null>(null);
   const [laps, setLaps] = useState<Lap[] | null>(null);
+  const [coachingEvents, setCoachingEvents] = useState<any[] | null>(null);
   const [sessionInfo, setSessionInfo] = useState<{ filename: string; date: string } | null>(null);
+
   const [loadState, setLoadState] = useState<LoadState>('loading');
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -83,13 +87,26 @@ function App() {
           console.warn("Could not load session info:", err);
         }
 
+        // Try loading coaching_events.json — fall back to static STATIC_COACHING_EVENTS
+        let coachingData = STATIC_COACHING_EVENTS;
+        try {
+          const coachingRes = await fetch('/data/coaching_events.json');
+          if (coachingRes.ok) {
+            coachingData = await coachingRes.json();
+          }
+        } catch (err) {
+          console.warn("Could not load coaching_events.json, using static fallback:", err);
+        }
+
         // Derive G-forces from GPS data (raw accelerometer fields are zero)
         deriveGForces(telemetryData);
 
         setTelemetry(telemetryData);
         setSegments(segmentsData);
         setLaps(lapsData);
+        setCoachingEvents(coachingData);
         setLoadState('ready');
+
       } catch (error) {
         console.error('Error loading data:', error);
         setErrorMsg(String(error));
@@ -145,8 +162,10 @@ function App() {
     telemetry={telemetry!} 
     segments={segments!} 
     laps={laps!} 
+    coachingEvents={coachingEvents!}
     sessionInfo={sessionInfo} 
   />;
+
 }
 
 export default App;

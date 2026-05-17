@@ -465,10 +465,8 @@ Built for the **IBM AI Builders Challenge 2026** — Racing Innovation Challenge
 
 **Demo:** [3-minute video link]
 
-**Live prototype:** [deployment link if available]
-
 ---
 
 <div align="center">
-  <sub>PitWall · Built by Kanak Waradkar · github.com/Labreo</sub>
+  <sub>PitWall · Built by Kanak Waradkar · www.github.com/Labreo</sub>
 </div>
