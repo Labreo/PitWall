@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from .upload_routes import router as upload_router
+from .routes.tts import router as tts_router
 
 app = FastAPI(title="PitWall Upload Orchestrator")
 
@@ -19,6 +20,7 @@ app.add_middleware(
 )
 
 app.include_router(upload_router, prefix="/api")
+app.include_router(tts_router, prefix="/api/tts")
 
 @app.get("/")
 async def root():

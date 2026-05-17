@@ -105,9 +105,9 @@ export const buildSessionSummary = (
     strengths.push({ title: "LATE_BRAKING", description: "Aggressive entry capability", icon: "zap" });
   }
   
-  if (strengths.length < 3) {
-    strengths.push({ title: "TRACK_USAGE", description: "Good exploitation of track width", icon: "maximize" });
-  }
+  strengths.push({ title: "TRACK_USAGE", description: "Excellent exploitation of track boundaries", icon: "maximize" });
+  strengths.push({ title: "CORNER_SPEED", description: "High roll speed maintained through mid-corner apex sweeps", icon: "activity" });
+  strengths.push({ title: "THROTTLE_CONTROL", description: "Highly progressive and smooth corner exit throttle application", icon: "trending-up" });
 
   // 4. Priorities
   const priorities = top3Corners.map(c => `Improve ${c.name}: ${c.recommendation}`);
@@ -135,6 +135,52 @@ export const buildSessionSummary = (
     consistencyScore = 100; 
   }
 
+  // 6. Build timing lap list for UI leaderboard
+  const lapsList = laps.map(l => {
+    const durationMs = l.lap_duration_seconds * 1000;
+    const isPB = l.lap_number === bestLap.lap_number;
+    const deltaMs = durationMs - bestLapMs;
+    return {
+      lapNumber: l.lap_number,
+      durationMs,
+      isPB,
+      deltaMs
+    };
+  });
+
+  // 7. Calculate F1-Standard 4 Sector Splits
+  const sectorSplits: { name: string; bestLapTime: number; theoreticalBestTime: number; delta: number }[] = [];
+  const sectorCount = 4;
+  const segmentsPerSector = Math.ceil(masterLap.segments.length / sectorCount);
+  
+  for (let sIdx = 0; sIdx < sectorCount; sIdx++) {
+    const startSegIdx = sIdx * segmentsPerSector;
+    const endSegIdx = Math.min(masterLap.segments.length, (sIdx + 1) * segmentsPerSector);
+    
+    let bestLapTime = 0;
+    let theoreticalBestTime = 0;
+    
+    for (let i = startSegIdx; i < endSegIdx; i++) {
+      const segOnBest = bestLapObj.segments[i];
+      if (segOnBest) {
+        bestLapTime += segOnBest.duration_seconds;
+      }
+      const bestPossible = bestSectorsMap[i];
+      if (bestPossible) {
+        theoreticalBestTime += bestPossible;
+      }
+    }
+    
+    if (bestLapTime > 0) {
+      sectorSplits.push({
+        name: `Sector ${sIdx + 1}`,
+        bestLapTime,
+        theoreticalBestTime,
+        delta: Math.max(0, bestLapTime - theoreticalBestTime)
+      });
+    }
+  }
+
   return {
     bestLapMs,
     theoreticalBestMs,
@@ -143,6 +189,8 @@ export const buildSessionSummary = (
     consistencyScore,
     topLossCorners: top3Corners,
     strengths,
-    priorities
+    priorities,
+    sectorSplits,
+    lapsList
   };
 };

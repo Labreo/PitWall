@@ -5,12 +5,21 @@ import json
 import pandas as pd
 import logging
 from typing import Any
+import os
+import wave
 from lap_detector import LapDetector
 from corner_segmentation import CornerSegmenter
 from coaching_context_builder import build_coaching_context
 from granite_prompt_builder import build_granite_prompt
 from coaching_event_serializer import serialize_coaching_event
 from ollama_client import OllamaClient
+
+try:
+    from backend.services.watson_tts import WatsonTTSService
+except ImportError:
+    class WatsonTTSService:
+        def synthesize(self, text: str) -> str | None:
+            return None
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,6 +28,7 @@ class CoachingEventGenerator:
     def __init__(self, ollama_client=None):
         self.ollama_client = ollama_client or OllamaClient()
         self.advice_history = {} # Track corner_id -> count of coaching events
+        self.tts_service = WatsonTTSService()
 
     def run_pipeline(self, telemetry_path: str) -> list[dict[str, Any]]:
         """
@@ -33,7 +43,7 @@ class CoachingEventGenerator:
         # 2. Extract Structure
         logger.info("Detecting laps and segments...")
         laps = LapDetector().detect_laps(df)
-        segments = CornerSegmenter().segment_track(df)
+        segments = CornerSegmenter().segment_track(df, laps)
         
         # 3. Assemble Session for Brain
         session = {
@@ -78,8 +88,34 @@ class CoachingEventGenerator:
             prompt = build_granite_prompt(ctx)
             advice_data = self.ollama_client.generate_advice(prompt)
             
-            # 7. Serialize
-            event = serialize_coaching_event(ctx, advice_data, trigger_ts)
+            # 7. Pre-Synthesize Watson TTS Audio
+            audio_url = None
+            audio_duration = None
+            coaching_line = advice_data.get("coaching_line")
+            if coaching_line:
+                try:
+                    audio_url = self.tts_service.synthesize(coaching_line)
+                    if audio_url:
+                        # Extract local file path to compute exact wave duration
+                        filename = os.path.basename(audio_url)
+                        local_path = os.path.join("data", "generated_audio", filename)
+                        if os.path.exists(local_path):
+                            with wave.open(local_path, "rb") as wf:
+                                frames = wf.getnframes()
+                                rate = wf.getframerate()
+                                audio_duration = round(frames / float(rate), 2)
+                                logger.info(f"Pre-synthesized F1 Radio voice: duration={audio_duration}s for '{coaching_line}'")
+                except Exception as e:
+                    logger.error(f"Failed to synthesize or read duration for '{coaching_line}': {e}")
+            
+            # 8. Serialize
+            event = serialize_coaching_event(
+                ctx, 
+                advice_data, 
+                trigger_ts,
+                audio_url=audio_url,
+                audio_duration=audio_duration
+            )
             coaching_events.append(event)
 
         logger.info(f"Successfully generated {len(coaching_events)} real coaching events via Granite.")

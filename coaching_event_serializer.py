@@ -4,7 +4,13 @@ coaching_event_serializer.py — Maps Python metrics and AI insights to Frontend
 import uuid
 from typing import Any
 
-def serialize_coaching_event(context: dict[str, Any], advice_data: dict[str, Any], trigger_ts: int) -> dict[str, Any]:
+def serialize_coaching_event(
+    context: dict[str, Any], 
+    advice_data: dict[str, Any], 
+    trigger_ts: int,
+    audio_url: str | None = None,
+    audio_duration: float | None = None
+) -> dict[str, Any]:
     """
     Combines telemetry metrics with LLM-generated insights.
     """
@@ -29,6 +35,8 @@ def serialize_coaching_event(context: dict[str, Any], advice_data: dict[str, Any
         "confidence_reasoning": advice_data.get("confidence_reasoning", ""),
         "delta_time_loss": round(context.get("time_loss_vs_best_lap", 0), 2) if context.get("time_loss_vs_best_lap") else 0,
         "confidence_score": round(context.get("confidence_score", 0), 2),
+        "audio_url": audio_url,
+        "audio_duration": audio_duration,
         "telemetry_summary": {
             "entry_speed": context.get("entry_speed_kmh"),
             "apex_speed": context.get("min_speed_kmh"),

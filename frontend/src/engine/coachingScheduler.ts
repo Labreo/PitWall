@@ -9,6 +9,9 @@ export class CoachingScheduler {
   constructor(events: CoachingEvent[]) {
     // Pre-sort by timestamp for O(log n) or linear search efficiency
     this.events = [...events].sort((a, b) => a.timestamp - b.timestamp);
+    
+    // Asynchronously preload Watson TTS audio files to avoid runtime network lag
+    coachingAudioQueue.preload(this.events);
   }
 
   /**

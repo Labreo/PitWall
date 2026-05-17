@@ -1,12 +1,13 @@
 # PITWALL // AI RACE ENGINEER
-### THE CINEMATIC RECONSTRUCTION OF PEAK PERFORMANCE
+### THE CINEMATIC RECONSTRUCTION OF PEAK PERFORMANCE // POWERED BY IBM GRANITE, DOCLING & WATSON
 
 <div align="center">
 
-[![Tech Stack](https://img.shields.io/badge/Stack-React%20%7C%20FastAPI%20%7C%20IBM%20Granite-cyan?style=for-the-badge)](https://github.com/labreo/pitwall)
+[![Tech Stack](https://img.shields.io/badge/Stack-React%20%7C%20FastAPI%20%7C%20IBM%20AI-cyan?style=for-the-badge)](https://github.com/labreo/pitwall)
 [![Performance](https://img.shields.io/badge/Replay-60FPS%20Deterministic-emerald?style=for-the-badge)](https://github.com/labreo/pitwall)
 [![IBM Granite](https://img.shields.io/badge/AI-IBM%20Granite-violet?style=for-the-badge)](https://github.com/labreo/pitwall)
 [![IBM Docling](https://img.shields.io/badge/Knowledge-IBM%20Docling-blue?style=for-the-badge)](https://github.com/labreo/pitwall)
+[![IBM Watson](https://img.shields.io/badge/Voice-IBM%20Watson%20TTS-pink?style=for-the-badge)](https://github.com/labreo/pitwall)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 </div>
@@ -218,7 +219,8 @@ Granite's coaching does not stay on screen. It speaks.
 - Short, sharp pace note format — the language of real race engineering radio: *"Turn 3. Brake late. Exit speed low."*
 - Subtitle overlay runs simultaneously for accessibility and demo clarity
 - Audio queue system ensures notes never stack or overlap — the most critical event per corner wins
-- Watson TTS integration pending IBM Cloud verification — current implementation uses Web Speech API
+- **IBM Watson Text-to-Speech** — Integrated as a high-fidelity, production-grade motorsport race-engineer radio voice. Includes synthetic analog start/end transmission gate clicks, custom walkie-talkie bandpass and compression FFmpeg post-processing filters, content-addressed pre-generation caching, and concurrent browser preloading.
+- **Robust Fallback Engine** — Seamlessly falls back to Web Speech API speech synthesis if IBM Watson TTS credentials are unconfigured or offline, ensuring uninterrupted replay coaching.
 
 **Result:** You hear your engineer coaching you through the lap. Reading subtitles during 60FPS replay breaks immersion. Hearing them does not.
 
@@ -244,6 +246,8 @@ When the session ends, PitWall automatically generates a complete race engineeri
 - **Chief Engineer AI Debrief** — A high-level, session-wide technical analysis generated dynamically by IBM Granite, addressing the driver directly to summarize performance trends, braking discipline, and throttle exit optimization.
 - **PB vs Theoretical Best** — exact potential gain in seconds (e.g. *-1.245s*) derived from sector analysis.
 - **Consistency Score** — 0–100 calculated from flying-lap variance, ignoring out-laps.
+- **Flying Laps Leaderboard** — Complete timing screen grid listing fly-laps with PB highlight and precise gaps-to-best.
+- **Sector Split Deficits** — Standard 4-sector dynamic delta tracking compared against theoretical sector potentials.
 - **Critical Time Loss Corners** — top 3 corners costing the most time, each with a mini-map wireframe and dynamic IBM Granite recommendations pulled from the session's grounded logs.
 - **Driver Strengths** — technical skill recognition: Brake Stability, Line Precision, Throttle Control.
 - **Actionable Priorities** — specific to-do list for next session.
@@ -257,6 +261,7 @@ When the session ends, PitWall automatically generates a complete race engineeri
 |---|---|---|
 | **IBM Granite** | Coaching language generation + audio pace notes + Chief Engineer Debrief + Intelligence Summary recommendations | Receives structured corner performance data from the physics engine. Narrates findings as text and synchronized audio. |
 | **IBM Docling** | Racing theory PDF parsing → FAISS vector knowledge base | Pre-parses FIA regulations, racing line theory, and track guides. Grounds all Granite output via RAG retrieval. |
+| **IBM Watson TTS** | Production-grade walkie-talkie race engineer voice synthesis | Pre-generates, filters (FFmpeg Walkie-Talkie EQ), and caches all Granite-produced pace-notes during session upload, serving them to the replay Web Audio engine. |
 
 **Architecture principle:** IBM tools sit on top of deterministic engineering. Granite is the narrator of findings produced by real algorithms. Every coaching line is traceable to a specific computed metric — not an LLM estimate.
 
@@ -283,8 +288,11 @@ graph TD
     subgraph IBM_AI_Pipeline ["IBM AI Pipeline"]
     N["IBM Docling · Racing PDFs"] --> O["FAISS Vector Index"]
     O --> P["IBM Granite · RAG Coaching"]
-    P --> Q["Coaching Scheduler · Timestamp Sync"]
-    Q --> R["Audio Pace Notes · Web Speech API"]
+    P --> QA["IBM Watson TTS · Pre-Synthesis"]
+    QA --> QB["FFmpeg Walkie-Talkie Filter"]
+    QB --> QC["Content-Addressed Cache"]
+    QC --> Q["Coaching Scheduler · Timestamp Sync"]
+    Q --> R["RadioAudioEngine · Preloaded Beep & WAV Replay"]
     end
 
     I --> P
@@ -379,7 +387,7 @@ PitWall is vehicle-agnostic. The telemetry pipeline reads GoPro GPMF streams ide
 
 ### 🚀 Option A: One-Click Quick Start (Recommended)
 
-To make running PitWall extremely frictionless, we have included a beautiful, cyberpunk-styled startup launcher script that automatically installs dependencies, checks your system, and launches both frontend and backend concurrently.
+To make running PitWall extremely frictionless, we have included a beautiful, cyberpunk-styled startup launcher script that automatically installs dependencies, copies configuration templates, checks your system, and launches both frontend and backend concurrently.
 
 Simply run:
 ```bash
@@ -388,8 +396,30 @@ Simply run:
 
 - It will check your Node, npm, and Python versions.
 - It will ensure all required python and npm packages are installed.
+- It will detect/initialize your root `.env` file from the provided `.env.example` template.
 - It will spin up the FastAPI Backend and React dev server together.
 - Press **[Ctrl+C]** at any time to cleanly shut down all background processes with zero zombie ports.
+
+---
+
+### 🔑 Environment Setup (.env)
+
+PitWall utilizes separate environment files for the Python backend and Vite frontend to ensure credentials are never exposed:
+
+#### 📂 1. Backend Environment (`.env`)
+Create a file named `.env` in the **root directory** of the project (an automatic template is generated when running `./run.sh` or copied from `.env.example`).
+Configure your IBM Watson Text-to-Speech credentials:
+```env
+WATSON_TTS_API_KEY=your_ibm_watson_tts_api_key_here
+WATSON_TTS_URL=https://api.us-south.text-to-speech.watson.cloud.ibm.com/instances/your_instance_id_here
+WATSON_TTS_VOICE=en-US_MichaelV3Voice
+```
+
+#### 📂 2. Frontend Environment (`frontend/.env.local`)
+Create a file named `.env.local` inside the `frontend/` directory (a pre-configured template is already in place):
+```env
+VITE_API_URL=http://localhost:8000
+```
 
 ---
 
@@ -448,7 +478,7 @@ Compatible GPS data sources: GoPro Hero 5+, Racelogic VBOX, AiM Solo, Harry's La
 | Telemetry analysis | NumPy, Pandas |
 | AI model | IBM Granite (via Ollama) |
 | Knowledge base | IBM Docling (PDF parsing + FAISS RAG) |
-| Audio coaching | Web Speech API (Watson TTS pending verification) |
+| Audio coaching | IBM Watson TTS (pre-generated, FFmpeg walkie-talkie filtered, preloaded, with browser SpeechSynthesis fallback) |
 | Timing engine | Deterministic Split State Machine |
 | Demo dataset | Donington Park · 9 laps · GoPro GPMF |
 
@@ -456,7 +486,7 @@ Compatible GPS data sources: GoPro Hero 5+, Racelogic VBOX, AiM Solo, Harry's La
 
 ## 10 // ROADMAP
 
-- [ ] **Watson TTS** — IBM Cloud voice synthesis replacing Web Speech API for production-grade audio pace notes
+- [x] **Watson TTS** — IBM Cloud voice synthesis replacing Web Speech API for production-grade audio pace notes with walkie-talkie acoustics
 - [ ] **Granite Vision** — Automatic detection of track hazards, flags, and competitor positions from raw video frames
 - [ ] **The Garage** — Persistent session history for multi-day driver progress tracking
 - [ ] **Cloud Reconstruction** — IBM Cloud offloading for heavy GPMF extraction on mobile upload
@@ -481,7 +511,7 @@ Every driver deserves a seat at the engineering table. PitWall builds it.
 
 Built for the **IBM AI Builders Challenge 2026** — Racing Innovation Challenge.
 
-**IBM Technologies Used:** IBM Granite · IBM Docling
+**IBM Technologies Used:** IBM Granite · IBM Docling · IBM Watson TTS
 
 **Demo:** [3-minute video link]
 

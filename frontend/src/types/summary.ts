@@ -14,6 +14,20 @@ export interface DriverStrength {
   icon: string;
 }
 
+export interface SectorSplit {
+  name: string;
+  bestLapTime: number;
+  theoreticalBestTime: number;
+  delta: number;
+}
+
+export interface LapSplit {
+  lapNumber: number;
+  durationMs: number;
+  isPB: boolean;
+  deltaMs: number;
+}
+
 export interface SessionSummaryData {
   bestLapMs: number;
   theoreticalBestMs: number;
@@ -24,4 +38,6 @@ export interface SessionSummaryData {
   strengths: DriverStrength[];
   priorities: string[];
   aiDebrief?: string;
+  sectorSplits?: SectorSplit[];
+  lapsList?: LapSplit[];
 }

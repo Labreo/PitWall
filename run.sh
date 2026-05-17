@@ -48,6 +48,17 @@ else
     echo -e "          (To enable Granite coaching, open Ollama and run: 'ollama pull granite3.1-dense:2b')\n"
 fi
 
+# Check for .env file at root
+echo -e "${CYAN}[2.5/4] Loading Environment Configuration...${NC}"
+if [ ! -f ".env" ]; then
+    echo -e "${YELLOW}[WARNING] Root '.env' file not found. Automatically creating from template '.env.example'...${NC}"
+    cp .env.example .env
+    echo -e "          Please update the '.env' file in the root folder with your Watson TTS credentials if desired."
+else
+    echo -e "${GREEN}[SUCCESS] .env configuration loaded successfully.${NC}"
+fi
+echo ""
+
 echo -e "${CYAN}[3/4] Ensuring Python and Node Dependencies are Installed...${NC}"
 echo -e "Installing Python requirements..."
 pip3 install -r requirements.txt --quiet

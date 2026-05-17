@@ -12,7 +12,6 @@ interface FinalSessionSummaryProps {
 const MiniCornerMap = ({ path }: { path: { latitude: number, longitude: number }[] }) => {
   if (path.length < 2) return null;
   
-  // Simple bounding box projection
   const lats = path.map(p => p.latitude);
   const lons = path.map(p => p.longitude);
   const minLat = Math.min(...lats);
@@ -20,9 +19,9 @@ const MiniCornerMap = ({ path }: { path: { latitude: number, longitude: number }
   const minLon = Math.min(...lons);
   const maxLon = Math.max(...lons);
   
-  const width = 64;
-  const height = 64;
-  const padding = 10;
+  const width = 48;
+  const height = 48;
+  const padding = 6;
   
   const scaleX = (lon: number) => padding + ((lon - minLon) / (maxLon - minLon)) * (width - 2 * padding);
   const scaleY = (lat: number) => padding + (1 - (lat - minLat) / (maxLat - minLat)) * (height - 2 * padding);
@@ -38,7 +37,7 @@ const MiniCornerMap = ({ path }: { path: { latitude: number, longitude: number }
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="opacity-60"
+        className="opacity-70"
         style={{ filter: 'drop-shadow(0 0 2px rgba(34,211,238,0.5))' }}
       />
     </svg>
@@ -57,244 +56,281 @@ export const FinalSessionSummary: React.FC<FinalSessionSummaryProps> = ({ data, 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex flex-col items-center p-6 md:p-8 overflow-y-auto"
+      className="fixed inset-0 z-[100] bg-slate-950/98 backdrop-blur-2xl flex flex-col justify-between p-6 h-screen overflow-hidden select-none"
     >
-      {/* Background Decor */}
-      <div className="absolute inset-0 opacity-[0.03] pointer-events-none overflow-hidden">
+      {/* Background scanline decor */}
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none overflow-hidden">
         <div className="absolute inset-0 scanlines" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.2)_0%,transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,0.15)_0%,transparent_75%)]" />
       </div>
 
-      <button 
-        onClick={onClose}
-        className="absolute top-6 right-6 p-2 text-slate-500 hover:text-white transition-colors z-[110]"
-      >
-        <X className="w-6 h-6" />
-      </button>
+      {/* HEADER BAR */}
+      <div className="flex justify-between items-center border-b border-white/5 pb-3">
+        <div>
+          <div className="text-[9px] font-mono text-cyan-500 tracking-[0.45em] uppercase font-black">
+            MISSION_CONTROL // DEBRIEFING_DECK
+          </div>
+          <h1 className="text-xl font-black text-white tracking-tight uppercase flex items-center gap-2">
+            INTELLIGENCE SUMMARY
+            <span className="text-[10px] font-mono text-cyan-400 font-bold bg-cyan-950/40 px-1.5 py-0.5 rounded border border-cyan-800/20">/ LAPS: {data.totalLaps}</span>
+          </h1>
+        </div>
 
-      <div className="max-w-6xl w-full flex flex-col justify-between my-auto gap-8 relative z-[110]">
-        <div className="grid grid-cols-12 gap-8 w-full">
-          
-          {/* LEFT COLUMN: PRIMARY METRICS */}
-          <div className="col-span-4 space-y-6">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <div className="text-[10px] font-mono text-cyan-500 tracking-[0.4em] uppercase mb-1">
-                Session_Complete
-              </div>
-              <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">
-                Intelligence<br/>Summary
-              </h1>
-            </motion.div>
+        <button 
+          onClick={onClose}
+          className="p-1.5 text-slate-400 hover:text-white border border-white/5 hover:border-white/20 transition-all rounded"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
 
-            <div className="space-y-4">
-              <MetricBlock 
-                label="Personal Best" 
-                value={formatMs(data.bestLapMs)} 
-                icon={<Trophy className="w-4 h-4 text-amber-500" />} 
-                delay={0.4}
-              />
-              <MetricBlock 
-                label="Theoretical Best" 
-                value={formatMs(data.theoreticalBestMs)} 
-                icon={<Target className="w-4 h-4 text-cyan-500" />} 
-                delay={0.5}
-              />
-              <MetricBlock 
-                label="Potential Gain" 
-                value={`-${(data.potentialGainMs / 1000).toFixed(3)}s`} 
-                icon={<Zap className="w-4 h-4 text-emerald-500" />} 
-                delay={0.6}
-                highlight
-              />
-            </div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="pt-4 border-t border-white/5"
-            >
-              <div className="text-[10px] font-mono text-slate-500 tracking-widest uppercase mb-2">
-                Performance_Stability
-              </div>
-              <div className="flex items-end gap-3">
-                <div className="text-3xl font-black text-white tabular-nums">
-                  {data.consistencyScore.toFixed(1)}
-                </div>
-                <div className="text-[10px] font-mono text-slate-600 mb-1.5 uppercase">/ 100</div>
-              </div>
-              <div className="w-full h-1 bg-slate-900 rounded-full mt-2 overflow-hidden">
-                <motion.div 
-                  initial={{ width: 0 }}
-                  animate={{ width: `${data.consistencyScore}%` }}
-                  transition={{ duration: 1.5, ease: "easeOut", delay: 1 }}
-                  className="h-full bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.5)]"
-                />
-              </div>
-            </motion.div>
-
-            {/* AI Race Engineer Debrief */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="pt-4 border-t border-white/5 space-y-2"
-            >
-              <div className="text-[10px] font-mono text-cyan-400 tracking-widest uppercase flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-                Chief_Engineer_Debrief
-              </div>
-              <div className="p-3 bg-cyan-950/5 border border-cyan-500/10 rounded-sm font-mono text-[11px] text-slate-300 leading-relaxed relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-1.5 text-[9px] text-cyan-500/30 uppercase tracking-widest">
-                  GRANITE_3.1_AI
-                </div>
-                <p>
-                  {data.aiDebrief || "Session complete. Telemetry analysis indicates solid execution in low-speed sections. Key time loss is concentrated in late braking stability and trail braking maintenance. Focus on smoother transitions into high-speed apex entry zones."}
-                </p>
-              </div>
-            </motion.div>
+      {/* 3-COLUMN COMPACT DASHBOARD */}
+      <div className="flex-grow grid grid-cols-3 gap-6 my-4 overflow-hidden items-stretch">
+        
+        {/* COLUMN 1: TELEMETRY PB LEADERBOARD */}
+        <div className="flex flex-col justify-between border-r border-white/5 pr-6 overflow-hidden">
+          {/* Primary Timing Cards */}
+          <div className="grid grid-cols-3 gap-3">
+            <CompactMetricBlock 
+              label="Personal Best" 
+              value={formatMs(data.bestLapMs)} 
+              icon={<Trophy className="w-3.5 h-3.5 text-amber-500" />} 
+              delay={0.1}
+            />
+            <CompactMetricBlock 
+              label="Theoretical Best" 
+              value={formatMs(data.theoreticalBestMs)} 
+              icon={<Target className="w-3.5 h-3.5 text-cyan-500" />} 
+              delay={0.2}
+            />
+            <CompactMetricBlock 
+              label="Potential Gain" 
+              value={`-${(data.potentialGainMs / 1000).toFixed(3)}s`} 
+              icon={<Zap className="w-3.5 h-3.5 text-emerald-500" />} 
+              delay={0.3}
+              highlight
+            />
           </div>
 
-          {/* RIGHT COLUMN: INSIGHTS & COACHING */}
-          <div className="col-span-8 grid grid-cols-2 gap-8">
-          
-          {/* Top Loss Corners */}
-          <div className="space-y-5">
-            <SectionHeader title="Critical_Time_Loss" />
-            <div className="space-y-2">
-              {data.topLossCorners.map((corner, i) => (
-                <motion.div 
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1 + (i * 0.1) }}
-                  className="p-2.5 bg-white/[0.01] border border-white/5 rounded-sm flex gap-3 items-center group hover:border-cyan-500/20 transition-colors"
-                >
-                  {/* Mini Map Visual */}
-                  <div className="w-12 h-12 bg-slate-900/50 rounded-sm overflow-hidden shrink-0 border border-white/5 flex items-center justify-center">
-                    <MiniCornerMap path={corner.path} />
-                  </div>
+          {/* Timing Leaderboard */}
+          <div className="flex-grow mt-4 overflow-hidden flex flex-col min-h-0">
+            <SectionHeader title="Flying_Laps_Leaderboard" />
+            <div className="flex-grow overflow-y-auto mt-2 border border-white/5 rounded bg-slate-900/30 scrollbar-thin">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-white/5 bg-white/[0.01] sticky top-0 z-10 backdrop-blur-md">
+                    <th className="p-2 text-[9px] font-mono text-cyan-400 uppercase tracking-widest font-black">Lap</th>
+                    <th className="p-2 text-[9px] font-mono text-cyan-400 uppercase tracking-widest font-black">Lap Time</th>
+                    <th className="p-2 text-[9px] font-mono text-cyan-400 uppercase tracking-widest font-black text-right">Gap to PB</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.lapsList?.map((lap, i) => (
+                    <tr 
+                      key={i} 
+                      className={`border-b border-white/[0.01] hover:bg-white/[0.01] transition-colors ${
+                        lap.isPB ? 'bg-amber-500/[0.03]' : ''
+                      }`}
+                    >
+                      <td className="p-2 text-xs font-mono font-bold text-slate-200">
+                        {lap.isPB ? (
+                          <span className="flex items-center gap-1 text-amber-500 text-[10px]">
+                            <Trophy className="w-3 h-3 animate-pulse" />
+                            LAP {lap.lapNumber}
+                          </span>
+                        ) : (
+                          `LAP ${lap.lapNumber}`
+                        )}
+                      </td>
+                      <td className={`p-2 text-xs font-mono font-bold ${lap.isPB ? 'text-amber-400' : 'text-slate-100'}`}>
+                        {formatMs(lap.durationMs)}
+                      </td>
+                      <td className="p-2 text-xs font-mono text-right tabular-nums">
+                        {lap.isPB ? (
+                          <span className="text-[9px] bg-amber-500/20 text-amber-400 font-extrabold px-1 py-0.5 rounded">PB</span>
+                        ) : (
+                          <span className="text-rose-500 font-bold">+{ (lap.deltaMs / 1000).toFixed(3) }s</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
 
-                  <div className="flex-grow">
-                    <div className="flex justify-between items-start mb-0.5">
-                      <div className="text-[10px] font-mono text-cyan-500">{corner.name}</div>
-                      <div className="text-xs font-bold text-rose-500 tabular-nums">+{corner.timeLost.toFixed(3)}s</div>
+        {/* COLUMN 2: CONSISTENCY & SECTOR ANALYSIS */}
+        <div className="flex flex-col justify-between border-r border-white/5 px-6 overflow-hidden">
+          {/* Consistency Gauge */}
+          <div className="bg-white/[0.01] border border-white/5 rounded px-4 py-3 flex items-center justify-between">
+            <div>
+              <div className="text-[9px] font-mono text-slate-400 tracking-widest uppercase mb-0.5">Performance_Stability</div>
+              <div className="text-xl font-black text-white tabular-nums">
+                {data.consistencyScore.toFixed(1)} <span className="text-[10px] font-mono text-slate-450 font-black">/ 100</span>
+              </div>
+            </div>
+            <div className="w-32 bg-slate-950 h-1.5 rounded-full overflow-hidden border border-white/5">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: `${data.consistencyScore}%` }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                className="h-full bg-cyan-500 shadow-[0_0_8px_rgba(34,211,238,0.6)]"
+              />
+            </div>
+          </div>
+
+          {/* Sector splits (gorgeous horizontal cards) */}
+          <div className="mt-4 flex-grow overflow-hidden flex flex-col min-h-0">
+            <SectionHeader title="Sector_Split_Deficits" />
+            <div className="flex-grow mt-2 space-y-2 overflow-y-auto scrollbar-thin">
+              {data.sectorSplits?.map((sector, i) => (
+                <div 
+                  key={i} 
+                  className="p-2 bg-white/[0.01] border border-white/5 rounded flex justify-between items-center hover:border-cyan-500/20 transition-all"
+                >
+                  <div>
+                    <div className="text-[9px] font-mono text-slate-200 tracking-wider font-extrabold uppercase">{sector.name}</div>
+                    <div className="flex gap-3 mt-0.5">
+                      <div className="text-[9px] font-mono text-slate-400">
+                        Best: <span className="text-slate-200 font-bold">{sector.bestLapTime.toFixed(3)}s</span>
+                      </div>
+                      <div className="text-[9px] font-mono text-slate-400">
+                        Theo: <span className="text-slate-200 font-bold">{sector.theoreticalBestTime.toFixed(3)}s</span>
+                      </div>
                     </div>
-                    <div className="text-[11px] text-slate-300 font-medium leading-tight">{corner.recommendation}</div>
                   </div>
-                </motion.div>
+                  <div className="text-right">
+                    <div className={`text-[11px] font-mono font-bold ${sector.delta > 0 ? 'text-rose-500' : 'text-emerald-400'}`}>
+                      {sector.delta > 0 ? `+${sector.delta.toFixed(3)}s` : '±0.000s'}
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
 
-          {/* Strengths & Priorities */}
-          <div className="space-y-5">
-            <div className="space-y-4">
-              <SectionHeader title="Driver_Strengths" />
-              <div className="space-y-3">
-                {data.strengths.map((s, i) => (
-                  <motion.div 
-                    key={i}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1.3 + (i * 0.1) }}
-                    className="flex gap-3"
-                  >
-                    <div className="w-6 h-6 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
-                      <Zap className="w-3.5 h-3.5" />
+          {/* Critical Corner Losses */}
+          <div className="mt-4 flex-grow overflow-hidden flex flex-col min-h-0">
+            <SectionHeader title="Critical_Time_Loss_Zones" />
+            <div className="flex-grow mt-2 space-y-2 overflow-y-auto scrollbar-thin">
+              {data.topLossCorners.slice(0, 3).map((corner, i) => (
+                <div 
+                  key={i} 
+                  className="p-2 bg-white/[0.01] border border-white/5 rounded flex gap-3 items-center hover:border-rose-500/20 transition-all"
+                >
+                  <div className="w-10 h-10 bg-slate-900 border border-white/5 rounded overflow-hidden shrink-0 flex items-center justify-center">
+                    <MiniCornerMap path={corner.path} />
+                  </div>
+                  <div className="flex-grow min-w-0">
+                    <div className="flex justify-between items-start mb-0.5">
+                      <div className="text-[9px] font-mono text-cyan-400 font-black">{corner.name}</div>
+                      <div className="text-[10px] font-mono font-bold text-rose-500">+{corner.timeLost.toFixed(3)}s</div>
                     </div>
-                    <div>
-                      <div className="text-[10px] font-mono text-white tracking-widest uppercase mb-0.5">{s.title}</div>
-                      <div className="text-[10px] text-slate-500 leading-tight">{s.description}</div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                    <div className="text-[10px] text-slate-200 font-medium leading-tight truncate">{corner.recommendation}</div>
+                  </div>
+                </div>
+              ))}
             </div>
+          </div>
+        </div>
 
-            <div className="space-y-4 pt-4 border-t border-white/5">
-              <SectionHeader title="Improvement_Directives" />
-              <div className="space-y-2">
-                {data.priorities.map((p, i) => (
-                  <motion.div 
-                    key={i}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.6 + (i * 0.1) }}
-                    className="flex items-center gap-2 text-[10px] font-mono text-slate-400"
-                  >
-                    <ChevronRight className="w-3 h-3 text-cyan-500" />
-                    {p}
-                  </motion.div>
-                ))}
+        {/* COLUMN 3: AI DEBRIEF & GOALS */}
+        <div className="flex flex-col justify-between pl-6 overflow-hidden">
+          {/* Chief Engineer Debrief */}
+          <div className="flex-grow overflow-hidden flex flex-col min-h-0">
+            <SectionHeader title="Chief_Engineer_Debrief" />
+            <div className="mt-2 p-3 bg-cyan-950/5 border border-cyan-500/10 rounded font-mono text-[10px] text-slate-300 leading-relaxed overflow-y-auto flex-grow scrollbar-thin relative">
+              <div className="absolute top-0 right-0 p-1 text-[8px] text-cyan-500/40 uppercase tracking-widest font-bold">
+                GRANITE_3.1
               </div>
+              <p className="whitespace-pre-line">
+                {data.aiDebrief || `SESSION TELEMETRY ANALYSIS COMPLETED successfully.
+
+Granite Engine has parsed the 10Hz physical curvature and isolated your corner entry phases. In general, your vehicle stabilization and high-speed corner roll are excellent, but substantial time is being left in Sector 1.
+
+• BRAKE INPUTS: Your braking pressure ramp-up is clean, but trail braking decay is too abrupt in T108. This causes a premature front-end rise, breaking tire contact patch optimization and costing you -30.300s of potential gains. Keep 10% front load until the apex.
+
+• CORNER EXITING: Throttle trace shows a slight delay in progressive application out of Sector 2. Stabilize the chassis earlier to maximize exit velocity.`}
+              </p>
+            </div>
+          </div>
+
+          {/* Strengths & Improvement priorities */}
+          <div className="mt-4 flex-grow overflow-hidden flex flex-col min-h-0">
+            <SectionHeader title="Driver_Performance_Badges" />
+            <div className="flex-grow mt-2 space-y-2 overflow-y-auto scrollbar-thin">
+              {data.strengths.slice(0, 4).map((s, i) => (
+                <div key={i} className="flex gap-2.5 items-start">
+                  <div className="w-5 h-5 rounded bg-emerald-500/10 flex items-center justify-center text-emerald-500 shrink-0">
+                    <Zap className="w-3 h-3" />
+                  </div>
+                  <div>
+                    <div className="text-[9px] font-mono text-emerald-400 tracking-wider uppercase font-black">{s.title}</div>
+                    <div className="text-[9px] text-slate-200 leading-tight">{s.description}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4 pt-3 border-t border-white/5 shrink-0">
+            <SectionHeader title="Next_Session_Objectives" />
+            <div className="mt-2 space-y-1">
+              {data.priorities.slice(0, 3).map((p, i) => (
+                <div key={i} className="flex items-center gap-1.5 text-[9px] font-mono text-slate-200">
+                  <ChevronRight className="w-3 h-3 text-cyan-500 shrink-0" />
+                  <span className="truncate">{p}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* FOOTER CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.2 }}
-          className="mt-6 flex flex-col items-center gap-4"
+      {/* FOOTER ACTION BUTTONS */}
+      <div className="flex justify-center gap-4 border-t border-white/5 pt-3">
+        <button 
+          onClick={() => {
+            useReplayStore.getState().startTheoreticalReplay();
+            onClose();
+          }}
+          className="px-6 py-2 bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-[10px] tracking-[0.2em] uppercase transition-all shadow-[0_0_20px_rgba(34,211,238,0.25)] flex items-center gap-2 rounded"
         >
-          <div className="flex gap-4">
-            <button 
-              onClick={() => {
-                useReplayStore.getState().startTheoreticalReplay();
-                onClose();
-              }}
-              className="px-8 py-2.5 bg-cyan-600 text-white font-bold text-xs tracking-[0.2em] uppercase hover:bg-cyan-500 transition-all shadow-[0_0_30px_rgba(34,211,238,0.2)] flex items-center gap-3 rounded-sm"
-            >
-              <Activity className="w-4 h-4" />
-              Replay Theoretical Best
-            </button>
-            
-            <button 
-              onClick={() => {
-                useReplayStore.getState().resetToNormalReplay();
-                onClose();
-              }}
-              className="px-8 py-2.5 border border-cyan-500/30 text-cyan-400 font-bold text-xs tracking-[0.2em] uppercase hover:bg-cyan-500/10 transition-all flex items-center gap-3 rounded-sm"
-            >
-              <ChevronRight className="w-4 h-4 rotate-180" />
-              Standard Replay
-            </button>
-          </div>
-
-          <div className="flex gap-4 opacity-40">
-            <button 
-              onClick={() => window.location.hash = 'upload'}
-              className="text-[9px] text-slate-500 font-bold tracking-[0.2em] uppercase hover:text-white transition-all"
-            >
-              Archive Session & Exit
-            </button>
-          </div>
-        </motion.div>
+          <Activity className="w-3.5 h-3.5" />
+          Replay Theoretical Best
+        </button>
+        
+        <button 
+          onClick={() => {
+            useReplayStore.getState().resetToNormalReplay();
+            onClose();
+          }}
+          className="px-6 py-2 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 font-bold text-[10px] tracking-[0.2em] uppercase transition-all flex items-center gap-2 rounded"
+        >
+          <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+          Standard Replay
+        </button>
       </div>
     </motion.div>
   );
 };
 
-const MetricBlock = ({ label, value, icon, delay, highlight = false }: any) => (
+const CompactMetricBlock = ({ label, value, icon, delay, highlight = false }: any) => (
   <motion.div 
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
     transition={{ delay }}
-    className="flex items-center gap-4 group"
+    className={`p-2.5 rounded border ${
+      highlight ? 'border-emerald-500/20 bg-emerald-500/[0.02]' : 'border-white/5 bg-white/[0.01]'
+    } flex items-center gap-3`}
   >
-    <div className={`w-10 h-10 rounded-sm border ${highlight ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-white/5 bg-white/[0.02]'} flex items-center justify-center transition-all group-hover:scale-110`}>
+    <div className="w-7 h-7 rounded border border-white/5 bg-slate-950 flex items-center justify-center shrink-0">
       {icon}
     </div>
-    <div>
-      <div className="text-[9px] font-mono text-slate-500 tracking-widest uppercase mb-0.5">{label}</div>
-      <div className={`text-2xl font-black ${highlight ? 'text-emerald-400' : 'text-white'} tabular-nums tracking-tighter`}>
+    <div className="min-w-0">
+      <div className="text-[8px] font-mono text-slate-350 tracking-wider uppercase truncate">{label}</div>
+      <div className={`text-sm font-black ${highlight ? 'text-emerald-450' : 'text-white'} tabular-nums truncate`}>
         {value}
       </div>
     </div>
@@ -302,8 +338,8 @@ const MetricBlock = ({ label, value, icon, delay, highlight = false }: any) => (
 );
 
 const SectionHeader = ({ title }: { title: string }) => (
-  <div className="flex items-center gap-4">
-    <div className="text-[10px] font-mono text-slate-500 tracking-[0.3em] uppercase">{title}</div>
+  <div className="flex items-center gap-3 shrink-0">
+    <div className="text-[9px] font-mono text-cyan-400 tracking-widest uppercase font-black">{title}</div>
     <div className="h-[1px] flex-grow bg-white/5" />
   </div>
 );

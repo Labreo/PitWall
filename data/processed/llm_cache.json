@@ -444,5 +444,103 @@
     "severity": "critical",
     "confidence_reasoning": "Telemetry indicates high unsuspended weight transfer (0.75), which aligns with theory's prediction of substantial impact on lateral body dynamics due to discrepant COG heights.",
     "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "03dbf291493780fc002c5543ab1efc20": {
+    "corner_summary": "Driver's braking and throttle inputs seem controlled, but steering stability could improve during heavy braking.",
+    "coaching_line": "Optimize unsuspended weight transfer management for better body control in S10 corner",
+    "severity": "critical",
+    "confidence_reasoning": "According to theory, significant unsuspended weight transfer occurs through suspension arms. Lower steering stability score indicates potential for enhanced damping or anti-dive/anti-squat devices. This could reduce body roll and improve overall cornering performance.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "1e6d9c13c696b4bf4fb6be7eee066cdb": {
+    "corner_summary": "Driver exhibits consistent, yet suboptimal weight transfer during heavy braking, leading to significant time loss.",
+    "coaching_line": "Focus on improving unsuspended component weight transfer through suspension tuning for better body control and reduced drag on the braking phase",
+    "severity": "critical",
+    "confidence_reasoning": "Based on theory 14.1.1, excessive unsuspended weight transfer results in increased body roll, contributing to the recorded time loss (0.900s). Adjustments to suspension settings can mitigate this effect.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "5aec6f34e3d282662cf872453aa97a2f": {
+    "corner_summary": "Driver executed heavy braking (0.38 Brake Score) at corner S12, with less steering input (0.50 Steering Stability), leading to a recorded time loss of 0.600s.",
+    "coaching_line": "Improve brake balance and trail braking consistency for better corner exit control.",
+    "severity": "critical",
+    "confidence_reasoning": "The low Brake Score (0.38) indicates insufficient initial braking force, potentially causing a loss in time as per Theory 27.5.1. The low Steering Stability score suggests the driver may need more input to maintain stability during and after heavy braking, as described by RossBentley-Trail-Braking-20210928-1.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "80e134406a28432c5c923ce05f3d176f": {
+    "corner_summary": "Driver's vision focus impacts corner entry speed perception, potentially leading to reduced control.",
+    "coaching_line": "Maintain Owl Vision: keep eyes ahead and turn head towards apex for right-hand bends.",
+    "severity": "warn",
+    "confidence_reasoning": "The driver's low braking score (0.44) and steering stability (0.50) suggest they may be overly focused on the turn-in point, causing reduced speed perception and potential loss of control.",
+    "source_attribution": "Racelogic-ebook-advanced-circuit-driving"
+  },
+  "1364fd61c4b03d43e5af28765f0f7926": {
+    "corner_summary": "The driver's performance in corner S12 indicates a balanced but not optimal weight transfer, with unsuspended components contributing less than suspended ones. The braking score is low (0.50), suggesting potential for further improvement.",
+    "coaching_line": "Focus on enhancing unsuspended weight transfer through optimized anti-roll and anti-squat/dive geometry to improve corner exit speed.",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry data shows a moderate braking score (0.50) indicating room for better braking control, which is directly linked to unsuspended weight transfer in the simplified model from MPhil_EJ_Goodman_2009_reduced.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "2377b7645e20630e603d89e65830ddfd": {
+    "corner_summary": "Driver's braking and throttle input, steering stability, and time loss indicate significant unoptimized weight transfer, potentially impacting vehicle control.",
+    "coaching_line": "Maximize suspension roll stiffness to better manage unsuspended weight transfer during heavy braking.",
+    "severity": "critical",
+    "confidence_reasoning": "Telemetry shows low steering stability (0.50), suggesting poor body control, which aligns with the theory that unsuspended weight transfer acts through suspension arms. Higher roll stiffness would help maintain stability and reduce time loss.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "90e2fb3861786ebbbb70b87523bff3a1": {
+    "corner_summary": "Driver executed heavy braking, maintaining steering stability without significant throttle input or time loss.",
+    "coaching_line": "Maintain consistent trail braking for a sweeping turn to improve corner exit speed and consistency",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1, early brake balance is crucial for safety; more sweeping the turn (theory 20210928-1) reduces trail braking needed.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "9fc074347263aa46673ea83610b85b48": {
+    "corner_summary": "Driver executed heavy braking at S104, indicating a high level of control and potentially over-braking for safety.",
+    "coaching_line": "Minimize brake pressure to reduce time loss, maintain stability.",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry Brake Score (0.46) suggests significant braking force application, aligning with Theory 27.5.1's emphasis on early braking system commissioning and balance. More sweeping turns would require less trail braking (Theory from RossBentley-Trail-Braking-20210928-1).",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "910b4bd53c27fdb48dd0155180b428dc": {
+    "corner_summary": "Driver maintained stable steering during heavy braking, indicating good control and balance.",
+    "coaching_line": "Maintain consistent trail braking for more cornering speed.",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1 Braking, early brake balance ensures safety; source Goodman (2009). Theory on trail braking (RossBentley-TrailBraking) emphasizes reduced use for wider turns, implying the driver has achieved this.",
+    "source_attribution": "MPhil_EJ_Goodman_2009"
+  },
+  "e6eaeaf7d995b58cb5f3eff4493aa587": {
+    "corner_summary": "Driver executed heavy braking with minimal throttle input, maintaining steering stability.",
+    "coaching_line": "Optimize brake balance for better traction during hard braking.",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory (27.5.1 Braking), a well-balanced braking system is crucial for safety and control in heavy braking situations, as indicated by the low Throttle Score of 0.02.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "e5fd338a89f1cfe143a5b4ed1b02d759": {
+    "corner_summary": "Driver initiated braking, likely due to heavy braking conditions, with minimal throttle input and no apparent trail braking application.",
+    "coaching_line": "Maintain consistent brake balance for safety, avoid excessive trail braking",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry indicates early and extensive braking (braking score 0.44), suggesting the driver adhered to safety protocols. According to theory, this is appropriate for heavy-braking scenarios.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "111eb186402a0822f797ffd64b9a6cb1": {
+    "corner_summary": "The driver maintained optimal braking balance and steering stability during S108, as indicated by a high Braking Score of 0.45 and Steering Stability of 0.50.",
+    "coaching_line": "Maintain consistent brake pressure throughout the turn",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory 27.5.1 Braking, achieving a suitable brake balance is crucial for safety and performance. The high Braking Score (0.45) suggests the driver has done this effectively.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
+  },
+  "9a4df50d5fcad22d5a66ff1b2339adfe": {
+    "corner_summary": "Driver demonstrated optimal braking control with minimal throttle input, maintaining steering stability during heavy braking.",
+    "coaching_line": "Maintain consistent brake pressure and smooth throttle transition for better corner performance.",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry data shows high Braking Score (0.37) and Steering Stability (0.50), aligning with the theory of early braking system optimization and suitable brake balance for safety, as per Goodman (2009). More sweeping turns would require less trail braking (as per RossBentley-TrailBraking-20210928-1), indicating effective cornering strategy.",
+    "source_attribution": "Goodman, E.J. (2009)"
+  },
+  "f1c019bcd5783bfa3368a6091df154cf": {
+    "corner_summary": "Driver maintained optimal braking balance, with minimal throttle input and no trail braking at turn S110.",
+    "coaching_line": "Preserve full braking force until the apex",
+    "severity": "warn",
+    "confidence_reasoning": "According to 27.5.1 Braking theory, maintaining appropriate brake balance ensures safety and control; no throttle input (0.00) signifies efficient energy management. As per RossBentley-Trail-Braking-20210928-1, less trail braking is employed when turning more sweepingly.",
+    "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
   }
 }
