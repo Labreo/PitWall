@@ -513,7 +513,7 @@ Built for the **IBM AI Builders Challenge 2026** — Racing Innovation Challenge
 
 **IBM Technologies Used:** IBM Granite · IBM Docling · IBM Watson TTS
 
-**Demo:** [3-minute video link]
+**Demo:** [https://www.youtube.com/watch?v=H3V_AMQSdnE]
 
 ---
 
