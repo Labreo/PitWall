@@ -3,9 +3,9 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def resample_and_interpolate(df: pd.DataFrame, target_freq: str = '100L') -> pd.DataFrame:
+def resample_and_interpolate(df: pd.DataFrame, target_freq: str = '100ms') -> pd.DataFrame:
     """
-    Resamples a time-indexed dataframe to a target frequency (e.g., '100L' for 100ms / 10Hz)
+    Resamples a time-indexed dataframe to a target frequency (e.g., '100ms' for 100ms / 10Hz)
     and applies linear interpolation to fill missing values.
     """
     if df.empty:

@@ -542,5 +542,259 @@
     "severity": "warn",
     "confidence_reasoning": "According to 27.5.1 Braking theory, maintaining appropriate brake balance ensures safety and control; no throttle input (0.00) signifies efficient energy management. As per RossBentley-Trail-Braking-20210928-1, less trail braking is employed when turning more sweepingly.",
     "source_attribution": "MPhil_EJ_Goodman_2009_reduced"
-  }
+  },
+  "bb61a154fd98e622349609e7eac40d1d": "During the session, I observed several key technical areas where you can enhance your performance. For corner S2 and S4, maintain consistent brake pressure to ensure optimal control and stability during cornering. On Lap 1's Corner S6, reduce brake pressure for better consistency in entry. Moving forward, focus on 'Owl Vision' for right-hand bends like Corner S6; keep your eyes ahead and subtly turn your head towards the apex without fixating, which will improve line accuracy and corner speed. These adjustments will significantly contribute to improved lap times and overall race strategy.",
+  "c5b1af2ec1a62cf6418dd84487ee0443": {
+    "corner_summary": "Driver maintained control during late-apex entry, ensuring smooth throttle application for corner exit.",
+    "coaching_line": "Gradually reduce throttle before apex to maintain speed and control on power exit",
+    "severity": "warn",
+    "confidence_reasoning": "According to nailing the apex theory (0.50 Steering Stability), maintaining a controlled entry allows for earlier throttle application, increasing exit speed.",
+    "source_attribution": "nailing the apex"
+  },
+  "d7cf08bcd309cc16048cfe6029fdeb73": {
+    "corner_summary": "Driver braked too early, leading to premature turn-in. BoB was not fully utilized.",
+    "coaching_line": "Maintain BoB reference point until the last possible moment before turning in",
+    "severity": "warn",
+    "confidence_reasoning": "According to Racelogic ebook advanced circuit driving, braking too early (braking score: 0.18) negatively impacts corner entry due to reduced control and increased risk of understeer. Trail braking (not mentioned as a focus) helps maintain optimal tire load distribution for better grip during turn-in.",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "5b8d48b8b86247a5468f3672ff2ad011": {
+    "corner_summary": "Driver's braking depth seems to be slightly too deep, causing understeer and delayed throttle application.",
+    "coaching_line": "Gently reduce entry speed for a more optimal apex position",
+    "severity": "warn",
+    "confidence_reasoning": "According to theory (Source: nailing the apex), braking deeper than necessary can lead to understeer and delayed throttle input, compromising corner exit speed. This is consistent with your Braking Score of 0.26.",
+    "source_attribution": "Source: nailing the apex"
+  },
+  "6459cb7e08287a6a9a2018322a5a7d8b": {
+    "corner_summary": "Driver has achieved a moderate braking score (0.20), indicating some weight transfer but not optimal for maximum cornering speed.",
+    "coaching_line": "Focus on maximizing the outside wheel's positive camber, maintaining negative inside camber to counteract jacking effects and enhance grip.",
+    "severity": "warn",
+    "confidence_reasoning": "According to MPhil_EJ_Goodman_2009 (Section 14.1.5), weight transfer due to steering geometry affects cornering performance, with castor angle inducing negative camber on the outside wheel and positive camber on the inside. This results in a desirable weight transfer towards the outside wheel for improved grip.",
+    "source_attribution": "MPhil_EJ_Goodman_2009"
+  },
+  "782f2088f1d3f0a2b4fcfd0c055a7682": {
+    "corner_summary": "Driver braked too early, leading to premature turn-in, causing time loss and lower stability score.",
+    "coaching_line": "Maintain a consistent BoB position for smoother turn-in",
+    "severity": "critical",
+    "confidence_reasoning": "Adherence to BoB (Racelogic ebook advanced circuit driving) ensures optimal brake zone duration, reducing early turn-in and improving stability. This translates to lower time loss (0.900s).",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "eec20ff9880da7745fce3eaa49121556": {
+    "corner_summary": "Driver navigated a 90-degree turn with late apex, potentially causing throttle application delay and increased time loss.",
+    "coaching_line": "Maintain early throttle application through apex for next corner to minimize straight section time loss",
+    "severity": "critical",
+    "confidence_reasoning": "According to nailing the apex theory (page 35), the driver's late apex might have resulted in delayed throttle input, contributing to recorded time loss. By adhering to the rule of thumb for optimal apex location, the driver can preserve throttle application until exiting the current corner.",
+    "source_attribution": "ning the apex"
+  },
+  "3fa0b47f2986061e96f849e87e7c4bb6": {
+    "corner_summary": "Driver turned in slightly early, causing a less optimal line for both turns. Missed Turn 12 apex by nearly 2 meters but maintained Turn 13's entry speed.",
+    "coaching_line": "Maintain late apex on Turn 12 to conserve speed",
+    "severity": "critical",
+    "confidence_reasoning": "According to DrivingSchoolManual (Theory: car travels in the wrong lane), turning early at Turn 12 reduces entry speed for Turn 13, leading to slower overall lap time.",
+    "source_attribution": "DrivingSchoolManual"
+  },
+  "0fa77ae7e371ba54bb6d46778db1baec": {
+    "corner_summary": "Driver's braking and throttle application need refinement, affecting steering stability and overall lap time.",
+    "coaching_line": "Maximize rear grip by modulating the throttle slightly earlier to counteract negative weight transfer.",
+    "severity": "critical",
+    "confidence_reasoning": "According to Goodman (2009), positive camber change on the outside wheel during steering induces this unwanted weight transfer. By adjusting throttle early, you can enhance rear grip and balance the car.",
+    "source_attribution": "MPhil_EJ_Goodman_2009"
+  },
+  "d695636ee4867fb62f1a3fdb0769e819": {
+    "corner_summary": "Driver's braking is slightly late, causing early turn-in. Steering stability is maintained but could improve with smoother transition.",
+    "coaching_line": "Focus on the 'Brake Release Zone' (BoB) as a process, not an exact point. Stay smooth and prepared for Turn-in",
+    "severity": "critical",
+    "confidence_reasoning": "According to Racelogic ebook advanced circuit driving, braking too early leads to early turn-in. This results in lower Steering Stability (0.50). By emphasizing the 'Brake Release Zone' as a process rather than an exact point, the driver can better manage this issue.",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "5393384cb11e0b66de4859d1b167b798": {
+    "corner_summary": "Driver took early apex, neglecting Turn 12's wide entry for Turn 13, resulting in lowered speed and increased time.",
+    "coaching_line": "Maintain optimal Turn 12 width for Turn 13, preserving speed",
+    "severity": "critical",
+    "confidence_reasoning": "According to DrivingSchoolManual, early apex errors result in slower entry into Turn 13. Our telemetry shows this line (red) misses the apex by nearly 2m but maintains the same apex speed as a more conventional line (blue). This emphasizes the importance of the wide entry for maximum speed",
+    "source_attribution": "DrivingSchoolManual"
+  },
+  "b115def8edbd75e7bae9e7d64f34ffa7": {
+    "corner_summary": "The driver's braking and throttle control are slightly below optimal, contributing to a 1.001s time loss.",
+    "coaching_line": "Maximize front tire grip by modulating trail brakes more effectively for improved corner exit speed",
+    "severity": "critical",
+    "confidence_reasoning": "According to theory (Goodman, 2009), steering geometry induces weight transfer. A lower braking score and throttle score indicate less front tire grip during braking and power application respectively, which is counterproductive for quick corner exits. This explains the recorded time loss.",
+    "source_attribution": "MPhil_EJ_Goodman_2009"
+  },
+  "28187b06656bada4bdbf4912b861c563": {
+    "corner_summary": "Driver braked too early, leading to premature turn-in.",
+    "coaching_line": "Maintain BoB until just before EoB for better corner exit.",
+    "severity": "critical",
+    "confidence_reasoning": "Referring to Racelogic ebook advanced circuit driving (88), where braking too early often results in early turn-in, reducing overall lap time.",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "5bb10c48b852d32b5f63b83f65d7d793": {
+    "corner_summary": "Driver's braking and throttle control indicate an Early Apex Line, potentially compromising lap time.",
+    "coaching_line": "Maintain apex for both Turns 12 and 13 to conserve speed",
+    "severity": "critical",
+    "confidence_reasoning": "Based on RELEVANT MOTORSPORT THEORY (SOURCE: Racelogic ebook advanced circuit driving), maintaining the same apex speed as the blue line (Teammate's preferred line) is crucial for optimal time. Braking Score of 0.35 suggests slight over-braking, while Throttle Score of 0.64 implies potential for faster entry into Turn 13.",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "fd8655e5ffc10141889a5034c4f80da7": {
+    "corner_summary": "Driver braked too early, leading to premature turn-in.",
+    "coaching_line": "Maintain consistent BoB reference point for smoother entry into corner turns",
+    "severity": "critical",
+    "confidence_reasoning": "According to Racelogic ebook advanced circuit driving (Theory: 'Doing this makes them much easier to remember rather than trying to understand it all in one go.'), the driver's early braking indicates a need for better BoB control. This will reduce time loss and improve corner exit speeds, as per RossBentley Trail Braking (Theory: 'With less-experienced drivers... focus on releasing the brakes smoothly').",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "e4b159d292257cb4b29253014b760d0f": {
+    "corner_summary": "The driver turned in slightly early, causing an Early Apex Line and reducing steering stability.",
+    "coaching_line": "Maintain apex for Turn 12 to ensure optimal line and avoid early apex error.",
+    "severity": "critical",
+    "confidence_reasoning": "According to DrivingSchoolManual (Theory: car traveling in the wrong lane), turning early at Turn 12 leads to reduced steering stability. This impacts your overall lap time, as seen in the telemetry data (Braking Score: 0.41, Steering Stability: 0.50).",
+    "source_attribution": "DrivingSchoolManual"
+  },
+  "14b60f3d70c135913df6fd5bbf57a5af": {
+    "corner_summary": "Driver slightly understeered, exiting slowly, but with improved head position for better vision to apex.",
+    "coaching_line": "Ahead-looking 'Owl Vision', focus on apex",
+    "severity": "critical",
+    "confidence_reasoning": "Based on telemetry, driver's understeer indicates the need for improved exit speed. By adopting 'Owl Vision', they can better perceive and target the apex, reducing time loss.",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "dec1f0c920523030dc56bb87d2abc253": {
+    "corner_summary": "Driver needs to refine mid-apex technique for 90-degree turns, potentially benefiting from earlier throttle application.",
+    "coaching_line": "Target the correct apex early for optimal throttle onset in next corner",
+    "severity": "critical",
+    "confidence_reasoning": "Based on theory (source: nailing the apex), a mid-apex point can yield faster lap times by allowing earlier throttle application. This is crucial to reduce straight-line speed loss, a key factor in overall lap time reduction.",
+    "source_attribution": "nailing the apex"
+  },
+  "0b5d63935dfe4e0e463fa87b0fdf2279": {
+    "corner_summary": "Driver attempted an Early Apex, resulting in a slower entry into Turn 13.",
+    "coaching_line": "Maintain late apex for Turn 12 to preserve speed for Turn 13's wider entry",
+    "severity": "critical",
+    "confidence_reasoning": "According to Motorsport Theory (DrivingSchoolManual), early apexing reduces turn-in speed, causing a loss of momentum. My telemetry shows a braking score of 0.54 and steering stability of 0.50, indicating a need for a more gradual approach.",
+    "source_attribution": "DrivingSchoolManual"
+  },
+  "9e3b647fa214158a050af04291aa5208": {
+    "corner_summary": "Driver experienced understeer, exiting slow but able to accelerate quickly on the following straight.",
+    "coaching_line": "Maintain Owl Vision, keep eyes ahead and turn head to apex",
+    "severity": "critical",
+    "confidence_reasoning": "According to Racelogic ebook advanced circuit driving, understeer at this corner necessitates a slow entry but quick exit. Maintaining Owl Vision (keeping eyes ahead and turning head towards the apex) can help mitigate this effect.",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "eaee241ec94ffb348059ef30ba04f61a": {
+    "corner_summary": "Driver slightly understeered at late apex, causing a 1.700s time loss.",
+    "coaching_line": "Confirm proper mid-apex position to maximize throttle application",
+    "severity": "critical",
+    "confidence_reasoning": "According to nailing the apex theory (page 35), early throttle application is crucial for quick corner exits. This aligns with the telemetry findings of a lower steering stability score and time loss.",
+    "source_attribution": "Ced technique on page 35"
+  },
+  "0558d0f9683de57da002b365baf982b2": {
+    "corner_summary": "Driver underperformed, turning in too early (Early Apex), causing speed loss and increased time.",
+    "coaching_line": "Maintain optimal entry speed for Turn 13, avoiding the apex of Turn 12 to conserve momentum.",
+    "severity": "critical",
+    "confidence_reasoning": "According to THEORY from DrivingSchoolManual, Early Apex results in slower speed and increased time. The telemetry Braking Score (0.40) and Recorded Time Loss (0.700s) corroborate this.",
+    "source_attribution": "DrivingSchoolManual"
+  },
+  "be32290c316e8deca4a510ccf0f93f5f": {
+    "corner_summary": "Driver slightly late on apex, potentially contributing to increased braking and time loss.",
+    "coaching_line": "Adjust mid-apex for quicker turns like this 90-degree",
+    "severity": "critical",
+    "confidence_reasoning": "Telemetry indicates a less optimal apex entry, aligning with 'nailing the apex' theory that suggests finding the earliest throttle application while unwinding steering without correction.",
+    "source_attribution": "Source: nailing the apex"
+  },
+  "6af78cc6fcbb3c082b99accd52d6072c": {
+    "corner_summary": "The driver is slightly favoring a more conventional Turn 12 apex, potentially causing early braking and throttle application.",
+    "coaching_line": "Maintain your current wide entry into Turn 13, but gently modulate the throttle to preserve apex speed.",
+    "severity": "warn",
+    "confidence_reasoning": "According to Theory from 'nd corner' (Racelogic ebook), missing the apex by a small margin doesn't significantly impact lap time if maintained at high speed. This is crucial for optimal corner exit and smooth transition into Turn 13.",
+    "source_attribution": "Theory from 'nd corner', Racelogic ebook"
+  },
+  "624a04b82b5f8dae76475190b8e901ef": {
+    "corner_summary": "Driver has been maintaining s understeer, approaching apex early but not optimally straight, potentially impacting exit speed.",
+    "coaching_line": "Maintain Owl Vision, focus on apex in your peripheral as you exit the turn.",
+    "severity": "warn",
+    "confidence_reasoning": "According to Racelogic's 'Advanced Circuit Driving', early turn-in can reduce speed due to reduced depth perception. By using Owl Vision, driver can maintain straight line speed into the next section of track (source: Racelogic ebook advanced circuit driving)",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "ee4578580172a0853999150800780604": {
+    "corner_summary": "Driver slightly underperformed on late-apex technique, causing a 0.400s time loss and lower steering stability score.",
+    "coaching_line": "Maintain apex until the earliest throttle application while unwinding steering without correction",
+    "severity": "warn",
+    "confidence_reasoning": "Telemetry Braking Score of 0.50 indicates premature braking, not aligning with 'ced technique' (n/a), suggesting a late apex. Steering Stability: 0.50 underscores the need for precise mid-apex entry.",
+    "source_attribution": "n/a"
+  },
+  "e8601a78e5e253fc5889cdc8868927b0": {
+    "corner_summary": "Driver's entry into Turn 13 is wide, early apex line suggests over-application of brakes and throttle, potentially causing loss of traction.",
+    "coaching_line": "Maintain late apex for Turn 12 to preserve speed for Turn 13",
+    "severity": "critical",
+    "confidence_reasoning": "Based on DrivingSchoolManual theory, early apex leads to reduced turn-in speed and increased risk of understeer. Late apex maintains momentum for a smoother transition into the next turn.",
+    "source_attribution": "DrivingSchoolManual"
+  },
+  "87acf89a398ae7cb4e3a2ac6dac9efba": {
+    "corner_summary": "The driver is maintaining a 'slow in, fast out' approach but showing reduced steering stability, potentially due to head position affecting peripheral vision.",
+    "coaching_line": "Focus on 'Owl Vision', keeping your eyes ahead and turning your head towards the apex without fixating on the turn-in point between corners.",
+    "severity": "critical",
+    "confidence_reasoning": "Based on telemetry findings, the driver is experiencing a reduced steering stability score (0.50) likely due to inadequate use of peripheral vision, aligning with the 'Owl Vision' technique from Racelogic's ebook (source: advanced circuit driving). This could be mitigated by shifting focus away from the turn-in point and towards the apex.",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "4e38fd360a22e194367ce9642bb76f45": {
+    "corner_summary": "Driver maintained consistent speed at entry, ensuring controlled turn-in and early throttle application for improved exit speed.",
+    "coaching_line": "Gradually reduce speed entering corner for smoother turn-in and earlier throttle application",
+    "severity": "warn",
+    "confidence_reasoning": "Based on 'nailing the apex' theory, low braking score (0.46) indicates controlled entry, while high steering stability (0.50) shows effective turn-in management.",
+    "source_attribution": "'nailing the apex'"
+  },
+  "6240c08a96f3d5756591bab47ab9bcf9": {
+    "corner_summary": "Driver maintained late apex speed, preventing oversteer and maintaining momentum for exit.",
+    "coaching_line": "Keep throttle early to preserve speed for corner exit",
+    "severity": "warn",
+    "confidence_reasoning": "According to nailing the apex theory (S104), giving up entry speed allows for earlier throttle application, reducing understeer and maintaining momentum. This is seen in the blue-outlined video compared to the red.",
+    "source_attribution": "Source: nailing the apex"
+  },
+  "d8b8b196a42dfcbe7263c52a10eb231a": {
+    "corner_summary": "Driver maintained control, minimizing speed loss during turn-in while preparing for early throttle application.",
+    "coaching_line": "Patience is key; hold off slightly on the power to ensure optimal exit speed",
+    "severity": "warn",
+    "confidence_reasoning": "According to Theory 1 (nailing the apex), giving up a bit of entry speed allows for early throttle application, maintaining momentum and capturing more time through the corner exit.",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "9cda5f3f089d22c1a72a372573b9b114": {
+    "corner_summary": "Driver entered corner late, but maintained control with smooth throttle application and steady steering input.",
+    "coaching_line": "Maintain early throttle application for better exit speed, as per low-out-fast strategy",
+    "severity": "warn",
+    "confidence_reasoning": "According to 'nailing the apex' theory (S106), delaying entry allows for earlier throttle application, increasing corner exit speed.",
+    "source_attribution": "'nailing the apex' source"
+  },
+  "55a2a0d25eb652ee48729c6362aea113": {
+    "corner_summary": "Driver entered with too much speed, causing understeer and early lift-off, but managed to recover and maintain momentum through exit.",
+    "coaching_line": "Subtly reduce entry throttle to ensure controlled turn-in",
+    "severity": "warn",
+    "confidence_reasoning": "According to RELEVANT MOTORSPORT THEORY (SOURCE: Racelogic ebook advanced circuit driving), maintaining speed through the corner exit is crucial for momentum. The driver's early lift-off resulted in oversteer, but by reducing entry throttle, they can control the car and maintain speed into the turn.",
+    "source_attribution": "SOURCE: Racelogic ebook advanced circuit driving"
+  },
+  "f30fa9111f4dcbaf5156b61ba6b0f1e7": {
+    "corner_summary": "The driver maintained consistent speed during braking, but could have applied more throttle for quicker exit.",
+    "coaching_line": "Modulate throttle early to optimize power application at turn-in",
+    "severity": "warn",
+    "confidence_reasoning": "According to 'nailing the apex' theory, early throttle input is crucial for maximizing corner exit speed. This is exemplified by the blue-outlined video where lift-off causes oversteer (image source: Racelogic ebook advanced circuit driving)",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "e744ea210d80d2a2c92ff3a9b733274e": {
+    "corner_summary": "Driver maintained speed during early braking, but could have better control over late apex exit to apply more throttle earlier.",
+    "coaching_line": "Subtle trail braking modulation for improved corner exit speed",
+    "severity": "warn",
+    "confidence_reasoning": "Based on telemetry findings of low braking score and steering stability, driver needs to better manage speed during early braking to capitalize on the late apex turn-in. Referencing 'nailing the apex' theory, this improves corner exit speed.",
+    "source_attribution": "Racelogic ebook advanced circuit driving"
+  },
+  "8233bb09bd2f41787e55e0a10b114900": {
+    "corner_summary": "Driver held speed entering corner, but did not reduce it enough for optimal late-apex control and throttle application.",
+    "coaching_line": "Maintain lower entry speed to better manage late apex exit",
+    "severity": "warn",
+    "confidence_reasoning": "According to THEORY 1 (nailing the apex), early throttle input is crucial for maintaining car control during corner exits. The Braking Score of 0.54 indicates a moderate braking effort, but the Throttle Score of 0.00 implies no throttle application, which could result in loss of traction and speed.",
+    "source_attribution": "Theory 1: nailing the apex"
+  },
+  "51a85e5e8e757c21918974626a2534e7": {
+    "corner_summary": "Driver executed a late apex exit, maintaining speed and control, preventing oversteer.",
+    "coaching_line": "Stay patient on turn-in to control speed and preserve momentum for the exit",
+    "severity": "warn",
+    "confidence_reasoning": "According to nailing the apex theory (SOURCE: nailing the apex), early throttle application can lead to oversteer. By staying patient, driver maintains control and maximizes speed through the corner.",
+    "source_attribution": "SOURCE: nailing the apex"
+  },
+  "7e6545496b8f2c49ab487dc763155c23": "Dear Driver,\n\nDuring today's session, I observed several key areas where you demonstrated strong control and consistency. At Corner S2, your patience on turn-in was commendable, preserving momentum for a powerful exit. In Corner S4, the gradual throttle application before apex maintained speed and control on power exit effectively. At Corner S6, maintaining BoB reference until the last moment improved your turning entry.\n\nFor Lap 2, I noticed a subtle yet beneficial adjustment in your approach to Corner S6. By gently reducing entry speed, you found an optimal apex position, showcasing your adaptability and keen understanding of track dynamics.\n\nMoving forward, consider refining these small aspects further: continue the patient turn-in at S2 for enhanced momentum, and ensure a smoother throttle application in S4 to maintain consistent speed control. Keep honing your Corner S6 entry speed management, as it significantly impacts overall lap time. Keep up this diligent work, and you'll see continued improvement in performance."
 }

@@ -2,10 +2,17 @@ import subprocess
 import json
 import logging
 import os
+import sys
 from pathlib import Path
 from typing import Dict, Any
 
 from schemas.raw_telemetry import RawTelemetryPoint
+
+# Ensure Homebrew and standard local paths are in the PATH environment variable on macOS
+if sys.platform == "darwin":
+    for path in ["/opt/homebrew/bin", "/usr/local/bin"]:
+        if path not in os.environ.get("PATH", "").split(":"):
+            os.environ["PATH"] = f"{path}:{os.environ.get('PATH', '')}"
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)

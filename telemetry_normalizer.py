@@ -105,13 +105,13 @@ class TelemetryNormalizer:
         # But we can just resample everything individually and then merge.
         
         # Step 1: Resample GPS to 10Hz
-        unified_df = resample_and_interpolate(unified_df, target_freq='100L') # 100ms = 10Hz
+        unified_df = resample_and_interpolate(unified_df, target_freq='100ms') # 100ms = 10Hz
         
         # Map ACCL
         for ax in ['x', 'y', 'z']:
             col_name = f"accel_{ax}"
             if not accl_df.empty and ax in accl_df.columns:
-                resampled_accl = resample_and_interpolate(accl_df[[ax]], target_freq='100L')
+                resampled_accl = resample_and_interpolate(accl_df[[ax]], target_freq='100ms')
                 # Reindex to unified_df index
                 unified_df[col_name] = resampled_accl[ax].reindex(unified_df.index, method='nearest')
             else:
@@ -121,7 +121,7 @@ class TelemetryNormalizer:
         for ax in ['x', 'y', 'z']:
             col_name = f"gyro_{ax}"
             if not gyro_df.empty and ax in gyro_df.columns:
-                resampled_gyro = resample_and_interpolate(gyro_df[[ax]], target_freq='100L')
+                resampled_gyro = resample_and_interpolate(gyro_df[[ax]], target_freq='100ms')
                 unified_df[col_name] = resampled_gyro[ax].reindex(unified_df.index, method='nearest')
             else:
                 unified_df[col_name] = 0.0

@@ -1,3 +1,12 @@
+import os
+import sys
+
+# Ensure Homebrew and standard local paths are in the PATH environment variable on macOS
+if sys.platform == "darwin":
+    for path in ["/opt/homebrew/bin", "/usr/local/bin"]:
+        if path not in os.environ.get("PATH", "").split(":"):
+            os.environ["PATH"] = f"{path}:{os.environ.get('PATH', '')}"
+
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware

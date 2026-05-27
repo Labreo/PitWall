@@ -2,11 +2,18 @@
 watson_tts.py — Synthesis and post-processing service for PitWall F1 Radio Audio.
 """
 import os
+import sys
 import subprocess
 import logging
 import requests
 from dotenv import load_dotenv
 from .audio_cache import AudioCache
+
+# Ensure Homebrew and standard local paths are in the PATH environment variable on macOS
+if sys.platform == "darwin":
+    for path in ["/opt/homebrew/bin", "/usr/local/bin"]:
+        if path not in os.environ.get("PATH", "").split(":"):
+            os.environ["PATH"] = f"{path}:{os.environ.get('PATH', '')}"
 
 # Load environment variables
 load_dotenv()

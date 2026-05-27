@@ -3,6 +3,16 @@
 # PITWALL CYBERPUNK ONE-CLICK LAUNCHER
 # Designed to build, configure, and boot both Frontend and Backend concurrently with clean SIGINT cleanup.
 
+# Activate virtual environment if present
+if [ -d ".venv" ]; then
+    source .venv/bin/activate
+fi
+
+# Ensure Homebrew and standard local paths are in the PATH on macOS (appended to avoid shadowing python/pip)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    export PATH="$PATH:/opt/homebrew/bin:/usr/local/bin"
+fi
+
 # ANSI Color Codes for Premium Terminal UI
 CYAN='\033[0;36m'
 GREEN='\033[0;32m'
